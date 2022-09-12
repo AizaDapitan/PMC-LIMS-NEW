@@ -157,12 +157,13 @@
                   disabled="true"
                   v-model="form.transType"
                 >
-                  <option value="Rock">Rock</option>
-                  <option value="Carbon">Carbon</option>
-                  <option value="Solid">Solid</option>
-                  <option value="Bulk">Bulk</option>
-                  <option value="Cut">Cut</option>
-                  <option value="Mine Drill">Mine Drill</option>
+                <option value="Rock">Rock</option>
+                <option value="Carbon">Carbon</option>
+                <option value="Bulk">Bulk</option>
+                <option value="Cut">Cut</option>
+                <option value="Mine Drill">Mine Drill</option>
+                <option value="Solids">Solids</option>
+                <option value="Solutions">Solutions</option>
                 </select>
               </div>
             </div>

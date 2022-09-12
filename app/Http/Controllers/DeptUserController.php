@@ -35,7 +35,7 @@ class DeptUserController extends Controller
 
     public function getDeptUsers()
     {
-        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1]])->orderBy('transmittalno', 'asc')->get();
+        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1]])->orderBy('datesubmitted', 'desc')->get();
 
         return $deptusers;
     }
