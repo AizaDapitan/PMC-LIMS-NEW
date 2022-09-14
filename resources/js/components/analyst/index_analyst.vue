@@ -150,7 +150,17 @@
               <Column field="status" header="Status" :sortable="true">
                 <template #body="slotProps">
                   <span
-                    v-if="slotProps.data.isApproved == 1"
+                    v-if="slotProps.data.isPosted == 1"
+                    class="badge badge-danger tx-uppercase"
+                    >Posted</span
+                  >
+                  <span
+                    v-else-if="slotProps.data.isAnalyzed == 1"
+                    class="badge badge-info tx-uppercase"
+                    >Saved</span
+                  >
+                  <span
+                    v-else-if="slotProps.data.isApproved == 1"
                     class="badge badge-success tx-uppercase"
                     >Approved</span
                   >
@@ -174,7 +184,7 @@
                     icon="pi pi-pencil"
                     class="p-button-rounded p-button-success mr-2"
                     @click="editWorksheet(slotProps)"
-                    :disabled="slotProps.data.isApproved == 0"
+                    :disabled="slotProps.data.isApproved == 0 || slotProps.data.isPosted == 1"
                   />
                 </template>
               </Column>
@@ -208,6 +218,7 @@ export default {
       editMsg: "Edit Worksheet",
       deleteMsg: "Delete Worksheet",
       transIds: null,
+      isDisabled: false,
     };
   },
   created() {

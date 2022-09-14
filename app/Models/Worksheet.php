@@ -13,13 +13,13 @@ class Worksheet extends Model
         'labbatch', 'dateshift', 'timeshift', 'fusionfurno', 'fusiontimefrom', 'fusiontimeto',
         'fusion', 'cupellationfurno', 'cupellationtimefrom', 'cupellationtimeto', 'cupellation', 'temperature', 'moldused', 'fireassayer', 'createdby',
         'isdeleted', 'deleted_at', 'updatedby', 'deleteby','isApproved','approvedby','approved_at','transType','dateweighed','shiftweighed','micnocheckweights',
-        'measuredby','analyzedby','isAnalyzed'
+        'measuredby','analyzedby','isAnalyzed','isPosted','posted_at','posted_by'
     ];
     protected $auditInclude = [
         'labbatch', 'dateshift', 'timeshift', 'fusionfurno', 'fusiontimefrom', 'fusiontimeto',
         'fusion', 'cupellationfurno', 'cupellationtimefrom', 'cupellationtimeto', 'cupellation', 'temperature', 'moldused', 'fireassayer', 'createdby',
         'isdeleted', 'deleted_at', 'updatedby', 'deleteby','isApproved','approvedby','approved_at','transType','dateweighed','shiftweighed','micnocheckweights',
-        'measuredby','analyzedby','isAnalyzed'
+        'measuredby','analyzedby','isAnalyzed','isPosted','posted_at','posted_by'
     ];
     protected $appends = ['fusion_furnace','cupellation_furnace','statuses'];
 

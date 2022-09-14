@@ -271,7 +271,6 @@
                   name="date-shift-weighed1"
                   pattern="\d{2}\/\d{2}\/\d{4}"
                   placeholder="mm/dd/yyyy"
-                  v-model="this.form.dateweighed"
                 />
               </div>
             </div>
@@ -377,39 +376,17 @@
             <Column field="niterg" header="Niter (Grams)"></Column>
             <Column field="leadg" header="Lead (Grams)"></Column>
             <Column field="silicang" header="Silican (Grams)"></Column>
+            <Column field="auprillmg" header="Au, Prill(Mg)"></Column>
+            <Column field="augradegpt" header="Au, Grade(Gpt)"></Column>
+            <Column field="assreadingppm" header="ASS Reading, ppm"></Column>
+            <Column field="agdoremg" header="Ag, Dore(Mg)"></Column>
+            <Column field="initialaggpt" header="Initial Ag (Gpt)"></Column>
             <Column
-              header="Ag, Dore(Mg)"
-              :hidden="this.form.transType != 'Solids'"
-            >
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
-            <Column
-              header="For Inquart(Mg)"
-              :hidden="this.form.transType != 'Solids'"
-            >
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
-            <Column
-              header="Au, Prill(Mg)"
-              :hidden="this.form.transType != 'Solids'"
-            >
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
-            <Column
-              header="Au, (Gpt)"
-              :hidden="this.form.transType != 'Solids'"
-            >
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
-            <Column
+              field="crusibleclearance"
               header="Crusible Clearance"
-              :hidden="this.form.transType != 'Solids'"
-            >
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
-            <Column header="Remarks" :hidden="this.form.transType != 'Solids'">
-              <template #body>{{ this.form.transType }}</template>
-            </Column>
+            ></Column>
+            <Column field="inquartmg" header="For Inquart (Mg)"></Column>
+            <Column field="methodremarks" header="Remarks"></Column>
             <Column
               :exportable="false"
               style="min-width: 8rem"
@@ -421,6 +398,14 @@
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
                   @click="editItem(slotProps)"
+                  :id="'btn' + slotProps.data.id"
+                  name="btnedit"
+                />
+                <Button
+                  v-bind:title="reassayMsg"
+                  icon="pi pi-refresh"
+                  class="p-button-rounded p-button-danger mr-2"
+                  @click="reassay(slotProps)"
                   :id="'btn' + slotProps.data.id"
                   name="btnedit"
                 />
@@ -440,17 +425,10 @@
         >
       </div>
       <div class="col-lg-6 d-flex justify-content-start justify-content-lg-end">
-        <a
-          :href="dashboard"
-          class="btn btn-white tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
-        >
-          <i data-feather="x-circle" class="mg-r-5"></i> Cancel
-        </a>
         <button
           type="submit"
           class="btn btn-primary tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
           @click.prevent="saveWorksheet"
-          :disabled="this.isApproved == 1"
         >
           <i data-feather="check-circle" class="mg-r-5"></i> Save
         </button>
@@ -483,6 +461,8 @@ export default {
       errors_exist: false,
       errors: {},
       isApproved: this.worksheet.isApproved,
+      editMsg: "Update Sample",
+      reassayMsg: "Reassay",
       form: {
         id: this.worksheet.id,
         labbatch: this.worksheet.labbatch,
@@ -502,10 +482,10 @@ export default {
         ids: this.transids,
         transType: this.worksheet.transType,
         dateweighed: "",
-        shiftweighed: "",
-        micnocheckweights: "",
-        measuredby: "",
-        analyzedby: "",
+        shiftweighed: this.worksheet.shiftweighed,
+        micnocheckweights: this.worksheet.micnocheckweights,
+        measuredby: this.worksheet.measuredby,
+        analyzedby: this.worksheet.analyzedby,
       },
     };
   },
@@ -531,6 +511,21 @@ export default {
       ":00.0000000",
       ""
     );
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = today.getFullYear();
+    today = mm + "/" + dd + "/" + yyyy;   
+    
+    console.log(this.worksheet.dateweighed);
+    document.getElementById("date-shift-weighed1").value = this.worksheet.dateweighed;
+   
+    if (this.worksheet.dateweighed == null) {
+      document.getElementById(
+        "date-shift-weighed1"
+      ).value = today;
+    }
   },
   methods: {
     async fetchItems() {
@@ -542,7 +537,10 @@ export default {
       this.items = res.data;
     },
     async saveWorksheet() {
-      const res = await this.submit("post", "/assayer/update", this.form, {
+      this.form.dateweighed = document.getElementById(
+        "date-shift-weighed1"
+      ).value;
+      const res = await this.submit("post", "/analyst/update", this.form, {
         headers: {
           "Content-Type":
             "multipart/form-data; charset=utf-8; boundary=" +
@@ -550,11 +548,88 @@ export default {
         },
       });
       if (res.status === 200) {
-        window.location.href = this.$env_Url + "/assayer/worksheet";
+        window.location.href = this.$env_Url + "/analyst/dashboard";
       } else {
         this.errors_exist = true;
         this.errors = res.data.errors;
       }
+    },
+    editItem(data) {
+      this.showDialog(data.data);
+    },
+    showDialog(data) {
+      const dialogRef = this.$dialog.open(item, {
+        props: {
+          header: "Transmittal item",
+          style: {
+            width: "50vw",
+          },
+          breakpoints: {
+            "960px": "75vw",
+            "640px": "90vw",
+          },
+          modal: true,
+        },
+        data: {
+          transmittalno: data.transmittalno,
+          id: data.id,
+          sampleno: data.sampleno,
+          samplewtvolume: data.samplewtvolume,
+          description: data.description,
+          elements: data.elements,
+          methodcode: data.methodcode,
+          comments: data.comments,
+          isDeptUser: false,
+          isReceiving: false,
+          isAssayer: false,
+          isAnalyst: true,
+          source: data.source,
+          samplewtgrams: data.samplewtgrams,
+          fluxg: data.fluxg,
+          flourg: data.flourg,
+          niterg: data.niterg,
+          leadg: data.leadg,
+          silicang: data.silicang,
+          crusibleused: data.crusibleused,
+          labbatch: this.form.labbatch,
+          transType: this.form.transType,
+          auprillmg: data.auprillmg,
+          augradegpt: data.augradegpt,
+          assreadingppm: data.assreadingppm,
+          agdoremg: data.agdoremg,
+          initialaggpt: data.initialaggpt,
+          crusibleclearance: data.crusibleclearance,
+          inquartmg: data.inquartmg,
+          methodremarks: data.methodremarks,
+        },
+        onClose: (options) => {
+          this.fetchItems();
+        },
+      });
+    },
+    reassay(data) {
+      this.$confirm.require({
+        message: "Do you want to reassay sample "  + data.data.sampleno + "?",
+        header: "Confirmation",
+        icon: "pi pi-info-circle",
+        acceptClass: "p-button-danger",
+        accept: async () => {
+          const res = await this.deleteRecord("post", "/analyst/reassay", {
+            id: data.data.id,
+          });
+          if (res.status === 200) {
+            this.$toast.add({
+                severity: "warn",
+                summary: "Confirmed",
+                detail: "Sample Code " + data.data.sampleno + " reassayed!",
+                life: 3000,
+            });
+            this.fetchItems();
+          } else {
+            this.ermessage();
+          }
+        },
+      });
     },
   },
 };

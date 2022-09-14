@@ -73,7 +73,7 @@ class DigesterController extends Controller
     {
         // dd(DeptuserTrans::where([['isdeleted', 0],['status','Approved'],['transcode',1],['transType','Solid']])
         // ->orderBy('transmittalno', 'asc')->toSql());
-        $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transcode', 1], ['transType', 'Solids']])
+        $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transType', 'Solids']])
             ->orderBy('transmittalno', 'asc')->get();
 
         return $transmittal;

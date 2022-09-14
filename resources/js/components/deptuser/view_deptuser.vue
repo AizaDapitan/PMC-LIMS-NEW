@@ -17,7 +17,7 @@
             <li class="breadcrumb-item" aria-current="page">
               <a :href="dashboard">Dept. Requesters</a>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item active" aria-current="page">View</li>
           </ol>
         </nav>
         <h4 class="mg-b-0 tx-spacing--1">View Transmittal - Dept.User</h4>

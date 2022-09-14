@@ -109,7 +109,10 @@ class AssayerController extends Controller
         }
 
         $transids = explode(',', $request->ids);
-        $items = TransmittalItem::whereIn('transmittalno', $transids)->where('isAssayed', 0)->Orwhere('labbatch', $labbatch)->get();
+        // $items = TransmittalItem::whereIn('transmittalno', $transids)->where(function($q){
+        //     $q->where( 'isAssayed', 0)->orWhere('reAssayed',1);
+        // })->Orwhere('labbatch', $labbatch)->get();
+        $items = TransmittalItem::whereIn('transmittalno', $transids)->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->get();
         return  $items;
     }
     public function worksheet()

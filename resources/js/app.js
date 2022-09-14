@@ -188,6 +188,51 @@ app.component(
     require("./components/analyst/edit_transmittal_analyst.vue").default
 );
 
+app.component(
+    "index_officer-component",
+    require("./components/officer/index_officer.vue").default
+);
+app.component(
+    "edit_officer-component",
+    require("./components/officer/edit_officer.vue").default
+);
+app.component(
+    "view_officer-component",
+    require("./components/officer/view_officer.vue").default
+);
+app.component(
+    "posted_officer-component",
+    require("./components/officer/posted_officer.vue").default
+);
+app.component(
+    "edit_posted_officer-component",
+    require("./components/officer/edit_posted_officer.vue").default
+);
+app.component(
+    "view_posted_officer-component",
+    require("./components/officer/view_posted_officer.vue").default
+);
+app.component(
+    "transmittal_officer-component",
+    require("./components/officer/transmittal_officer.vue").default
+);
+app.component(
+    "create_transmittal_officer-component",
+    require("./components/officer/create_transmittal_officer.vue").default
+);
+app.component(
+    "edit_transmittal_officer-component",
+    require("./components/officer/edit_transmittal_officer.vue").default
+);
+app.component(
+    "view_transmittal_officer-component",
+    require("./components/officer/view_transmittal_officer.vue").default
+);
+app.component(
+    "unsaved_transmittal_officer-component",
+    require("./components/officer/unsaved_transmittal_officer.vue").default
+);
+
 app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("Toolbar", Toolbar);

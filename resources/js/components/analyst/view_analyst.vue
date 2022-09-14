@@ -271,6 +271,7 @@
                   name="date-shift-weighed1"
                   pattern="\d{2}\/\d{2}\/\d{4}"
                   placeholder="mm/dd/yyyy"
+                  v-model="form.dateweighed"
                   disabled="true"
                 />
               </div>
@@ -283,6 +284,8 @@
                   class="form-control"
                   id="date-shift-weighed2"
                   name="date-shift-weighed2"
+                  placeholder="S2"
+                  v-model="this.form.shiftweighed"
                   disabled="true"
                 />
               </div>
@@ -299,6 +302,8 @@
             class="form-control"
             id="microbalance-no-check-weights"
             name="microbalance-no-check-weights"
+            placeholder="#1 - 0.00009, 5000, 9111"
+            v-model="this.form.micnocheckweights"
             disabled="true"
           />
         </div>
@@ -308,8 +313,9 @@
           <select
             class="custom-select tx-base"
             id="measured-by"
-            disabled="true"
             name="measured-by"
+            v-model="this.form.measuredby"
+            disabled="true"
           >
             <option value="">--Select--</option>
             <option value="User">User</option>
@@ -321,8 +327,9 @@
           <select
             class="custom-select tx-base"
             id="analyzed-by"
-            disabled="true"
             name="analyzed-by"
+            v-model="this.form.analyzedby"
+            disabled="true"
           >
             <option value="">--Select--</option>
             <option value="User">User</option>
@@ -435,6 +442,11 @@ export default {
         fireassayer: this.worksheet.fireassayer,
         ids: this.transids,
         transType: this.worksheet.transType,
+        dateweighed: this.worksheet.dateweighed,
+        shiftweighed: this.worksheet.shiftweighed,
+        micnocheckweights: this.worksheet.micnocheckweights,
+        measuredby: this.worksheet.measuredby,
+        analyzedby: this.worksheet.analyzedby,
       },
     };
   },

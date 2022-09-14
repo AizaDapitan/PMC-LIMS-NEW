@@ -9,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DeptUserController;
 use App\Http\Controllers\DeptOfficerController;
 use App\Http\Controllers\DigesterController;
+use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\QAQCRecieverController;
 use App\Http\Controllers\TransmittalItemController;
 
@@ -132,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/dashboard', [AnalystController::class, 'index'])->name("analyst.index");
             Route::get('/view/{id}', [AnalystController::class, 'view'])->name("analyst.view");
             Route::get('/edit/{id}', [AnalystController::class, 'edit'])->name("analyst.edit");
+            Route::post('/update', [AnalystController::class, 'update'])->name("analyst.update");
             Route::get('/transmittal', [AnalystController::class, 'transmittal'])->name("analyst.transmittal");
             Route::post('/getTransmittal', [AnalystController::class, 'getTransmittal'])->name("analyst.getTransmittal");
             Route::get('/view-transmittal/{id}', [AnalystController::class, 'viewTransmittal'])->name("analyst.viewTransmittal");
@@ -139,6 +141,36 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/receiveTransmittal', [AnalystController::class, 'receiveTransmittal'])->name("analyst.receiveTransmittal");
             Route::get('/edit-transmittal/{id}', [AnalystController::class, 'editTransmittal'])->name("analyst.editTransmittal");
             Route::post('/getItems', [AnalystController::class, 'getItems'])->name("analyst.getItems");
+            Route::post('/reassay', [AnalystController::class, 'reassay'])->name("analyst.reassay");
+        }
+    );
+     // Officer
+     Route::group(
+        ['prefix' => 'officer'],
+        function () {
+            Route::get('/dashboard', [OfficerController::class, 'index'])->name("officer.index");
+            Route::get('/posted', [OfficerController::class, 'posted'])->name("officer.posted");
+            Route::post('/getWorksheet', [OfficerController::class, 'getWorksheet'])->name("officer.getWorksheet");
+            Route::post('/getPostedWorksheet', [OfficerController::class, 'getPostedWorksheet'])->name("officer.getPostedWorksheet");
+            Route::get('/view/{id}', [OfficerController::class, 'view'])->name("officer.view");
+            Route::get('/edit/{id}', [OfficerController::class, 'edit'])->name("officer.edit");
+            Route::post('/update', [OfficerController::class, 'update'])->name("officer.update");
+            Route::post('/getItems', [OfficerController::class, 'getItems'])->name("officer.getItems");
+            Route::get('/unpost/{id}', [OfficerController::class, 'unpost'])->name("officer.unpost");
+            Route::post('/updateposted', [OfficerController::class, 'updateposted'])->name("officer.updateposted");
+            Route::get('/view-posted/{id}', [OfficerController::class, 'viewposted'])->name("officer.viewposted");
+            Route::get('/transmittal', [OfficerController::class, 'transmittal'])->name("officer.transmittal");
+            Route::post('/getTransmittal', [OfficerController::class, 'getTransmittal'])->name("officer.getTransmittal");
+            Route::get('/create-transmittal', [OfficerController::class, 'createTransmittal'])->name("officer.createTransmittal");
+            Route::post('/checkTransNo', [OfficerController::class, 'checkTransNo'])->name("officer.checkTransNo");
+            Route::post('/store', [OfficerController::class, 'store'])->name("officer.store");
+            Route::post('/autosave', [OfficerController::class, 'autosave'])->name("officer.autosave");
+            Route::get('/edit-transmittal/{id}', [OfficerController::class, 'editTransmittal'])->name("officer.editTransmittal");
+            Route::post('/update-transmittal', [OfficerController::class, 'updateTransmittal'])->name("officer.updateTransmittal");
+            Route::get('/view-transmittal/{id}', [OfficerController::class, 'viewTransmittal'])->name("officer.viewTransmittal");
+            Route::post('/delete', [OfficerController::class, 'deleteTransmittal'])->name("officer.deleteTransmittal");
+            Route::get('/unsaved-transmittal', [OfficerController::class, 'unsavedTrans'])->name("officer.unsavedTrans");
+            Route::post('/getUnsavedTrans', [OfficerController::class, 'getUnsaved'])->name("deptuser.getUnsaved");
         }
     );
 

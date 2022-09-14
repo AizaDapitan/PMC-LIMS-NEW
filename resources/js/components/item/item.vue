@@ -111,7 +111,7 @@
             />
           </div>
         </div>
-        <div v-if="this.form.isAssayer" class="col-lg-12">
+        <div v-if="this.isAnalystAssayer" class="col-lg-12">
           <div class="form-group">
             <label for="source">Source</label>
             <input
@@ -133,6 +133,7 @@
               type="number"
               class="form-control input-sm"
               v-model="form.samplewtgrams"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <div class="form-group">
@@ -144,6 +145,7 @@
             <input
               class="form-control input-sm"
               v-model="form.crusibleused"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <h4>Elements</h4>
@@ -157,6 +159,7 @@
               type="number"
               class="form-control input-sm"
               v-model="form.fluxg"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <div class="form-group">
@@ -169,6 +172,7 @@
               type="number"
               class="form-control input-sm"
               v-model="form.flourg"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <div class="form-group">
@@ -181,6 +185,7 @@
               type="number"
               class="form-control input-sm"
               v-model="form.niterg"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <div class="form-group">
@@ -193,6 +198,7 @@
               type="number"
               class="form-control input-sm"
               v-model="form.leadg"
+              :disabled="!this.form.isAssayer"
             />
           </div>
           <div class="form-group">
@@ -205,7 +211,116 @@
               type="number"
               class="form-control input-sm"
               v-model="form.silicang"
+              :disabled="!this.form.isAssayer"
             />
+          </div>
+          <div v-if="this.form.isAnalyst">
+            <div>
+              <hr class="mg-t-10 mg-b-30" />
+            </div>
+            <h5 class="mb-4">{{ this.methodheader }}</h5>
+            <h6 v-if="this.isfa30g" class="mb-4">FA30G</h6>
+
+            <div class="form-group" v-if="this.showauprill">
+              <label for="sample-no"
+                >Au, Prill (Mg)<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.auprillmg"
+              />
+            </div>
+            <div class="form-group" v-if="this.showaugrade">
+              <label for="sample-no"
+                >Au Grade (Gpt)<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.augradegpt"
+              />
+            </div>
+            <h6 class="mb-4" v-if="this.isfa30a">FA30A</h6>
+            <div class="form-group" v-if="this.assreadingppm">
+              <label for="sample-no"
+                >ASS Reading, ppm<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.assreadingppm"
+              />
+            </div>
+            <div class="form-group" v-if="this.showagdore">
+              <label for="sample-no"
+                >Ag, Dore (Mg)<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.agdoremg"
+              />
+            </div>
+            <div class="form-group" v-if="this.form.transType == 'Carbon'">
+              <label for="sample-no"
+                >Initial Ag (Gpt)<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.initialaggpt"
+              />
+            </div>
+            <div class="form-group" v-if="this.showcclearance">
+              <label for="sample-no"
+                >Crusible Clearance<span
+                  class="text-danger"
+                  aria-required="true"
+                >
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.crusibleclearance"
+              />
+            </div>
+            <div class="form-group" v-if="this.form.transType == 'Solids'">
+              <label for="sample-no"
+                >For Inquart (Mg)<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.inquartmg"
+              />
+            </div>
+            <div class="form-group">
+              <label for="sample-no"
+                >Remarks<span class="text-danger" aria-required="true">
+                  *
+                </span></label
+              >
+              <input
+                type="number"
+                class="form-control input-sm"
+                v-model="form.methodremarks"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -241,6 +356,15 @@ export default {
       errors_exist: false,
       errors: {},
       isdisabled: true,
+      isAnalystAssayer: false,
+      methodheader: "Method",
+      showauprill: false,
+      showaugrade: false,
+      showassreading: false,
+      showagdore: false,
+      showcclearance: false,
+      isfa30g: false,
+      isfa30a: false,
       form: {
         transmittalno: this.dialogRef.data.transmittalno,
         id: this.dialogRef.data.id,
@@ -260,13 +384,68 @@ export default {
         silicang: this.dialogRef.data.silicang,
         crusibleused: this.dialogRef.data.crusibleused,
         isAssayer: this.dialogRef.data.isAssayer,
-        labbatch :this.dialogRef.data.labbatch,
+        isAnalyst: this.dialogRef.data.isAnalyst,
+        labbatch: this.dialogRef.data.labbatch,
+        transType: this.dialogRef.data.transType,
+        auprillmg: this.dialogRef.data.auprillmg,
+        augradegpt: this.dialogRef.data.augradegpt,
+        assreadingppm: this.dialogRef.data.assreadingppm,
+        agdoremg: this.dialogRef.data.agdoremg,
+        initialaggpt: this.dialogRef.data.initialaggpt,
+        crusibleclearance: this.dialogRef.data.crusibleclearance,
+        inquartmg: this.dialogRef.data.inquartmg,
+        methodremarks: this.dialogRef.data.methodremarks,
       },
     };
   },
   mounted() {
     if (this.dialogRef.data.sampleno == undefined || this.isDeptUser) {
       this.isdisabled = false;
+    }
+    if (this.dialogRef.data.isAssayer || this.dialogRef.data.isAnalyst) {
+      this.isAnalystAssayer = true;
+    }
+    if (
+      this.dialogRef.data.transType == "Rock" ||
+      this.dialogRef.data.transType == "Mine Drill"
+    ) {
+      this.showauprill = true;
+      this.showaugrade = true;
+      this.assreadingppm = true;
+      this.isfa30g = true;
+      this.isfa30a = true;
+
+      this.form.agdoremg = 0;
+      this.form.initialaggpt = 0;
+      this.form.crusibleclearance = 0;
+      this.form.inquartmg = 0;
+    } else if (this.dialogRef.data.transType == "Carbon") {
+      this.showagdore = true;
+      this.showcclearance = true;
+      this.methodheader = "Gravimetric Method";
+
+      this.form.auprillmg = 0;
+      this.form.augradegpt = 0;
+      this.form.assreadingppm = 0;
+      this.form.inquartmg = 0;
+    } else if (this.dialogRef.data.transType == "Solids") {
+      this.showauprill = true;
+      this.showaugrade = true;
+      this.showagdore = true;
+      this.methodheader = "Gravimetric Method";
+      this.showcclearance = true;
+
+      this.form.assreadingppm = 0;
+      this.form.initialaggpt = 0;
+    } else if (this.dialogRef.data.transType == "Cut") {
+      this.showauprill = true;
+      this.showaugrade = true;
+      this.showcclearance = true;
+
+      this.form.assreadingppm = 0;
+      this.form.agdoremg = 0;
+      this.form.initialaggpt = 0;
+      this.form.inquartmg = 0;
     }
   },
   methods: {

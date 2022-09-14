@@ -44,6 +44,7 @@ class AnalystController extends Controller
                 'micnocheckweights' => $request->micnocheckweights,
                 'measuredby' => $request->measuredby,
                 'analyzedby' => $request->analyzedby,
+                'isAnalyzed' => 1
             ];
 
             $worksheet->update($data);
@@ -58,7 +59,7 @@ class AnalystController extends Controller
     }
     public function getTransmittal()
     {
-        $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transcode', 1], ['transType', 'Solutions']])
+        $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transType', 'Solutions']])
             ->orderBy('transmittalno', 'asc')->get();
 
         return $transmittal;
@@ -104,5 +105,25 @@ class AnalystController extends Controller
     {
         $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno], ['isAssayed', 0]])->get();
         return  $items;
+    }
+    public function reassay(Request $request)
+    {
+        $request->validate(['id' => 'required']);
+        try {
+            $item = TransmittalItem::find($request->id);
+            $data = [
+                'labbatch' => NULL,
+                'reassayed' => 1,
+                'reaasyedby' => auth()->user()->username,
+                'labbatch' => NULL,
+                'isAssayed' => 0,
+                'assayedby' => NULL,
+
+            ];
+            $item->update($data);
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' => $e->getMessage(), 500]);
+        }
     }
 }

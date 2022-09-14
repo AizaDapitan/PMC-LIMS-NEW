@@ -35,14 +35,14 @@ class DeptUserController extends Controller
 
     public function getDeptUsers()
     {
-        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1]])->orderBy('datesubmitted', 'desc')->get();
+        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1],['transcode',1]])->orderBy('datesubmitted', 'desc')->get();
 
         return $deptusers;
     }
 
     public function deptusersList(DeptuserTrans $deptuser)
     {
-        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1]])->get();
+        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1],['transcode',1]])->get();
         return $deptusers;
     }
     public function create()
@@ -250,7 +250,7 @@ class DeptUserController extends Controller
     }
     public function getUnsaved()
     {
-        $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0]])->orderBy('transmittalno', 'asc')->get();
+        $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0],['transcode',1]])->orderBy('transmittalno', 'asc')->get();
 
         return $unsavedTrans;
     }

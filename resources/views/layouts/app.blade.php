@@ -98,7 +98,16 @@
             <li class="{{ (request()->is('analyst/transmittal*')) ? 'active' : '' }}"><a href="{{ route('analyst.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalystTrans}}</span></a></li>
           </ul>
         </li>
-         <li class="nav-item"><a href="#" class="nav-link"><i data-feather="bell"></i> <span>Officer</span></a></li>
+        <li class="nav-item with-sub {{ (request()->is('officer/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Officer</span><span class="badge badge-danger rounded-circle ml-3">{{ $OfficerNotif}}</span></a>
+          <ul>
+            <li class="{{ (request()->is('officer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOfficer}}</span></a></li>
+            <li class="{{ (request()->is('officer/posted*')) ? 'active' : '' }}"><a href="{{ route('officer.posted') }}"><span>Posted</span></a></li>
+            <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
+            <li class="{{ (request()->is('officer/unsaved*')) ? 'active' : '' }}"><a href="{{ route('officer.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsavedOfficer}}</span></a></li>
+           
+          </ul>
+        </li>
 
         <li class="nav-label mg-t-25">Maintenance</li>
         <li class="nav-item with-sub">

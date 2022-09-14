@@ -199,6 +199,18 @@ class TransmittalItemController extends Controller
                 'silicang' => 'required',
                 'crusibleused' => 'required'
             ]);
+        } else if ($request->isAnalyst) {
+            $request->validate([
+                'id' => 'required',
+                'auprillmg' => 'required',
+                'augradegpt' => 'required',
+                'assreadingppm' => 'required',
+                'agdoremg' => 'required',
+                'initialaggpt' => 'required',
+                'crusibleclearance' => 'required',
+                'inquartmg' => 'required',
+                'methodremarks' => 'required'
+            ]);
         } else {
             $request->validate([
                 'id' => 'required',
@@ -228,6 +240,18 @@ class TransmittalItemController extends Controller
                     'updatedby' => auth()->user()->username,
                     'assayedby'  =>  auth()->user()->username,
                     'assayed_at' => Carbon::now(),
+                ];
+            } else  if ($request->isAnalyst) {
+                $data = [
+                    'auprillmg' => $request->auprillmg,
+                    'augradegpt' => $request->augradegpt,
+                    'assreadingppm' => $request->assreadingppm,
+                    'agdoremg' => $request->agdoremg,
+                    'initialaggpt' =>  $request->initialaggpt,
+                    'crusibleclearance' => $request->crusibleclearance,
+                    'inquartmg' => $request->inquartmg,
+                    'methodremarks'    => $request->methodremarks,
+                    'updatedby' => auth()->user()->username
                 ];
             } else {
                 $data = [
