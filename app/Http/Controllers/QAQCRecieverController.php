@@ -18,7 +18,7 @@ class QAQCRecieverController extends Controller
     {
         // dd( DeptuserTrans::where([['isdeleted', 0],['status','Approved']])->WhereNotIn('transType',['Solid','Solutions'])
         // ->orderBy('transmittalno', 'asc')->toSql());
-        $transmittal = DeptuserTrans::where([['isdeleted', 0],['status','Approved'],['transcode',1]])->WhereNotIn('transType',['Solids','Solutions'])
+        $transmittal = DeptuserTrans::where([['isdeleted', 0],['status','Approved']])->WhereNotIn('transType',['Solids','Solutions'])
         ->orderBy('transmittalno', 'asc')->get();
 
         return $transmittal;

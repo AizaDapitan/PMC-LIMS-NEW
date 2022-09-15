@@ -292,7 +292,7 @@
                 </span></label
               >
               <input
-                type="number"
+                type=""
                 class="form-control input-sm"
                 v-model="form.crusibleclearance"
               />
@@ -316,7 +316,7 @@
                 </span></label
               >
               <input
-                type="number"
+                type=""
                 class="form-control input-sm"
                 v-model="form.methodremarks"
               />
