@@ -103,18 +103,19 @@
           <ul>
             <li class="{{ (request()->is('officer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOfficer}}</span></a></li>
             <li class="{{ (request()->is('officer/posted*')) ? 'active' : '' }}"><a href="{{ route('officer.posted') }}"><span>Posted</span></a></li>
-            <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
+          <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
             <li class="{{ (request()->is('officer/unsaved*')) ? 'active' : '' }}"><a href="{{ route('officer.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsavedOfficer}}</span></a></li>
+            <li class="{{ (request()->is('officer/Solutions-dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.solutions') }}"><span>Solutions Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $officerSolutions}}</span></a></li>
            
           </ul>
         </li>
 
         <li class="nav-label mg-t-25">Maintenance</li>
-        <li class="nav-item with-sub">
+        <li class="nav-item with-sub {{ (request()->is('user/*')) ? 'active show' : '' }}">
           <a href="#" class="nav-link"><i data-feather="users"></i> <span>User Maintenance</span></a>
           <ul>
-            <li><a href="manage-users.html">Manage Users</a></li>
-            <li><a href="create-new-user.html">Create New User</a></li>
+            <li class="{{ (request()->is('user/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('user/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create New User</a></li>
           </ul>
         </li>
         <li class="nav-item with-sub {{ (request()->is('roles/*')) ? 'active show' : '' }}">
@@ -131,6 +132,9 @@
             <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Add New</a></li>
           </ul>
         </li>
+        <li class="{{ (request()->is('permissions/list*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
+        <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Role Access Rights</span></a></li>
+
         <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>User Action Monitoring</span></a></li>
         <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Application Error Logs</span></a></li>
         <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>

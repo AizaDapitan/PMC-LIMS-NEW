@@ -275,7 +275,7 @@ class TransmittalItemController extends Controller
     }
     public function getWorksheetItems(Request $request)
     {
-        $items = TransmittalItem::where('labbatch', $request->labbatch)->get();
+        $items = TransmittalItem::where('labbatch', $request->labbatch)->OrderBy('sampleno')->get();
         return  $items;
     }
 }

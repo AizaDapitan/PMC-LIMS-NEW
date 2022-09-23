@@ -32,11 +32,11 @@ class AppServiceProvider extends ServiceProvider
         view()->composer(
             'layouts.app',
             function ($view) {
-                $forOffApproval = DeptuserTrans::where([['status', 'Pending'], ['isdeleted', false], ['isSaved', 1]])->count();
+                $forOffApproval = DeptuserTrans::where([['status', 'Pending'], ['isdeleted', false], ['isSaved', 1],['transcode',1]])->count();
                 $forReceive = DeptuserTrans::where([['status', 'Approved'], ['isReceived', false], ['transcode', 1]])->WhereNotIn('transType', ['Solids', 'Solutions'])->count();
                 $unsaved = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0], ['transcode', 1]])->count();
-                $usertrans = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0]])->get();
-                $trans_nos = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0]])->get('transmittalno')->toArray();
+                // $usertrans = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0]])->get();
+                $trans_nos = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0],['transType', '<>', 'Solutions']])->get('transmittalno')->toArray();
                 $forAssayer = 0;
                 foreach ($trans_nos as $trans_no) {
                     $items = TransmittalItem::where([['transmittalno', $trans_no['transmittalno']], ['isAssayed', 0]])->get();
@@ -60,7 +60,8 @@ class AppServiceProvider extends ServiceProvider
                 $forAnalyst = $forAnalystWorksheet + $forAnalystTrans;
                 $forOfficer = Worksheet::where([['isdeleted', 0], ['isAnalyzed', 1],['isPosted', 0]])->count();
                 $unsavedOfficer = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0], ['transcode', 2]])->count();
-                $OfficerNotif = $forOfficer +  $unsavedOfficer;
+                $officerSolutions = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0],['transType', 'Solutions'],['isPosted',false]])->count();
+                $OfficerNotif = $forOfficer +  $unsavedOfficer + $officerSolutions;
                 // $forOfficerPosted = Worksheet::where([['isdeleted', 0], ['isPosted', 1]])->count();
                 $view->with(
                     compact(
@@ -76,7 +77,8 @@ class AppServiceProvider extends ServiceProvider
                         'forAnalyst',
                         'forOfficer',
                         'unsavedOfficer',
-                        'OfficerNotif'
+                        'OfficerNotif',
+                        'officerSolutions'
                         // 'forOfficerPosted'
                     )
                 );

@@ -11,6 +11,6 @@ class TransmittalItem extends Model
         'sampleno', 'description', 'elements', 'methodcode', 'comments', 'isdeleted', 'transmittalno',
         'username', 'deleted_at','samplewtvolume','labbatch','reassayed','reaasyedby','source','updatedby','deletedby','receiveby',
         'samplewtgrams','fluxg','flourg','niterg','leadg','silicang','crusibleused','assayedby','assayed_at','isAssayed','auprillmg',
-        'augradegpt','assreadingppm','agdoremg','initialaggpt','crusibleclearance','inquartmg','methodremarks'
+        'augradegpt','assreadingppm','agdoremg','initialaggpt','crusibleclearance','inquartmg','methodremarks','isDuplicate'
     ];
 }

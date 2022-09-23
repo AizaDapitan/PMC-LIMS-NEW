@@ -214,7 +214,6 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $request->hasFile('cocFile') ? $filenametostore : $deptuserTrans->cocFile,
-                    'status' =>  $request->status,
                     'transType' => $request->transType,
                     'created_by' => auth()->user()->username,
                 ];
@@ -232,7 +231,6 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $filenametostore,
-                    'status' =>  $request->status,
                     'transType' => $request->transType,
                     'created_by' => auth()->user()->username,
                     'transcode' => 1

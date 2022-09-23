@@ -347,6 +347,15 @@
                   name="btnedit"
                   disabled
                 />
+                <Button
+                  v-bind:title="dupMsg"
+                  icon="pi pi-clone"
+                  class="p-button-rounded p-button-warning mr-2"
+                  @click="duplicateSample(slotProps)"
+                  :id="'btndup' + slotProps.data.id"
+                  name="btndup"
+                  disabled
+                />
               </template>
             </Column>
           </DataTable>
@@ -404,6 +413,7 @@ export default {
       loading: true,
       cocPath: "",
       editMsg: "Update Sample",
+      dupMsg: "Duplicate Sample",
       items: [],
       errors_exist: false,
       errors: {},
@@ -583,8 +593,10 @@ export default {
       if (event.target.checked) {
         this.selectedItemsId.push(sample.data);
         document.getElementById("btn" + sample.data.id).disabled = false;
+        document.getElementById("btndup" + sample.data.id).disabled = false;
       } else {
         document.getElementById("btn" + sample.data.id).disabled = true;
+        document.getElementById("btndup" + sample.data.id).disabled = true;
         _.remove(this.selectedItemsId, function (val) {
           return val === sample.data;
         });
@@ -593,11 +605,15 @@ export default {
     checkAll(event) {
       var checkboxes = document.getElementsByName("chkboxes");
       var btnEdits = document.getElementsByName("btnedit");
+      var btnDups = document.getElementsByName("btndup");
       for (var chkbox of checkboxes) {
         chkbox.checked = event.target.checked;
       }
       for (var btnEdit of btnEdits) {
         btnEdit.disabled = !event.target.checked;
+      }
+      for (var btnDup of btnDups) {
+        btnDup.disabled = !event.target.checked;
       }
       this.selectedItemsId = [];
       if (event.target.checked) {
@@ -605,6 +621,30 @@ export default {
           this.selectedItemsId.push(item);
         }
       }
+    },
+    duplicateSample(data) {
+      this.$confirm.require({
+        message: "Do you want to duplicate sample "  + data.data.sampleno + "?",
+        header: "Confirmation",
+        icon: "pi pi-info-circle",
+        acceptClass: "p-button-info",
+        accept: async () => {
+          const res = await this.submit("post", "/assayer/duplicateSample", {
+            id: data.data.id,
+          });
+          if (res.status === 200) {
+            this.$toast.add({
+                severity: "warn",
+                summary: "Confirmed",
+                detail: "Sample Code " + data.data.sampleno + " Duplicated!",
+                life: 3000,
+            });
+            this.fetchItems();
+          } else {
+            this.ermessage();
+          }
+        },
+      });
     },
   },
 };

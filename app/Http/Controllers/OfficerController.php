@@ -309,4 +309,46 @@ class OfficerController extends Controller
 
         return $unsavedTrans;
     }
+    public function transmittal_Solutions()
+    {
+        return view('officer.solutions');
+    }
+    public function getTransmittal_Solutions()
+    {
+        $transmittal = DeptuserTrans::where([['isdeleted', 0], ['isReceived', true], ['transType', 'Solutions']])
+            ->orderBy('transmittalno', 'asc')->get();
+
+        return $transmittal;
+    }
+    public function view_solution($id)
+    {
+        $transmittal = DeptuserTrans::where('id', $id)->first();
+        return view('officer.view_solutions', compact('transmittal'));
+    }
+    public function post_solution($id)
+    {
+        $transmittal = DeptuserTrans::where('id', $id)->first();
+        return view('officer.post_solutions', compact('transmittal'));
+    }
+    public function post(Request $request)
+    {
+        $request->validate([
+            'id' => 'required'
+        ]);
+        try {
+
+            $deptuserTrans = DeptuserTrans::find($request->id);
+
+            $data = [
+                'posted_at' => Carbon::now(),
+                'postedBy' => auth()->user()->username,
+                'isPosted' =>  true,
+            ];
+            $deptuserTrans->update($data);
+
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['error' =>  $e->getMessage()], 500);
+        }
+    }
 }

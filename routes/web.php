@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessRightsController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\AssayerController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,8 @@ use App\Http\Controllers\DigesterController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\QAQCRecieverController;
 use App\Http\Controllers\TransmittalItemController;
+use App\Http\Controllers\UserController;
+use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +110,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/checkBatchNo', [AssayerController::class, 'checkBatchNo'])->name("deptuser.checkBatchNo");
             Route::post('/addSample', [AssayerController::class, 'addSample'])->name("assayer.addSample");
             Route::post('/excludeSample', [AssayerController::class, 'excludeSample'])->name("assayer.excludeSample");
+            Route::post('/duplicateSample', [AssayerController::class, 'duplicateSample'])->name("assayer.duplicateSample");
         }
     );
     // Digester
@@ -142,10 +146,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/edit-transmittal/{id}', [AnalystController::class, 'editTransmittal'])->name("analyst.editTransmittal");
             Route::post('/getItems', [AnalystController::class, 'getItems'])->name("analyst.getItems");
             Route::post('/reassay', [AnalystController::class, 'reassay'])->name("analyst.reassay");
+            Route::get('/AnalyticalResult/{data}', [AnalystController::class, 'analyticalResult'])->name("analyst.analyticalresult");
         }
     );
-     // Officer
-     Route::group(
+    // Officer
+    Route::group(
         ['prefix' => 'officer'],
         function () {
             Route::get('/dashboard', [OfficerController::class, 'index'])->name("officer.index");
@@ -171,9 +176,38 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/delete', [OfficerController::class, 'deleteTransmittal'])->name("officer.deleteTransmittal");
             Route::get('/unsaved-transmittal', [OfficerController::class, 'unsavedTrans'])->name("officer.unsavedTrans");
             Route::post('/getUnsavedTrans', [OfficerController::class, 'getUnsaved'])->name("deptuser.getUnsaved");
+            Route::get('/Solutions-dashboard', [OfficerController::class, 'transmittal_solutions'])->name("officer.solutions");
+            Route::post('/getTransmittal-solutions', [OfficerController::class, 'getTransmittal_solutions'])->name("officer.getTransmittal_solutions");
+            Route::get('/view-solution/{id}', [OfficerController::class, 'view_solution'])->name("officer.view_solution");
+            Route::get('/post-solution/{id}', [OfficerController::class, 'post_solution'])->name("officer.edit_solution");
+            Route::post('/post', [OfficerController::class, 'post'])->name('officer.post');
         }
     );
-
+    // Role Controller
+    Route::group(
+        ['prefix' => 'users'],
+        function () {
+            Route::get('/dashboard', [UserController::class, 'index'])->name("users.index");
+            Route::get('/getAllUsers', [UserController::class, 'getAllUsers'])->name("users.getAllUsers");
+            Route::get('/create', [UserController::class, 'create'])->name("users.create");
+            Route::get('/employee-lookup', [UserController::class, 'employee_lookup'])->name("users.employee_lookup");
+            Route::post('/store', [UserController::class, 'store'])->name("users.store");
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name("users.edit");
+            Route::post('/update', [UserController::class, 'update'])->name("users.update");
+            Route::post('/deactivate', [UserController::class, 'deactivate'])->name("users.deactivate");
+            Route::post('/activate', [UserController::class, 'activate'])->name("users.activate");
+        }
+    );
+    // Access Rights
+    Route::group(
+        ['prefix' => 'accessrights'],
+        function () {
+            Route::get('/user', [AccessRightsController::class, 'user'])->name('accessrights.user');
+            Route::get('/getUsers',[AccessRightsController::class, 'getUsers'])->name('accessrights.getUsers');
+            Route::get('/getModules',[AccessRightsController::class, 'getModules'])->name('accessrights.getModules');
+            Route::post('/storeUser',[AccessRightsController::class, 'storeUser'])->name('accessrights.storeUser');
+        }
+    );
     // Role Controller
     Route::group(
         ['prefix' => 'roles'],

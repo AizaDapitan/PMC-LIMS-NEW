@@ -18,7 +18,7 @@ class AssayerController extends Controller
     }
     public function getTransmittal()
     {
-        $transmittals = DeptuserTrans::where([['isdeleted', 0], ['isReceived', 1]])->orderBy('created_at', 'asc')->get();
+        $transmittals = DeptuserTrans::where([['isdeleted', 0], ['isReceived', 1],['transType','<>','Solutions']])->orderBy('created_at', 'asc')->get();
         $transnos = [];
         foreach ($transmittals as $transmittal) {
             $count = 0;
@@ -112,7 +112,7 @@ class AssayerController extends Controller
         // $items = TransmittalItem::whereIn('transmittalno', $transids)->where(function($q){
         //     $q->where( 'isAssayed', 0)->orWhere('reAssayed',1);
         // })->Orwhere('labbatch', $labbatch)->get();
-        $items = TransmittalItem::whereIn('transmittalno', $transids)->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->get();
+        $items = TransmittalItem::whereIn('transmittalno', $transids)->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('sampleno')->get();
         return  $items;
     }
     public function worksheet()
@@ -211,7 +211,7 @@ class AssayerController extends Controller
     }
     public function getItemList(Request $request)
     {
-        $trans_nos = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0],['transType',$request->transType]])->get('transmittalno')->toArray();
+        $trans_nos = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0],['transType',$request->transType],['transType','<>','Solutions']])->get('transmittalno')->toArray();
         $forAssayer = 0;
         $transids = [];
         foreach ($trans_nos as $trans_no) {
@@ -230,7 +230,7 @@ class AssayerController extends Controller
             }
         }
         $labbatch = $request->labbatch;
-        $itemsList = TransmittalItem::whereIn('transmittalno', $transids)->where('isAssayed', 0)->get();
+        $itemsList = TransmittalItem::whereIn('transmittalno', $transids)->where('isAssayed', 0)->OrderBy('sampleno')->get();
         $itemsList = $itemsList->WhereNull('labbatch')->values();
         return  $itemsList;
     }
@@ -262,4 +262,38 @@ class AssayerController extends Controller
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
+    public function duplicateSample(Request $request)
+    {
+        $request->validate(['id' => 'required']);
+        try {
+            $item = TransmittalItem::find($request->id);
+
+            TransmittalItem::create([
+                'sampleno' => $item->sampleno,
+                'samplewtgrams' => $item->samplewtgrams,
+                'fluxg' => $item->fluxg,
+                'flourg' =>  $item->flourg,
+                'niterg' => $item->niterg,
+                'leadg' => $item->leadg,
+                'silicang' => $item->silicang,
+                'crusibleused' => $item->crusibleused,
+                'labbatch' => $item->labbatch,
+                'assayedby' => auth()->user()->username,
+                'assayed_at' => Carbon::now(),
+                'description' => $item->description,
+                'elements' => $item->elements,
+                'methodcode' =>  $item->methodcode,
+                'transmittalno' => $item->transmittalno,
+                'comments' => $item->comments,
+                'username' => auth()->user()->username,
+                'source'    => $item->source,
+                'isDuplicate' => 1
+            ]);
+
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' => $e->getMessage(), 500]);
+        }
+    }
+    
 }

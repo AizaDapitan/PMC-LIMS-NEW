@@ -446,6 +446,14 @@ export default {
       this.form.agdoremg = 0;
       this.form.initialaggpt = 0;
       this.form.inquartmg = 0;
+    } else if (this.dialogRef.data.transType == "Solutions") {
+      this.form.auprillmg = 0;
+      this.form.augradegpt = 0;
+      this.form.assreadingppm = 0;
+      this.form.agdoremg = 0;
+      this.form.initialaggpt = 0;
+      this.form.crusibleclearance = 0;
+      this.form.inquartmg = 0;
     }
   },
   methods: {

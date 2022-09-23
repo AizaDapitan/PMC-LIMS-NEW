@@ -2,105 +2,151 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
+use App\Models\Application;
+use App\Models\Permission;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\UsersPermissions;
+use App\Services\AccessedAppService;
+use Illuminate\Support\Facades\Session;
+use App\Services\UserService;
+// use App\Services\UserRightService;
+use Carbon\Carbon;
+use Exception;
+use Facade\FlareClient\Stacktrace\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use PDO;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct(
+        // UserRightService $userrightService,
+        UserService $userService
+    ) {
+        $this->userService = $userService;
+        // $this->userrightService = $userrightService;
+    }
     public function index()
     {
-        // $rolesPermissions = $this->roleRightService->hasPermissions("Users Maintenance");
-
+        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
         // if (!$rolesPermissions['view']) {
         //     abort(401);
         // }
-
-        // $create = $rolesPermissions['create'];
-        // $edit = $rolesPermissions['edit'];
-        // $delete = $rolesPermissions['delete'];
-        // $print = $rolesPermissions['print'];
-        // $upload = $rolesPermissions['upload'];
-
-        $users = User::where([['id', '>', 5], ['isActive', '=', 1]])->orderBy('id', 'desc')->paginate(10);
-
-        return view('maintenance.users', compact(
-            'users',
-            'create',
-            'edit',
-            'delete',
-            'print',
-            'upload'
-        ));
+        return view('user.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function getUsers()
+    {
+        $users = User::where([['active', 1], ['username', '<>', 'ADMIN']])->orderBy('name', 'asc')->get();
+
+        return $users;
+    }
+
+    public function getAllUsers()
+    {
+        $users = User::where([['username', '<>', 'ADMIN']])->orderBy('name', 'asc')->get();
+
+        return $users;
+    }
+
     public function create()
     {
-        //
+        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
+        // if (!$rolesPermissions['create']) {
+        //     abort(401);
+        // }
+        return view('user.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public static function employee_lookup()
     {
-        //
+        $streamContext = stream_context_create([
+            'ssl' => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false
+            ]
+        ]);
+        $employees = file_get_contents(config('app.api_path') . "hris-api-2.php", false, $streamContext);
+        // $employees = file_get_contents("https://localhost/camm/api/hris-api-2.php", false, $streamContext);
+        return $employees;
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public static function userList()
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        $users = User::where('active', 1)->get();
+
+        return json_encode($users);
+    }
+    public function store(UserRequest $userRequest, User $user)
+    {
+        try {
+            $this->userService->create($userRequest);
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
+    }
+    public function deactivate(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+        ]);
+        try {
+            $user = User::find($request->id);
+
+            $data = [
+                'isActive' => 0,
+            ];
+            $user->update($data);
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
+    }
+    public function activate(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+        ]);
+        try {
+            $user = User::find($request->id);
+
+            $data = [
+                'isActive' => 1,
+            ];
+            $user->update($data);
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
+    }
     public function edit($id)
     {
-        //
+        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
+        // if (!$rolesPermissions['edit']) {
+        //     abort(401);
+        // }
+        $user = User::where('id', $id)->first();
+        return view('user.edit', compact('user'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'id' => 'required'
+            ]);
+
+            $this->userService->update($request);
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function getAccessRights(Request $request)
     {
-        //
+        $users_permissions = $this->userrightService->getByUsername($request->username, $request->appid);
+        return $users_permissions;
     }
 }

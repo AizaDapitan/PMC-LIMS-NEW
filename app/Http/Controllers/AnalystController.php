@@ -8,6 +8,7 @@ use App\Models\Worksheet;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class AnalystController extends Controller
 {
@@ -20,7 +21,7 @@ class AnalystController extends Controller
         $worksheet = Worksheet::where('id', $id)->first();
         return view('analyst.view', compact('worksheet'));
     }
-    
+
     public function edit($id)
     {
         $worksheet = Worksheet::where('id', $id)->first();
@@ -64,7 +65,7 @@ class AnalystController extends Controller
 
         return $transmittal;
     }
-    
+
     public function viewTransmittal($id)
     {
         $transmittal = DeptuserTrans::where('id', $id)->first();
@@ -115,7 +116,6 @@ class AnalystController extends Controller
                 'labbatch' => NULL,
                 'reassayed' => 1,
                 'reaasyedby' => auth()->user()->username,
-                'labbatch' => NULL,
                 'isAssayed' => 0,
                 'assayedby' => NULL,
 
@@ -125,5 +125,82 @@ class AnalystController extends Controller
         } catch (Exception $e) {
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
+    }
+    public function AnalyticalResult($data)
+    {
+        $input = explode(',', $data);
+        $transType = $input[2];
+        if ($input[2] == "Mine Drill") {
+            $transType = "Minedrill";
+        };
+        $pdf = new \setasign\Fpdi\Fpdi('P');
+        // Reference the PDF you want to use (use relative path)
+        // DD(env('APP_URL') . '/template/certificate.pdf');
+        $streamContext = stream_context_create([
+            'ssl' => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false
+            ]
+        ]);
+        // $filecontent = file_get_contents('https://localhost/camm/api/' . $transType . '.pdf', false, $streamContext);
+        $filecontent = file_get_contents(config('app.api_path') . $transType . '.pdf', false, $streamContext);
+        $pagecount = $pdf->setSourceFile(\setasign\Fpdi\PdfParser\StreamReader::createByString($filecontent));
+        // $pagecount = $pdf->setSourceFile("https://localhost/camm/api/certificate.pdf");
+        // Import the first page from the PDF and add to dynamic PDF
+        $tpl = $pdf->importPage(1);
+        $pdf->AddPage();
+        // Use the imported page as the template
+        $pdf->useTemplate($tpl, 5, 0, 200);
+        // Set the default font to use
+        $pdf->SetFont('Helvetica');
+        $pdf->SetFontSize('6'); // set font size
+        if ($transType == "Rock") {
+            $pdf->SetXY(95, 247); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(142, 247); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+
+        } else if ($transType == "Bulk") {
+            $pdf->SetXY(89, 249); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(137, 249); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+        } else if ($transType == "Carbon") {
+            $pdf->SetXY(44, 226); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(119, 226); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+        } else if ($transType == "Minedrill") {
+            $pdf->SetXY(94, 247); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(142, 247); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+
+        } else if ($transType == "Solids") {
+            $pdf->SetXY(49, 202); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(124, 202); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+
+        } else if ($transType == "Solutions") {
+            $pdf->SetXY(51, 206); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(114, 206); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+
+        } else {
+            $pdf->SetXY(89, 249); // set the position of the box
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+
+            $pdf->SetXY(137, 249); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+        }
+        $pdf->Output('' , $transType .'.pdf',false);
     }
 }

@@ -34,6 +34,18 @@
               class="p-button-help p-button-sm mr-2"
               @click="exportCSV($event)"
             />
+            <Button
+              label="Generate Analytical Result"
+              icon="pi pi-upload"
+              class="p-button-success p-button-sm mr-2"
+              @click="showDialog('Generate Analytical Result')"
+            />
+            <Button
+              label="Generate Certificate of Analysis"
+              icon="pi pi-upload"
+              class="p-button-success p-button-sm mr-2"
+              @click="showDialog('Generate Certificate of Analysis')"
+            />
           </template>
           <template #end>
             <div class="search-form mg-r-10">
@@ -205,10 +217,13 @@
   <toast
     :breakpoints="{ '920px': { width: '100%', right: '0', left: '0' } }"
   ></toast>
+  <DynamicDialog />
   <ConfirmDialog></ConfirmDialog>
 </template>
 <script>
 import { FilterMatchMode, FilterOperator } from "primevue/api";
+import reportparam from "../../components/reportparam/analyticalresult";
+
 export default {
   data() {
     return {
@@ -255,6 +270,31 @@ export default {
       let src = data.data.id,
         alt = data.data.id;
       window.location.href = this.$env_Url + "/analyst/edit/" + alt;
+    },
+    generateAnaReport(){
+      window.location.href = this.$env_Url + "/analyst/AnalyticalResult";
+      this.showDialog()
+    },
+    showDialog(ReportType) {
+      const dialogRef = this.$dialog.open(reportparam, {
+        props: {
+          header: ReportType,
+          style: {
+            width: "50vw",
+          },
+          breakpoints: {
+            "960px": "75vw",
+            "640px": "90vw",
+          },
+          modal: true,
+        },
+        data: {
+          reportType: ReportType,
+          
+        },
+        onClose: (options) => {
+        },
+      });
     },
   },
 };

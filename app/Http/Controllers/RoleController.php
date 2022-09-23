@@ -29,7 +29,7 @@ class RoleController extends Controller
 
     public function getRoles()
     {
-        $roles = Role::where('active', 1)->get();
+        $roles = Role::where('active', 1)->OrderBy('name')->get();
 
         return $roles;
     }

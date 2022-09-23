@@ -310,7 +310,7 @@
             <Column field="silicang" header="Silican (Grams)"></Column>
             <Column
               :exportable="false"
-              style="min-width: 8rem"
+              style="min-width: 12rem"
               header="Actions"
             >
               <template #body="slotProps">
@@ -326,6 +326,14 @@
                   class="p-button-rounded p-button-warning mr-2"
                   @click="excludeSample(slotProps)"
                   :disabled="slotProps.data.isApproved == 1"
+                />
+                <Button
+                  v-bind:title="dupMsg"
+                  icon="pi pi-clone"
+                  class="p-button-rounded p-button-warning mr-2"
+                  @click="duplicateSample(slotProps)"
+                  :id="'btndup' + slotProps.data.id"
+                  name="btndup"
                 />
               </template>
             </Column>
@@ -552,6 +560,30 @@ export default {
                 severity: "warn",
                 summary: "Confirmed",
                 detail: "Sample Code " + data.data.sampleno + " Excluded!",
+                life: 3000,
+            });
+            this.fetchItems();
+          } else {
+            this.ermessage();
+          }
+        },
+      });
+    },
+    duplicateSample(data) {
+      this.$confirm.require({
+        message: "Do you want to duplicate sample "  + data.data.sampleno + "?",
+        header: "Confirmation",
+        icon: "pi pi-info-circle",
+        acceptClass: "p-button-info",
+        accept: async () => {
+          const res = await this.submit("post", "/assayer/duplicateSample", {
+            id: data.data.id,
+          });
+          if (res.status === 200) {
+            this.$toast.add({
+                severity: "warn",
+                summary: "Confirmed",
+                detail: "Sample Code " + data.data.sampleno + " Duplicated!",
                 life: 3000,
             });
             this.fetchItems();

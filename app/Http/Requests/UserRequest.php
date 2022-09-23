@@ -28,10 +28,7 @@ class UserRequest extends FormRequest
             'name' => 'required',
             'dept' => 'string|max:150',
             'active' => 'active',
-            'imageFile' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
-            'appRole' => 'required|string',
-            'userPermissions' => 'required|string',
-            'role_id'   => 'string',
+            'role_id'   => 'required',
         ];
     }
 }   

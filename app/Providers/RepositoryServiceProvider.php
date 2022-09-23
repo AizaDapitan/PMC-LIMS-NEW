@@ -35,7 +35,25 @@ class RepositoryServiceProvider extends ServiceProvider
                 'App\Models\DeptOfficer',
             ],
         ),      
-        
+         // users
+         array(
+            'interface' => 'App\Repositories\Interfaces\UserRepositoryInterface',
+            'repository' => 'App\Repositories\UserRepository',
+            'service' => 'App\Services\UserService',
+            'model' => [
+                'App\Models\User'
+            ],
+        ),
+        // Access Rights
+        array(
+            'interface' => 'App\Repositories\Interfaces\AccessRightRepositoryInterface',
+            'repository' => 'App\Repositories\AccessRightRepository',
+            'service' => 'App\Services\AccessRightService',
+            'model' => [
+                'App\Models\UsersPermissions',
+                'App\Models\RolesPermissions'
+            ],
+        ),    
     );
     public function register()
     {
