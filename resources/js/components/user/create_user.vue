@@ -10,29 +10,30 @@
       "
     >
       <div>
-        <div v-if="errors">
-          <p v-for="error in errors" :key="error" class="alert alert-danger">
-            {{ error }}
-          </p>
-        </div>
-        <p v-if="success != ''" class="alert alert-success">
-          {{ success }}
-        </p>
-
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-style1 mg-b-5">
             <li class="breadcrumb-item" aria-current="page">
-              <a :href="roles">User</a>
+              <a :href="dashboard">LIMS</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">
+              <a :href="dashboard">User</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-              Add New User
+              Create
             </li>
           </ol>
         </nav>
-        <h4 class="mg-b-0 tx-spacing--1">Add New User</h4>
+        <h4 class="mg-b-0 tx-spacing--1">Create New User</h4>
       </div>
     </div>
-
+    <div v-if="errors_exist" class="alert alert-danger" role="alert">
+      Whoops! Something didn't work.
+      <ul>
+        <div v-for="error in errors" :key="error.id">
+          <li>{{ error[0] }}</li>
+        </div>
+      </ul>
+    </div>
     <div class="row">
       <div class="col-lg-6">
         <label for="name">Select Employee</label>
@@ -136,14 +137,34 @@
             </option>
           </select>
         </div>
+        <div class="form-group">
+          <label>Assigned Module <i class="text-danger">*</i></label>
+          <select
+          class="custom-select tx-base"
+          v-model="form.assigned_module"
+          >
+            <option value="Department User">Department User</option>
+            <option value="Department Officer">Department Officer</option>
+            <option value="Receiving">Receiving</option>
+            <option value="Assayer">Assayer</option>
+            <option value="Tech/Digester">Tech/Digester</option>
+            <option value="Analyst">Analyst</option>
+            <option value="Officer">Officer</option>
+          </select>
+        </div>
       </div>
 
       <div class="col-lg-12 mg-t-30">
-        <button class="btn btn-primary btn-sm" @click.prevent="save">
-          Submit
+        <button
+          class="btn btn-primary tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
+          @click.prevent="save"
+        >
+          <i data-feather="save" class="mg-r-5"></i> Save
         </button>
         &nbsp;
-        <a :href="dashboard" class="btn btn-white tx-13 btn-uppercase"
+        <a
+          :href="dashboard"
+          class="btn btn-white tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
           ><i data-feather="arrow-left" class="mg-r-5"></i> Back to Dashboard</a
         >
       </div>
@@ -165,13 +186,13 @@ export default {
   data() {
     return {
       roles: [],
-      errors: [],
       employees: [],
       loading: false,
       success: "",
-      roles: this.$env_Url + "/roles/list",
       dashboard: this.$env_Url + "/users/dashboard",
       namedept: "",
+      errors_exist: false,
+      errors: {},
       form: {
         // role_id: "",
         // name: "",
@@ -219,9 +240,8 @@ export default {
       if (res.status === 200) {
         this.smessage();
         window.location.href = this.$env_Url + "/users/dashboard";
-      } else if (res.status == 500) {
-        this.singleermessage(res.data.error);
-      } else {
+      }  else {
+        this.errors_exist = true;
         this.errors = res.data.errors;
       }
     },

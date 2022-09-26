@@ -28,7 +28,7 @@ class UserService
                 'role' => $user->role,
                 'isActive' => $user->isActive,
                 'role_id' => $user->role_id,
-
+                'assigned_module' => $user->assigned_module
             ]);
         }
 
@@ -48,6 +48,7 @@ class UserService
             'dept' => $fields->dept,
             'isActive' => 1,
             'email' => $fields->email,
+            'assigned_module' => $fields->assigned_module
         ];
         $user = $this->repository->create($data);
 
@@ -60,22 +61,19 @@ class UserService
 
     public function update($fields)
     {
-        
-        $roles = $this->repository->GetRoleName($fields->role_id);
-        $reset = $fields->reset;
 
-            $data = [
-                'name' => $fields->name,
-                'username' => strtoupper($fields->username),
-                'password' => \Hash::make("password"),
-                'remember_token' => Str::random(60),
-                'role_id' => $fields->role_id,
-                'role' => $roles->role_name,
-                'dept' => $fields->dept,
-                // 'isActive' => $fields->status,
-                'email' => $fields->email,
-            ];
-       
+        $roles = $this->repository->GetRoleName($fields->role_id);
+
+        $data = [
+            'name' => $fields->name,
+            'username' => strtoupper($fields->username),
+            'role_id' => $fields->role_id,
+            'role' => $roles->role_name,
+            'dept' => $fields->dept,
+            'email' => $fields->email,
+            'assigned_module' => $fields->assigned_module
+        ];
+
         $user = $this->repository->update($data, $fields->id);
 
         if ($user) {
@@ -102,47 +100,5 @@ class UserService
         ];
 
         return $data;
-    }
-
-    public function lock($fields, $id)
-    {
-        $data = [
-            'locked' => $fields->status,
-            'locked_at' => now(),
-        ];
-
-        $user = $this->repository->update($data, $id);
-
-        if ($user) {
-            return redirect()->back()->with('success', 'User lock has been updated successfully!');
-        } else {
-            return redirect()->back()->with('success', 'User lock update failed!');
-        }
-    }
-
-    public function changeStatus($fields, $id)
-    {
-        $data = [
-            'active' => $fields->status,
-        ];
-
-        $user = $this->repository->update($data, $id);
-
-        if ($user) {
-            return redirect()->back()->with('success', 'User status has been updated successfully!');
-        } else {
-            return redirect()->back()->with('success', 'User status update failed!');
-        }
-    }
-
-    public function destroy($id)
-    {
-        $user = $this->repository->destroy($id);
-
-        if ($user) {
-            return redirect()->back()->with('success', 'User has been removed successfully!');
-        } else {
-            return redirect()->back()->with('success', 'Failed removing user!');
-        }
     }
 }

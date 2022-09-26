@@ -23,7 +23,14 @@
         <h4 class="mg-b-0 tx-spacing--1">Home/Dashboard - Department User</h4>
       </div>
     </div>
-
+    <div v-if="errors_exist" class="alert alert-danger" role="alert">
+        Whoops! Something didn't work.
+        <ul>
+          <div v-for="error in errors" :key="error.id">
+            <li>{{ error[0] }}</li>
+          </div>
+        </ul>
+      </div>
     <div class="row row-sm">
       <!-- Start Pages -->
 
@@ -228,6 +235,8 @@ export default {
       editMsg: "Edit Transmittal",
       viewMsg: "View Transmittal",
       deleteMsg: "Delete Transmittal",
+      errors_exist: false,
+      errors: {},
     };
   },
   created() {
@@ -284,11 +293,13 @@ export default {
           const res = await this.deleteRecord("post", "/deptuser/delete", {
             id: data.data.id,
           });
+          console.log(res.status);
           if (res.status === 200) {
             this.rmessage();
             this.fetchRecord();
           } else {
-            this.ermessage();
+          this.errors_exist = true;
+          this.errors = res.data.errors;
           }
         },
       });

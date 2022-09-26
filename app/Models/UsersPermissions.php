@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
-// use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class UsersPermissions extends Model  //implements AuditableContract
+class UsersPermissions extends Model  implements AuditableContract
 {
     
-    // use Auditable;
+    use Auditable;
     protected $fillable = [
         'user_id', 
         'permission_id', 

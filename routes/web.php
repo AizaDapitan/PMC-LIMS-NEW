@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccessRightsController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AssayerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\DeptOfficerController;
 use App\Http\Controllers\DigesterController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\QAQCRecieverController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransmittalItemController;
 use App\Http\Controllers\UserController;
 use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector;
@@ -29,6 +31,7 @@ use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector;
 
 Route::get('/', [LoginController::class, 'index'])->name("login");
 Route::post('auth/login', [LoginController::class, 'login'])->name("auth.login");
+Route::post('auth/adminlogin', [LoginController::class, 'login'])->name("auth.adminlogin");
 
 Route::middleware(['auth'])->group(function () {
 
@@ -203,9 +206,13 @@ Route::middleware(['auth'])->group(function () {
         ['prefix' => 'accessrights'],
         function () {
             Route::get('/user', [AccessRightsController::class, 'user'])->name('accessrights.user');
-            Route::get('/getUsers',[AccessRightsController::class, 'getUsers'])->name('accessrights.getUsers');
-            Route::get('/getModules',[AccessRightsController::class, 'getModules'])->name('accessrights.getModules');
-            Route::post('/storeUser',[AccessRightsController::class, 'storeUser'])->name('accessrights.storeUser');
+            Route::get('/role', [AccessRightsController::class, 'role'])->name('accessrights.role');
+            Route::get('/getUsers', [AccessRightsController::class, 'getUsers'])->name('accessrights.getUsers');
+            Route::get('/getModules', [AccessRightsController::class, 'getModules'])->name('accessrights.getModules');
+            Route::post('/storeUser', [AccessRightsController::class, 'storeUser'])->name('accessrights.storeUser');
+            Route::post('/getUserAccessRights', [AccessRightsController::class, 'getUserAccessRights'])->name('accessrights.getUserAccessRights');
+            Route::post('/storeRole', [AccessRightsController::class, 'storeRole'])->name('accessrights.storeRole');
+            Route::post('/getRoleAccessRights', [AccessRightsController::class, 'getRoleAccessRights'])->name('accessrights.getRoleAccessRights');
         }
     );
     // Role Controller
@@ -215,7 +222,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', [RoleController::class, 'create'])->name("roles.create");
             Route::get('/getRoles', [RoleController::class, 'getRoles'])->name("roles.getRoles");
             Route::post('/store', [RoleController::class, 'store'])->name("roles.store");
-            Route::get('/list', [RoleController::class, 'index'])->name("roles.index");
+            Route::get('/dashboard', [RoleController::class, 'index'])->name("roles.index");
             Route::get('/edit/{id}', [RoleController::class, 'edit'])->name("roles.edit");
             Route::post('/update', [RoleController::class, 'update'])->name("roles.update");
             Route::get('/rolesList', [RoleController::class, 'rolesList'])->name("roles.list");
@@ -229,11 +236,37 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', [PermissionController::class, 'create'])->name("permissions.create");
             Route::get('/getPermissions', [PermissionController::class, 'getPermissions'])->name("permissions.getPermissions");
             Route::post('/store', [PermissionController::class, 'store'])->name("permissions.store");
-            Route::get('/list', [PermissionController::class, 'index'])->name("permissions.index");
+            Route::get('/dashboard', [PermissionController::class, 'index'])->name("permissions.index");
             Route::get('/edit/{id}', [PermissionController::class, 'edit'])->name("permissions.edit");
             Route::post('/update', [PermissionController::class, 'update'])->name("permissions.update");
             Route::get('/modulesList', [PermissionController::class, 'modulesList'])->name("permissions.list");
             Route::get('/getPermission_selected', [PermissionController::class, 'getPermission_selected'])->name("permissions.getPermission_selected");
+        }
+    );
+    // Report Controller
+    Route::group(
+        ['prefix' => 'reports'],
+        function () {
+            Route::get('/audit-logs', [ReportController::class, 'auditLogs'])->name("reports.auditLogs");
+            Route::post('/getAuditLogs', [ReportController::class, 'getAuditLogs'])->name("reports.getAuditLogs");
+        }
+    );
+    // Application Controller
+    Route::group(
+        ['prefix' => 'applications'],
+        function () {
+            Route::get('/dashboard', [ApplicationController::class, 'index'])->name("applications.index");
+            Route::get('/getScheduledShutdown', [ApplicationController::class, 'getScheduledShutdown'])->name("applications.getScheduledShutdown");
+            Route::get('/create', [ApplicationController::class, 'create'])->name("applications.create");
+            Route::post('/store', [ApplicationController::class, 'store'])->name("applications.store");
+            Route::get('/edit/{id}', [ApplicationController::class, 'edit'])->name("applications.edit");
+            Route::post('/update', [ApplicationController::class, 'update'])->name("applications.update");
+            Route::post('/delete', [ApplicationController::class, 'delete'])->name("applications.delete");
+
+            Route::post('systemDown', [ApplicationController::class, 'systemDown'])->name('applications.systemDown');
+            Route::post('systemUp', [ApplicationController::class, 'systemUp'])->name('applications.systemUp');
+            Route::post('reindex', [ApplicationController::class, 'reindex'])->name('applications.reindex');
+            Route::get('systemDown_auto', [ApplicationController::class, 'systemDown_auto'])->name('applications.systemDown_auto');
         }
     );
 });

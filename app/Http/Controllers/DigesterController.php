@@ -8,15 +8,30 @@ use App\Models\Worksheet;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\AccessRightService;
 
 class DigesterController extends Controller
 {
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Worksheets");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('digester.index');
     }
     public function viewWorksheet($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Worksheets");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         $forapproval = 1;
         // dd(TransmittalItem::where('labbatch', $worksheet->labbatch)->where(function ($q) {
@@ -67,6 +82,10 @@ class DigesterController extends Controller
     }
     public function transmittal()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('digester.transmittal');
     }
     public function getTransmittal()
@@ -80,6 +99,10 @@ class DigesterController extends Controller
     }
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('digester.edit', compact('transmittal'));
     }
@@ -91,11 +114,19 @@ class DigesterController extends Controller
 
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('digester.view_transmittal', compact('transmittal'));
     }
     public function receive($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Tech/Digester Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('digester.receive', compact('transmittal'));
     }

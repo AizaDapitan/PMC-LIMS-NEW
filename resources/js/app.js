@@ -18,6 +18,8 @@ import ConfirmationService from "primevue/confirmationservice";
 import ConfirmDialog from "primevue/confirmdialog";
 import Dropdown from "primevue/dropdown";
 import DynamicDialog from 'primevue/dynamicdialog';
+import Tooltip from 'primevue/tooltip';
+import Calendar from 'primevue/calendar';
 
 // import 'primeicons/primeicons.css';
 
@@ -27,6 +29,7 @@ app.use(PrimeVue);
 app.use(DialogService);
 app.use(ConfirmationService);
 app.use(ToastService);
+app.directive('tooltip', Tooltip);
 
 app.config.globalProperties.$env_Url = process.env.MIX_APP_URL;
 
@@ -264,6 +267,27 @@ app.component(
     "useraccess_rights-component",
     require("./components/accessrights/useraccess_rights.vue").default
 );
+app.component(
+    "roleaccess_rights-component",
+    require("./components/accessrights/roleaccess_rights.vue").default
+);
+app.component(
+    "audit_logs-component",
+    require("./components/report/audit_logs.vue").default
+);
+
+app.component(
+    "index_application-component",
+    require("./components/application/index_application.vue").default
+);
+app.component(
+    "create_application-component",
+    require("./components/application/create_application.vue").default
+);
+app.component(
+    "edit_application-component",
+    require("./components/application/edit_application.vue").default
+);
 
 app.component("DataTable", DataTable);
 app.component("Column", Column);
@@ -274,6 +298,7 @@ app.component("ConfirmationService", ConfirmationService);
 app.component("ConfirmDialog", ConfirmDialog);
 app.component("DynamicDialog", DynamicDialog);
 app.component("Dropdown", Dropdown);
+app.component("Calendar", Calendar);
 
 app.mount("#app");
 

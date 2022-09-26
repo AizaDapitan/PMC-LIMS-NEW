@@ -80,7 +80,7 @@ export default {
             if (response.data.result == "Success") {
               window.location.href = this.$env_Url + "/deptuser/dashboard";
             } else {
-              this.errors.push("Invalid Credential.");
+              this.errors.push("Invalid Credential or User is Inactive!");
             }
           })
           .catch(function (error) {});

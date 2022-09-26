@@ -10,14 +10,6 @@
       "
     >
       <div>
-        <div v-if="errors">
-          <p v-for="error in errors" :key="error" class="alert alert-danger">
-            {{ error }}
-          </p>
-        </div>
-        <p v-if="success != ''" class="alert alert-success">
-          {{ success }}
-        </p>
 
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-style1 mg-b-5">
@@ -51,6 +43,7 @@
               name="username"
               :disabled="loading"
               v-model="form.user_id"
+              @change="getData($event)"
             >
               <option
                 v-for="user in users"
@@ -73,13 +66,21 @@
               mr-lg-0
               mb-lg-0
             "
+            @click.prevent="save"
           >
             <i data-feather="save" class="mg-r-5"></i> Save Changes
           </button>
         </div>
       </div>
     </div>
-
+    <div v-if="errors_exist" class="alert alert-danger" role="alert">
+      Whoops! Something didn't work.
+      <ul>
+        <div v-for="error in errors" :key="error.id">
+          <li>{{ error[0] }}</li>
+        </div>
+      </ul>
+    </div>
     <div class="row">
       <div class="col-lg-12">
         <div class="table-responsive text-nowrap access-tbl">
@@ -260,18 +261,19 @@ export default {
   data() {
     return {
       roles: [],
-      errors: [],
       users: [],
       modules: [],
       success: "",
       loading: true,
-      roles: this.$env_Url + "/roles/list",
-      dashboard: this.$env_Url + "/users/dashboard",
       namedept: "",
       form: {
           userPermissions: "",
           user_id: "",
       },
+      
+      errors_exist: false,
+      seconds: 0,
+      errors: {},
     };
   },
 
@@ -301,6 +303,51 @@ export default {
       const res = await this.callApi("get", "/permissions/getPermissions");
       this.permissions = res.data;
     },
+    getData(event){
+      this.form.user_id = event.target.value
+      this.getRolesPermissions(this.form.user_id);
+    },
+    async getRolesPermissions(userid) {
+      document.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false);
+      let access = new FormData();
+      access.append("userid", userid);
+
+      const res = await this.callApiwParam(
+        "post",
+        "/accessrights/getUserAccessRights",
+        access
+      );
+      var chkid = "";
+      var oldAction = "";
+      var rolePermissionLenght = res.data.length;
+      for (var i = 0; i < rolePermissionLenght; i++) {
+        chkid = "";
+        chkid =
+          res.data[i].permission_id +
+          "_" +
+          res.data[i].module_id +
+          "_" +
+          res.data[i].action;
+        if (chkid != "") {
+          document.getElementById(
+              res.data[i].module_id +
+              "_" +
+              res.data[i].action
+          ).checked = true;
+          document.getElementById(chkid).checked = true;
+          if (oldAction != res.data[i].action) {
+            this.storeID(
+                res.data[i].module_id +
+                "_" +
+                res.data[i].action
+            );
+          }
+          this.storeID(chkid);
+
+          oldAction = res.data[i].action;
+        }
+      }
+    },   
     onChange(evt) {
       this.employeeArr = evt.target.value.split(":");
       this.form.name = this.employeeArr[0];
@@ -321,7 +368,8 @@ export default {
       if (res.status === 200) {
         this.smessage();
       } else {
-        this.ermessage(res.data.errors);
+        this.errors_exist = true;
+        this.errors = res.data.errors;
       }
     },
 

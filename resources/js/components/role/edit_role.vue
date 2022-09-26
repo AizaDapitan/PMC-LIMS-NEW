@@ -1,6 +1,6 @@
 
 <template>
- <div class="container-fluid pd-x-0">
+  <div class="container-fluid pd-x-0">
     <div
       class="
         d-sm-flex
@@ -10,19 +10,13 @@
       "
     >
       <div>
-        <div v-if="errors">
-          <p v-for="error in errors" :key="error" class="alert alert-danger">
-            {{ error }}
-          </p>
-        </div>
-        <p v-if="success != ''" class="alert alert-success">
-          {{ success }}
-        </p>
-
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-style1 mg-b-5">
             <li class="breadcrumb-item" aria-current="page">
-              <a :href="roles">Roles</a>
+              <a :href="dashboard">LIMS</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">
+              <a :href="dashboard">Roles</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
               Edit Role
@@ -32,7 +26,14 @@
         <h4 class="mg-b-0 tx-spacing--1">Edit Role</h4>
       </div>
     </div>
-
+    <div v-if="errors_exist" class="alert alert-danger" role="alert">
+      Whoops! Something didn't work.
+      <ul>
+        <div v-for="error in errors" :key="error.id">
+          <li>{{ error[0] }}</li>
+        </div>
+      </ul>
+    </div>
     <div class="row row-sm">
       <div class="col-lg-6">
         <input type="hidden" v-model="form.id" />
@@ -47,7 +48,7 @@
         </div>
 
         <div class="form-group">
-          <label class="d-block">Role Name *</label>
+          <label class="d-block">Role Name <i class="text-danger">*</i></label>
           <input
             type="text"
             class="form-control"
@@ -57,7 +58,7 @@
         </div>
 
         <div class="form-group">
-          <label class="d-block">Role Description *</label>
+          <label class="d-block">Role Description <i class="text-danger">*</i></label>
           <input
             type="text"
             class="form-control"
@@ -68,14 +69,22 @@
       </div>
 
       <div class="col-lg-12 mg-t-30">
-        <button class="btn btn-primary btn-sm" @click.prevent="updateRole">
-          Update
+        <button   class="btn btn-primary tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0" @click.prevent="updateRole">
+          <i data-feather="save" class="mg-r-5"></i> Save
         </button>
         &nbsp;
-        <a :href="roles" class="btn btn-outline-secondary btn-sm" type="cancel"
-          >Cancel</a
+        <a
+          :href="dashboard"
+          class="btn btn-white tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
+          ><i data-feather="arrow-left" class="mg-r-5"></i> Back to Dashboard</a
         >
       </div>
+    </div>
+    <div class="cms-footer mg-t-50">
+      <hr />
+      <p class="tx-gray-500 tx-10">
+        Admin Portal v1.0 • Developed by WebFocus Solutions, Inc. 2022
+      </p>
     </div>
   </div>
   <toast
@@ -90,10 +99,9 @@ export default {
   props: ["role"],
   data() {
     return {
-      errors: [],
-      success: "",
-      roles: env_Url + "/roles/list",
-      dashboard: env_Url + "/dashboard",
+      errors_exist: false,
+      errors: {},
+      dashboard: this.$env_Url + "/roles/dashboard",
       form: {
         id: this.role.id,
         name: this.role.name,
@@ -117,9 +125,9 @@ export default {
       });
       if (res.status === 200) {
         this.updmessage();
-      } else if (res.status == 500) {
-        this.singleermessage(res.data.error);
+        window.location.href = this.$env_Url + "/roles/dashboard";
       } else {
+        this.errors_exist = true;
         this.errors = res.data.errors;
       }
     },

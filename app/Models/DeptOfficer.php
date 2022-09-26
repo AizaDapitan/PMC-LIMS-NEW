@@ -2,13 +2,13 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-// use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
-// use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class DeptOfficer extends Model //implements AuditableContract
+class DeptOfficer extends Model implements AuditableContract
 {
 
-    // use Auditable;
+    use Auditable;
 
 
 	protected $guarded = [];

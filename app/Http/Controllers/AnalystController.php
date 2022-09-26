@@ -8,22 +8,45 @@ use App\Models\Worksheet;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\AccessRightService;
 use Illuminate\Support\Facades\Redirect;
 
 class AnalystController extends Controller
 {
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
+
         return view('analyst.index');
     }
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('analyst.view', compact('worksheet'));
     }
 
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Worksheets");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('analyst.edit', compact('worksheet'));
     }
@@ -56,6 +79,11 @@ class AnalystController extends Controller
     }
     public function transmittal()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Transmittals");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('analyst.transmittal');
     }
     public function getTransmittal()
@@ -68,11 +96,21 @@ class AnalystController extends Controller
 
     public function viewTransmittal($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Transmittals");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('analyst.view_transmittal', compact('transmittal'));
     }
     public function receive($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Transmittals");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('analyst.receive', compact('transmittal'));
     }
@@ -99,6 +137,11 @@ class AnalystController extends Controller
     }
     public function editTransmittal($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Analyst Transmittals");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('analyst.edit_transmittal', compact('transmittal'));
     }

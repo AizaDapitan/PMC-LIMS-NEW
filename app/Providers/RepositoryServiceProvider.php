@@ -54,6 +54,24 @@ class RepositoryServiceProvider extends ServiceProvider
                 'App\Models\RolesPermissions'
             ],
         ),    
+        // Audit
+        array(
+            'interface' => 'App\Repositories\Interfaces\AuditRepositoryInterface',
+            'repository' => 'App\Repositories\AuditRepository',
+            'service' => 'App\Services\AuditService',
+            'model' => [
+                '\OwenIt\Auditing\Models\Audit',
+            ],
+        ),
+         // Report
+         array(
+            'interface' => 'App\Repositories\Interfaces\ReportRepositoryInterface',
+            'repository' => 'App\Repositories\ReportRepository',
+            'service' => 'App\Services\ReportService',
+            'model' => [
+                '\OwenIt\Auditing\Models\Audit',
+            ],
+        ),     
     );
     public function register()
     {

@@ -2,20 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\RolesPermissions;
+use App\Models\UsersPermissions;
 use App\Repositories\Interfaces\RoleRightRepositoryInterface;
-use App\Role;
-use App\Permission;
-use App\RolesPermissions;
 use App\Services\RoleRightService;
 use Illuminate\Support\Facades\DB;
-use App\User;
-use App\UsersPermissions;
 
 class RoleRightRepository implements RoleRightRepositoryInterface
 {
     protected $user;
     protected $action;
-
+protected $rolespermissions;
     public function __construct(
         RolesPermissions $rolesPermissions
     ) {

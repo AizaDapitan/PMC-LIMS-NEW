@@ -32,11 +32,6 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->find($id)->update($fields);
     }
 
-    public function destroy($id)
-    {
-        return $this->user->find($id)->delete();
-    }
-
     public function getById($id)
     {
         return $this->user->find($id);

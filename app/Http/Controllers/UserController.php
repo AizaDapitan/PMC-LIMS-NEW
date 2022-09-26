@@ -9,32 +9,32 @@ use App\Models\Permission;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\UsersPermissions;
-use App\Services\AccessedAppService;
-use Illuminate\Support\Facades\Session;
 use App\Services\UserService;
-// use App\Services\UserRightService;
 use Carbon\Carbon;
 use Exception;
-use Facade\FlareClient\Stacktrace\File;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use PDO;
+use App\Services\AccessRightService;
+
 
 class UserController extends Controller
 {
+    protected $userService;
+    protected $accessRightService;
+
     public function __construct(
-        // UserRightService $userrightService,
+        AccessRightService $accessRightService,
         UserService $userService
     ) {
         $this->userService = $userService;
-        // $this->userrightService = $userrightService;
+        $this->accessRightService = $accessRightService;
     }
     public function index()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
-        // if (!$rolesPermissions['view']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Users Maintenance");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('user.index');
     }
 
@@ -54,10 +54,11 @@ class UserController extends Controller
 
     public function create()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
-        // if (!$rolesPermissions['create']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Users Maintenance");
+
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         return view('user.create');
     }
     public static function employee_lookup()
@@ -69,7 +70,7 @@ class UserController extends Controller
             ]
         ]);
         $employees = file_get_contents(config('app.api_path') . "hris-api-2.php", false, $streamContext);
-        // $employees = file_get_contents("https://localhost/camm/api/hris-api-2.php", false, $streamContext);
+        //  $employees = file_get_contents("https://localhost/camm/api/hris-api-2.php", false, $streamContext);
         return $employees;
     }
     public static function userList()
@@ -124,29 +125,29 @@ class UserController extends Controller
     }
     public function edit($id)
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Users");
-        // if (!$rolesPermissions['edit']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Users Maintenance");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $user = User::where('id', $id)->first();
         return view('user.edit', compact('user'));
     }
     public function update(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required',
+            'dept' => 'string|max:150',
+            'role_id'   => 'required',
+            'assigned_module' => 'required'
+        ]);
         try {
-            $request->validate([
-                'id' => 'required'
-            ]);
 
             $this->userService->update($request);
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);
         }
-    }
-    public function getAccessRights(Request $request)
-    {
-        $users_permissions = $this->userrightService->getByUsername($request->username, $request->appid);
-        return $users_permissions;
     }
 }

@@ -95,6 +95,13 @@
         </div>
       </div>
       <!-- End Pages -->
+     
+    </div>
+    <div class="cms-footer mg-t-50">
+      <hr />
+      <p class="tx-gray-500 tx-10">
+        Admin Portal v1.0 • Developed by WebFocus Solutions, Inc. 2022
+      </p>
     </div>
   </div>
 

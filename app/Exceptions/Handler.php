@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Foundation\Http\Exceptions\MaintenanceModeException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -36,6 +39,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+        $this->renderable(function (MaintenanceModeException $e, $request) {
+            dd($request);
+            return redirect()->route('auth.adminLogin');
         });
     }
 }

@@ -660,7 +660,7 @@ export default {
     },
     async autosave() {
       this.seconds = this.seconds + 1;
-      if (this.seconds == 300) {
+      if (this.seconds == 30) {
         if (this.form.transmittalno != "" || this.form.transmittalno != null) {
           if (this.form.purpose == null) {
             this.form.purpose = "";

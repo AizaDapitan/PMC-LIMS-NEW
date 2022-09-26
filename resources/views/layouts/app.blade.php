@@ -87,7 +87,7 @@
         <li class="nav-item with-sub {{ (request()->is('digester/*')) ? 'active show' : '' }}">
           <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Tech/Digester</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigester}}</span></a>
           <ul>
-            <li class="{{ (request()->is('digester/worksheet*')) ? 'active' : '' }}"><a href="{{ route('digester.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterWorksheet}}</span></a></li>
+            <li class="{{ (request()->is('digester/dashboard*')) ? 'active' : '' }}"><a href="{{ route('digester.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterWorksheet}}</span></a></li>
             <li class="{{ (request()->is('digester/transmittal*')) ? 'active' : '' }}"><a href="{{ route('digester.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterTrans}}</span></a></li>
           </ul>
         </li>
@@ -111,33 +111,37 @@
         </li>
 
         <li class="nav-label mg-t-25">Maintenance</li>
-        <li class="nav-item with-sub {{ (request()->is('user/*')) ? 'active show' : '' }}">
+        <li class="nav-item with-sub {{ (request()->is('users/*')) ? 'active show' : '' }}">
           <a href="#" class="nav-link"><i data-feather="users"></i> <span>User Maintenance</span></a>
           <ul>
-            <li class="{{ (request()->is('user/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('user/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create New User</a></li>
+            <li class="{{ (request()->is('users/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('users/create*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create New User</a></li>
           </ul>
         </li>
         <li class="nav-item with-sub {{ (request()->is('roles/*')) ? 'active show' : '' }}">
           <a href="" class="nav-link"><i data-feather="users"></i> <span>Roles</span></a>
           <ul>
-            <li class="{{ (request()->is('roles/list*')) ? 'active' : '' }}"><a href="{{ route('roles.index') }}">Manage</a></li>
+            <li class="{{ (request()->is('roles/dashboard*')) ? 'active' : '' }}"><a href="{{ route('roles.index') }}">Dashboard</a></li>
             <li class="{{ (request()->is('roles/create')) ? 'active' : '' }}"><a href="{{ route('roles.create') }}">Create</a></li>
           </ul>
         </li>
         <li class="nav-item with-sub {{ (request()->is('permissions/*')) ? 'active show' : '' }}">
           <a href="" class="nav-link"><i data-feather="users"></i> <span>Permissions</span></a>
           <ul>
-            <li class="{{ (request()->is('permissions/list*')) ? 'active' : '' }}"><a href="{{ route('permissions.index') }}">Manage</a></li>
+            <li class="{{ (request()->is('permissions/dashboard*')) ? 'active' : '' }}"><a href="{{ route('permissions.index') }}">Dashboard</a></li>
             <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Add New</a></li>
           </ul>
         </li>
-        <li class="{{ (request()->is('permissions/list*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
-        <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Role Access Rights</span></a></li>
-
-        <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>User Action Monitoring</span></a></li>
-        <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Application Error Logs</span></a></li>
-        <li class="nav-item"><a href="#" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>
+        <li class="nav-item {{ (request()->is('accessrights/user*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
+        <li class="nav-item {{ (request()->is('accessrights/role*')) ? 'active' : '' }}"><a href="{{ route('accessrights.role') }}" class="nav-link"><i data-feather="settings"></i> <span>Role Access Rights</span></a></li>
+        <li class="nav-item with-sub {{ (request()->is('reports/*')) ? 'active show' : '' }}">
+          <a href="" class="nav-link"><i data-feather="file"></i> <span>Reports</span></a>
+          <ul>
+            <li class="{{ (request()->is('reports/audit-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.auditLogs') }}">User Action Monitoring</a></li>
+            <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Application Error Logs</a></li>
+          </ul>
+        </li>
+        <li class="nav-item {{ (request()->is('applications/dashboard*')) ? 'active' : '' }}"><a href="{{ route('applications.index') }}" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>
       </ul>
     </div>
   </aside>
@@ -169,10 +173,32 @@
           <!-- dropdown-menu -->
         </div>
       </div>
+      
       <!-- dropdown -->
     </div><!-- content-header -->
     <notifications />
+    
     <div class="content-body py-5 px-4" id="app">
+    <div id="myModal1" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content" id="content">
+        <span class="close" id="close">&times;</span>
+        <p style="font-size: 18px; font-weight:bold;">In exactly 1 hour the system will undergo maitenance! Please save your work!</p>
+      </div>
+    </div>
+    <div style="margin-top:-40px">
+      @if($reason)
+      <div class="alert alert-danger alert-dismissable">
+        <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button> -->
+        <span class="fa fa-exclamation"></span>
+        <label aria-labelledby="notifications" id="notifications">{{ $reason }} </label>
+        <label aria-labelledby="countdown" id="countdown" style="float:right; font-weight:bold">Time Remaining : </label>
+        <label aria-labelledby="datetime" id="datetime" style="display:block">Shutdown Date : {{ $scheduledate }} {{ $scheduletime}} </label>
+      </div>
+      @else
+      <label aria-labelledby="countdown" id="countdown" style="display:none; font-weight:bold">Time Remaining : </label>
+      @endif
+    </div>
       @yield('content')
     </div>
 
@@ -311,6 +337,120 @@
         });
       };
     </script>
+    <script>
+   
+    var modal = document.getElementById("myModal1");
+    var tday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var tmonth = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var shown = 0;
+    var span = document.getElementById("close");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    function GetClock() {
+      var d = new Date();
+      var nday = d.getDay(),
+        nmonth = d.getMonth(),
+        ndate = d.getDate(),
+        nyear = d.getFullYear();
+      var nhour = d.getHours(),
+        nmin = d.getMinutes(),
+        nsec = d.getSeconds(),
+        ap;
+      var ohour = nhour + 1;
+      if (nhour <= 9) nhour = "0" + nhour;
+      if (nhour == 0) {
+        ap = " AM";
+        nhour = 12;
+      } else if (nhour < 12) {
+        ap = " AM";
+      } else if (nhour == 12) {
+        ap = " PM";
+      } else if (nhour > 12) {
+        ap = " PM";
+        nhour -= 12;
+      }
+
+      if (nmin <= 9) nmin = "0" + nmin;
+      if (nsec <= 9) nsec = "0" + nsec;
+
+      var clocktext = "" + tday[nday] + ", " + tmonth[nmonth] + " " + ndate + ", " + nyear + " " + nhour + ":" + nmin + ":" + nsec + ap + "";
+      // document.getElementById('clockbox').innerHTML = clocktext;
+      var schedule = {!!json_encode($scheduledate) !!} + ' ' + {!!json_encode($scheduletime) !!};
+      // dt = dt.replace(':00.0000000','');
+      var mnth = nmonth + 1;
+      var dte = ndate;
+      if (mnth <= 9) mnth = "0" + mnth;
+      if (dte <= 9) dte = "0" + dte;
+      var curDateless1hour = nyear + '-' + mnth + '-' + dte + ' ' + ohour + ":" + nmin;
+      var curDate = nyear + '-' + mnth + '-' + dte + ' ' + (ohour - 1) + ":" + nmin;
+      // console.log(dt);
+      // console.log(dd2);
+      if (schedule == curDateless1hour && shown == 0) {
+        shown = 1;
+        //    alert("In exactly 1 hour the system will undergo maitenance! Please save your work.");
+
+        modal.style.display = "block";
+        return false;
+      }
+      if (schedule == curDate) {
+        $.ajax({
+          url: '{!! route('applications.systemDown_auto') !!}',
+          type: 'GET',
+          async: false,
+          success: function(response) {}
+        });
+      }
+      // console.log(schedule);
+      // console.log(curDate);
+      if (schedule > curDate) {
+        var TimeDiff = timeDiffCalc(new Date(schedule), new Date());
+      } else {
+        TimeDiff = "Maintenance is in progress!";
+      }
+
+      document.getElementById('countdown').innerHTML = "Time Remaining : " + TimeDiff;
+    }
+    GetClock();
+    setInterval(GetClock, 1000);
+
+    function timeDiffCalc(dateFuture, dateNow) {
+      // console.log(dateNow);
+      let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+      // calculate days
+      const days = Math.floor(diffInMilliSeconds / 86400);
+      diffInMilliSeconds -= days * 86400;
+
+      // calculate hours
+      const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
+      diffInMilliSeconds -= hours * 3600;
+
+      // calculate minutes
+      const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+      diffInMilliSeconds -= minutes * 60;
+
+      // calculate minutes
+      const seconds = Math.floor(diffInMilliSeconds);
+      diffInMilliSeconds -= seconds;
+      // if(seconds > 0){
+
+      let difference = '';
+      if (days > 0) {
+        difference += (days === 1) ? `${days} day, ` : `${days} days, `;
+      }
+
+      difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
+
+      difference += (minutes === 0 || hours === 1) ? `${minutes} minute, ` : `${minutes} minutes, `;
+
+      difference += (seconds === 0 || seconds === 1) ? `${seconds} seconds` : `${seconds} seconds`;
+
+      return difference;
+      // }
+    }
+  </script>
 </body>
 
 </html>

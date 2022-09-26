@@ -8,38 +8,43 @@ use App\Models\Role;
 use App\Services\UserRightService;
 use Exception;
 use Illuminate\Support\Facades\Session;
+use App\Services\AccessRightService;
 
 class RoleController extends Controller
 {
-    // public function __construct(
-    //     UserRightService $userrightService
-    // ) {
-    //     $this->userrightService = $userrightService;
-    // }
+    protected $accessRightService;
+
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Roles");
-        // if (!$rolesPermissions['view']) {
-        //     abort(401);
-        // }
-        $roles = Role::orderBy('name', 'asc')->get();
+        $rolesPermissions = $this->accessRightService->hasPermissions("Roles");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
+        $roles = Role::where('description','<>', 'ADMIN')->orderBy('name', 'asc')->get();
         $roles = json_encode($roles);
         return view('role.index', compact('roles'));
     }
 
     public function getRoles()
     {
-        $roles = Role::where('active', 1)->OrderBy('name')->get();
+        $roles = Role::where([['active', 1],['description','<>', 'ADMIN']])->OrderBy('name')->get();
 
         return $roles;
     }
 
     public function create()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Roles");
-        // if (!$rolesPermissions['create']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Roles");
+
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         return view('role.create');
     }
 
@@ -56,7 +61,7 @@ class RoleController extends Controller
             $role = Role::create([
                 'name' => strtoupper($request->name),
                 'description' => $request->description,
-                'active' => $request->status,
+                'active' => 1,
                 'created_at' => $created_at,
                 'app'    => 'CAMM',
             ]);
@@ -74,10 +79,11 @@ class RoleController extends Controller
 
     public function edit($id)
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Roles");
-        // if (!$rolesPermissions['edit']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Roles");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $role = Role::where('id', $id)->first();
         return view('role.edit', compact('role'));
     }
@@ -113,15 +119,7 @@ class RoleController extends Controller
     }
     public function rolesList(Role $role)
     {
-        $roles = $role->where('active', 1)->get();
-        // $streamContext = stream_context_create([
-        //     'ssl' => [
-        //         'verify_peer'      => false,
-        //         'verify_peer_name' => false
-        //     ]
-        // ]);
-        // $roles = file_get_contents(config('app.api_path') . "roles-api.php", false, $streamContext);
-        // dd($roles);
+        $roles = $role->where([['active', 1],['description','<>','ADMIN']])->get();
         return $roles;
     }
 

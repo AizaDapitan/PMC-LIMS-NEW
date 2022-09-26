@@ -2,14 +2,14 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-// use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
-// use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
 
-class Permission extends Model  //implements AuditableContract
+class Permission extends Model  implements AuditableContract
 {
 
-   // use Auditable;
+   use Auditable;
 	
 
 	public $table = 'permissions';

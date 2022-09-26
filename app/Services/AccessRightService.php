@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Permission;
+use App\Models\RolesPermissions;
 use App\Repositories\Interfaces\AccessRightRepositoryInterface;
 use App\Models\UsersPermissions;
 use Illuminate\Support\Facades\DB;
@@ -62,14 +63,15 @@ class AccessRightService
     public function createUser($fields)
     {
         $userrights = false;
-        UsersPermissions::where('user_id', '=', $fields->userid)->delete();
-        $listOfPermissions = explode(',', $fields->users_permissions);
+        
+        UsersPermissions::where('user_id', '=', $fields->user_id)->delete();
+        $listOfPermissions = explode(',', $fields->userPermissions);
         foreach ($listOfPermissions as $permission) {
 
             $permissionarray = explode("_", $permission);
             if (count($permissionarray) == 3) {
                 $data = [
-                    'user_id' => $fields->userid,
+                    'user_id' => $fields->user_id,
                     'permission_id' => $permissionarray[0],
                     'module_id' => $permissionarray[1],
                     'action' => $permissionarray[2],
@@ -102,6 +104,93 @@ class AccessRightService
                 'permission_id' => $userpermission->permission_id,
                 'module_id' => $userpermission->module_id,
                 'action' => $userpermission->action,
+            ]);
+        }
+        return $data;
+    }
+    public function hasPermissions($description)
+    {
+        $roles_permissions = $this->repository->hasPermissions($description);
+        $data = collect();
+        $access = false;
+        $role = auth()->user()->role;
+        if ($role == "ADMIN" || $role == "admin") {
+            $access = true;
+        }
+        $create = $access;
+        $edit = $access;
+        $delete = $access;
+        $view = $access;
+        $print = $access;
+        $search = $access;
+        $upload = $access;
+        $pagination = $access;
+        foreach ($roles_permissions as $roles_permission) {
+            if ($roles_permission['action'] == "create") {
+                $create = true;
+            } elseif ($roles_permission['action'] == "edit") {
+                $edit = true;
+            } elseif ($roles_permission['action'] == "delete") {
+                $delete = true;
+            } elseif ($roles_permission['action'] == "view") {
+                $view = true;
+            } elseif ($roles_permission['action'] == "print") {
+                $print = true;
+            } elseif ($roles_permission['action'] == "search") {
+                $search = true;
+            } elseif ($roles_permission['action'] == "upload") {
+                $upload = true;
+            } elseif ($roles_permission['action'] == "pagination") {
+                $pagination = true;
+            }
+        }
+
+        $data->push([
+            'create' => $create,
+            'edit' => $edit,
+            'delete' => $delete,
+            'view' => $view,
+            'print' => $print,
+            'search' => $search,
+            'upload' => $upload,
+            'pagination' => $pagination,
+        ]);
+
+        return $data->first();
+    }
+    public function createRole($fields)
+    {
+        $rolerights = false;
+        RolesPermissions::where('role_id', '=', $fields->role_id)->delete();
+        $listOfPermissions = explode(',', $fields->rolePermissions);
+
+        foreach ($listOfPermissions as $permission) {
+
+            $permissionarray = explode("_", $permission);
+            if (count($permissionarray) == 3) {
+                $data = [
+                    'role_id' => $fields->role_id,
+                    'permission_id' => $permissionarray[0],
+                    'module_id' => $permissionarray[1],
+                    'action' => $permissionarray[2],
+                ];
+                $rolerights = $this->repository->createRole($data);
+            }
+        }
+        return redirect()->back()->with('success', 'Role Access Right has been saved successfully!');
+    }
+    public function getByRole($roleid)
+    {        
+        $rolepermissions = $this->repository->getByRole($roleid);
+
+        $data = collect();
+        foreach ($rolepermissions as $rolepermission) {
+            $data->push([
+                'role_id' => $rolepermission->role_id,
+                'application_id' => $rolepermission->app_id,
+                'permission_id' => $rolepermission->permission_id,
+                'module_id' => $rolepermission->module_id,
+                'action' => $rolepermission->action,
             ]);
         }
         return $data;

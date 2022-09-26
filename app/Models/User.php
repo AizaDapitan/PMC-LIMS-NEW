@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use OwenIt\Auditing\Contracts\UserResolver;
+use OwenIt\Auditing\Auditable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements AuditableContract, UserResolver
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,9 +22,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role','dtpassexpiration','email','remember_token'
+        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role',  'email', 'remember_token', 'assigned_module'
     ];
-
+    protected $auditInclude = [
+        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role', 'email', 'assigned_module'
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -47,6 +53,10 @@ class User extends Authenticatable
         if ($this->isActive != 1) {
             $status  = 'Inactive';
         }
-        return $status; 
+        return $status;
+    }
+    public static function resolve()
+    {
+        return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
     }
 }

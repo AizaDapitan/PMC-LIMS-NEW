@@ -9,11 +9,23 @@ use App\Models\Worksheet;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\AccessRightService;
 
 class OfficerController extends Controller
 {
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('officer.index');
     }
     public function getWorksheet()
@@ -23,6 +35,11 @@ class OfficerController extends Controller
     }
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('officer.edit', compact('worksheet'));
     }
@@ -47,6 +64,11 @@ class OfficerController extends Controller
     }
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('officer.view', compact('worksheet'));
     }
@@ -57,10 +79,20 @@ class OfficerController extends Controller
     }
     public function posted()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('officer.posted');
     }
     public function unpost($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('officer.editposted', compact('worksheet'));
     }
@@ -83,11 +115,21 @@ class OfficerController extends Controller
     }
     public function viewposted($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Worksheets");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('officer.viewposted', compact('worksheet'));
     }
     public function transmittal()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Transmittals");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
        return view('officer.transmittal');
     }
     public function getTransmittal()
@@ -98,6 +140,11 @@ class OfficerController extends Controller
     }
     public function createTransmittal()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Transmittals");
+
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         return view('officer.createtransmittal');
     }
     public function checkTransNo(Request $request)
@@ -222,6 +269,11 @@ class OfficerController extends Controller
     }
     public function editTransmittal($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Transmittals");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('officer.edittransmittal', compact('transmittal'));
     }
@@ -280,6 +332,11 @@ class OfficerController extends Controller
     }
     public function viewTransmittal($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Transmittals");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('officer.viewtransmittal', compact('transmittal'));
     }
@@ -301,16 +358,27 @@ class OfficerController extends Controller
     }
     public function unsavedTrans()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Officer Unsaved Transmittals");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('officer.unsaved');
     }
     public function getUnsaved()
     {
+        
         $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0],['transcode',2 ]])->orderBy('transmittalno', 'asc')->get();
 
         return $unsavedTrans;
     }
     public function transmittal_Solutions()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Solutions");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('officer.solutions');
     }
     public function getTransmittal_Solutions()
@@ -322,11 +390,21 @@ class OfficerController extends Controller
     }
     public function view_solution($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Solutions");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('officer.view_solutions', compact('transmittal'));
     }
     public function post_solution($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Solutions");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('officer.post_solutions', compact('transmittal'));
     }

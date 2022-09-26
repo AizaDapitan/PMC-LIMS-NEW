@@ -7,11 +7,22 @@ use App\Models\TransmittalItem;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\AccessRightService;
 
 class QAQCRecieverController extends Controller
 {
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function Index()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Receiving Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
        return view('qaqcreceiver.index');
     }
     public function getTransmittal()
@@ -25,11 +36,19 @@ class QAQCRecieverController extends Controller
     }
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Receiving Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('qaqcreceiver.view', compact('transmittal'));
     }
     public function receive($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Receiving Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('qaqcreceiver.receive', compact('transmittal'));
     }
@@ -56,6 +75,10 @@ class QAQCRecieverController extends Controller
     }
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Receiving Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('qaqcreceiver.edit', compact('transmittal'));
     }

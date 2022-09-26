@@ -9,11 +9,22 @@ use App\Models\Worksheet;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\AccessRightService;
 
 class AssayerController extends Controller
 {
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function Index()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('assayer.index');
     }
     public function getTransmittal()
@@ -35,11 +46,19 @@ class AssayerController extends Controller
     }
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('assayer.view', compact('transmittal'));
     }
     public function create($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Worksheets");
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         $transids = $id;
         $ids = explode(',', $transids);
         $transmittal = DeptuserTrans::whereIn('transmittalno', $ids)->first();
@@ -117,6 +136,10 @@ class AssayerController extends Controller
     }
     public function worksheet()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Worksheets");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('assayer.worksheet');
     }
     public function getWorksheet()
@@ -126,6 +149,10 @@ class AssayerController extends Controller
     }
     public function Edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Worksheets");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('assayer.edit', compact('worksheet'));
     }
@@ -184,6 +211,10 @@ class AssayerController extends Controller
     }
     public function viewWorksheet($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Worksheets");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $worksheet = Worksheet::where('id', $id)->first();
         return view('assayer.viewworksheet', compact('worksheet'));
     }

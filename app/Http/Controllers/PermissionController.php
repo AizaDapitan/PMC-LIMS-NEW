@@ -6,24 +6,27 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use App\Models\Permission;
 use App\Models\Module;
-// use App\Services\UserRightService;
 use Illuminate\Support\Facades\Session;
 use Exception;
+use App\Services\AccessRightService;
 
 class PermissionController extends Controller
 {
-    // public function __construct(
-    //     UserRightService $userrightService
-    // ) {
-    //     $this->userrightService = $userrightService;
-    // }
+    protected $accessRightService;
+
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
 
-        // $rolesPermissions = $this->userrightService->hasPermissions("Permissions");
-        // if (!$rolesPermissions['view']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Permissions");
+
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $permissions = Permission::orderBy('description', 'asc')->get();
         $permissions = json_encode($permissions);
         return view('permission.index', compact('permissions'));
@@ -48,10 +51,11 @@ class PermissionController extends Controller
 
     public function create()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Permissions");
-        // if (!$rolesPermissions['create']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Permissions");
+
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         return view('permission.create');
     }
 
@@ -85,10 +89,11 @@ class PermissionController extends Controller
 
     public function edit($id)
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("Permissions");
-        // if (!$rolesPermissions['edit']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Permissions");
+
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $permission = Permission::where('id', $id)->first();
         return view('permission.edit', compact('permission'));
     }

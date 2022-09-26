@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-// use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
-// use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class DeptuserTrans extends Model //implements AuditableContract
+class DeptuserTrans extends Model implements AuditableContract
 {
 
-    // use Auditable;
+    use Auditable;
 
 
     protected $guarded = [];

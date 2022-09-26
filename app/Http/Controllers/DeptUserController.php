@@ -16,37 +16,63 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use App\Services\AccessRightService;
+use PhpParser\Node\Stmt\Else_;
 
 class DeptUserController extends Controller
 {
-    // public function __construct(
-    //     UserRightService $userrightService
-    // ) {
-    //     $this->userrightService = $userrightService;
-    // }
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("DeptUsers");
-        // if (!$rolesPermissions['view']) {
-        //     abort(401);
-        // }
-        return view('deptuser.index');
+        $assigned_module = auth()->user()->assigned_module;
+        if (auth()->user()->role != 'ADMIN') {
+            if ($assigned_module == 'Department User') {
+                $rolesPermissions = $this->accessRightService->hasPermissions("Department User Transmittals");
+                if (!$rolesPermissions['view']) {
+                    abort(401);
+                }
+                return view('deptuser.index');
+            } else if ($assigned_module == 'Department Officer') {
+                return redirect()->route('deptofficer.index');
+            } else if ($assigned_module == 'Receiving') {
+                return redirect()->route('qaqcreceiver.index');
+            } else if ($assigned_module == 'Assayer') {
+                return redirect()->route('assayer.index');
+            } else if ($assigned_module == 'Tech/Digester') {
+                return redirect()->route('digester.index');
+            } else if ($assigned_module == 'Analyst') {
+                return redirect()->route('analyst.index');
+            } else if ($assigned_module == 'Officer') {
+                return redirect()->route('officer.index');
+            }
+        } else {
+            return view('deptuser.index');
+        }
     }
 
     public function getDeptUsers()
     {
-        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1],['transcode',1]])->orderBy('datesubmitted', 'desc')->get();
+        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1]])->orderBy('datesubmitted', 'desc')->get();
 
         return $deptusers;
     }
 
     public function deptusersList(DeptuserTrans $deptuser)
     {
-        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1],['transcode',1]])->get();
+        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1], ['transcode', 1]])->get();
         return $deptusers;
     }
     public function create()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department User Transmittals");
+        if (!$rolesPermissions['create']) {
+            abort(401);
+        }
         return view('deptuser.create');
     }
     public function store(DeptUserTransRequest $request)
@@ -74,7 +100,6 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $filenametostore,
-                    'status' =>  $request->status,
                     'created_by' => auth()->user()->username,
                     'isSaved'   => 1,
                     'transType' => $request->transType,
@@ -93,7 +118,6 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $filenametostore,
-                    'status' =>  $request->status,
                     'created_by' => auth()->user()->username,
                     'isSaved'   => 1,
                     'transType' => $request->transType,
@@ -108,6 +132,10 @@ class DeptUserController extends Controller
     }
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department User Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         // dd($transmittal);
         return view('deptuser.edit', compact('transmittal'));
@@ -152,7 +180,6 @@ class DeptUserController extends Controller
                 'email_address' => $request->email_address,
                 'source' =>  $request->source,
                 'cocFile' => $request->hasFile('cocFile') ? $filenametostore : $deptuserTrans->cocFile,
-                'status' =>  $request->status,
                 'created_by' => auth()->user()->username,
                 'isSaved'   => 1,
                 'transType' => $request->transType,
@@ -183,6 +210,10 @@ class DeptUserController extends Controller
     }
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department User Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('deptuser.view', compact('transmittal'));
     }
@@ -244,11 +275,15 @@ class DeptUserController extends Controller
     }
     public function unsavedTrans()
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department User Unsaved Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('deptuser.unsaved');
     }
     public function getUnsaved()
     {
-        $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0],['transcode',1]])->orderBy('transmittalno', 'asc')->get();
+        $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0], ['transcode', 1]])->orderBy('transmittalno', 'asc')->get();
 
         return $unsavedTrans;
     }

@@ -12,14 +12,9 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ForgotPassworMail;
-use App\Models\AccessedApp;
-use App\Models\DeptuserTrans;
-use App\Models\Role;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use App\Services\AuditService;
-use App\Services\UserRightService;
 use DateTime;
 use Exception;
 use PDO;
@@ -27,12 +22,12 @@ use PDO;
 class LoginController extends Controller
 {
     // use AuthenticatesUsers;
-    // public function __construct(
-    //     AuditService $auditService,UserRightService $userrightService
-    // ) {
-    //     $this->auditService = $auditService;
-    //     $this->userrightService = $userrightService;
-    // }
+    protected $auditService;
+    public function __construct(
+        AuditService $auditService
+    ) {
+        $this->auditService = $auditService;
+    }
     public function index()
     {
         return auth()->check() ? redirect()->route('deptuser.index') : view('auth.login');
@@ -42,17 +37,15 @@ class LoginController extends Controller
     {
         return view('auth.forgot_password');
     }
-
-
-
     public function login(Request $request)
     {
         $checker = auth()->attempt([
             'username' => $request->username,
-            'password' => $request->password
+            'password' => $request->password,
+            'isActive' => 1
         ]);
         if ($checker) {
-           
+            $this->auditService->create($request, "Login User : " . auth()->user()->username, "Login");
             return response()->json(['result' => 'Success']);
         } else {
             return response()->json(['result' => 'Failed']);
@@ -61,7 +54,9 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        
+        if (auth()->check()) {
+            $this->auditService->create($request, "Logout User : " .  auth()->user()->username, "Logout");
+        }
         Auth::logout();
         Session::flush();
         return auth()->logout() ?? redirect()->route('login');
@@ -105,38 +100,6 @@ class LoginController extends Controller
             return response()->json(['result' => 'Success']);
         } else {
             return response()->json(['result' => 'Failed']);
-        }
-    }
-    public function updateP1users($password)
-    {
-        try {
-            $applications = Application::where('active', 1)->get();
-
-            foreach ($applications as $application) {
-                $databasename = $application->database_name;
-                if ($databasename == null) {
-                    $databasename = "";
-                }
-                if ($databasename != "") {
-                    $conn_a['app']['type'] = config('app.db_connection');
-                    $conn_a['app']['host'] = $application->server_name;;
-                    $conn_a['app']['name'] = $databasename;
-                    $conn_a['app']['uname'] = $application->dbusername;
-                    $conn_a['app']['pword'] = $application->dbpass;
-
-                    $pdoApps = new PDO($conn_a['app']['type'] . ":server=" . $conn_a['app']['host'] . ";Database=" . $conn_a['app']['name'], $conn_a['app']['uname'], $conn_a['app']['pword']);
-                    $pdoApps->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                    $data = [
-                        'password' => $password,
-                        'username' => auth()->user()->username,
-                    ];
-                    $sql = "UPDATE users SET password=:password WHERE " . $application->loginFieldName . "=:username";
-                    $pdoApps->prepare($sql)->execute($data);
-                }
-            }
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

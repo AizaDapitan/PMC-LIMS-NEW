@@ -15,26 +15,28 @@ use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Services\AccessRightService;
 
 class DeptOfficerController extends Controller
 {
-    // public function __construct(
-    //     UserRightService $userrightService
-    // ) {
-    //     $this->userrightService = $userrightService;
-    // }
+    protected $accessRightService;
+    public function __construct(
+        AccessRightService $accessRightService
+    ) {
+        $this->accessRightService = $accessRightService;
+    }
     public function index()
     {
-        // $rolesPermissions = $this->userrightService->hasPermissions("DeptOfficers");
-        // if (!$rolesPermissions['view']) {
-        //     abort(401);
-        // }
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department Officer Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         return view('deptofficer.index');
     }
 
     public function getDeptOfficers()
     {
-        $deptofficers = DeptuserTrans::where([['isdeleted', 0],['isSaved',1],['transcode',1]])->orderBy('datesubmitted', 'desc')->get();
+        $deptofficers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1]])->orderBy('datesubmitted', 'desc')->get();
 
         return $deptofficers;
     }
@@ -47,6 +49,10 @@ class DeptOfficerController extends Controller
 
     public function edit($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department Officer Transmittals");
+        if (!$rolesPermissions['edit']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         // dd($transmittal);
         return view('deptofficer.edit', compact('transmittal'));
@@ -54,6 +60,10 @@ class DeptOfficerController extends Controller
 
     public function view($id)
     {
+        $rolesPermissions = $this->accessRightService->hasPermissions("Department Officer Transmittals");
+        if (!$rolesPermissions['view']) {
+            abort(401);
+        }
         $transmittal = DeptuserTrans::where('id', $id)->first();
         // dd($transmittal);
         return view('deptofficer.view', compact('transmittal'));
@@ -65,7 +75,7 @@ class DeptOfficerController extends Controller
             'id' => 'required'
         ]);
         try {
-          
+
             $deptuserTrans = DeptuserTrans::find($request->id);
 
             $data = [

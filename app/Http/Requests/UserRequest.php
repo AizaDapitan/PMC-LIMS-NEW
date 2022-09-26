@@ -27,8 +27,8 @@ class UserRequest extends FormRequest
             'username' => 'required|unique:users',
             'name' => 'required',
             'dept' => 'string|max:150',
-            'active' => 'active',
             'role_id'   => 'required',
+            'assigned_module' => 'required'
         ];
     }
 }   

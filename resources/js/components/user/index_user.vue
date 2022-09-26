@@ -11,7 +11,7 @@
       <div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-style1 mg-b-10">
-            <li class="breadcrumb-item" aria-current="page">Maintenance</li>
+            <li class="breadcrumb-item" aria-current="page">LIMS</li>
             <li class="breadcrumb-item" aria-current="page">
               User Maintenance
             </li>
