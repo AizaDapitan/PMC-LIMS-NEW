@@ -240,8 +240,7 @@
             name="fire-assayer"
             v-model="form.fireassayer"
           >
-            <option value="">--Select--</option>
-            <option value="fire assayer">Fire Assayer User</option>
+            <option v-for="fireassayer in fireassayers" :key="fireassayer.id" :value="fireassayer.name">{{fireassayer.name}}</option>
           </select>
         </div>
       </div>
@@ -421,6 +420,7 @@ export default {
       disableEdit: true,
       labbatchExists: false,
       selectedItemsId: [],
+      fireassayers : [],
       form: {
         labbatch: "",
         dateshift: "",
@@ -444,6 +444,7 @@ export default {
   },
   created() {
     this.fetchItems();
+    this.fetchFireAssayer();
     this.loading = false;
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -514,6 +515,11 @@ export default {
         this.form
       );
       this.items = res.data;
+    },
+    async fetchFireAssayer() {
+      const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
+
+      this.fireassayers = res.data;
     },
     editItem(data) {
       this.showDialog(data.data);

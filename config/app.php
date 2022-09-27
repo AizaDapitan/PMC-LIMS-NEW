@@ -56,6 +56,7 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
     'api_path' => env('API_PATH', null),
+    'it_email' => env('IT_EMAIL', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -68,7 +69,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
+    'timezone' => 'Asia/Manila',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +168,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        OwenIt\Auditing\AuditingServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -176,7 +178,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
-        OwenIt\Auditing\AuditingServiceProvider::class,
     ],
 
     /*

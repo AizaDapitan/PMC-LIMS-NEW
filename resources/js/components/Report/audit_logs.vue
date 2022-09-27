@@ -12,6 +12,9 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-style1 mg-b-5">
             <li class="breadcrumb-item active" aria-current="page">
+                LIMS
+              </li>
+            <li class="breadcrumb-item active" aria-current="page">
               User Action Monitoring
             </li>
           </ol>

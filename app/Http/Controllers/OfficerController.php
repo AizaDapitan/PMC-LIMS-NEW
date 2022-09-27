@@ -258,7 +258,7 @@ class OfficerController extends Controller
                     'status' =>  $request->status,
                     'transType' => $request->transType,
                     'created_by' => auth()->user()->username,
-                    'transcode' => 1
+                    'transcode' => 2
                 ];
                 $transmittal = DeptuserTrans::create($data);
                 return response()->json(['id' => $transmittal->id]);

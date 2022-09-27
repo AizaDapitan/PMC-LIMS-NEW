@@ -26,14 +26,14 @@ class RoleController extends Controller
         if (!$rolesPermissions['view']) {
             abort(401);
         }
-        $roles = Role::where('description','<>', 'ADMIN')->orderBy('name', 'asc')->get();
+        $roles = Role::where('name','<>', 'ADMIN')->orderBy('name', 'asc')->get();
         $roles = json_encode($roles);
         return view('role.index', compact('roles'));
     }
 
     public function getRoles()
     {
-        $roles = Role::where([['active', 1],['description','<>', 'ADMIN']])->OrderBy('name')->get();
+        $roles = Role::where([['active', 1],['name','<>', 'ADMIN']])->OrderBy('name')->get();
 
         return $roles;
     }
@@ -58,19 +58,13 @@ class RoleController extends Controller
 
         $created_at = \Carbon\Carbon::now();
         try {
-            $role = Role::create([
+           Role::create([
                 'name' => strtoupper($request->name),
                 'description' => $request->description,
                 'active' => 1,
                 'created_at' => $created_at,
-                'app'    => 'CAMM',
+                'app'    => 'LIMS',
             ]);
-
-            $returnedRole = Role::find($role->id);
-            $data = [
-                'app_role_id' => $role->id,
-            ];
-            $returnedRole->update($data);
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['error' =>  $e->getMessage()], 500);
@@ -119,7 +113,7 @@ class RoleController extends Controller
     }
     public function rolesList(Role $role)
     {
-        $roles = $role->where([['active', 1],['description','<>','ADMIN']])->get();
+        $roles = $role->where([['active', 1],['name','<>','ADMIN']])->get();
         return $roles;
     }
 

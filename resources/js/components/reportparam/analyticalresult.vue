@@ -18,8 +18,13 @@
               </span></label
             >
             <select class="custom-select tx-base" v-model="form.analyzedBy">
-              <option value="Analyst1">Analyst 1</option>
-              <option value="Analyst2">Analyst 2</option>
+              <option
+                v-for="supervisor in supervisors"
+                :key="supervisor.id"
+                :value="supervisor.name"
+              >
+                {{ supervisor.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -36,8 +41,13 @@
             >
 
             <select class="custom-select tx-base" v-model="form.verifiedBy">
-              <option value="Verifier 1">Verifier 1</option>
-              <option value="Verifier 2">Verifier 2</option>
+              <option
+                v-for="chemist in chemists"
+                :key="chemist.id"
+                :value="chemist.name"
+              >
+                {{ chemist.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -54,13 +64,48 @@
               name="type"
               v-model="form.transmittalType"
             >
-              <option value="Rock" v-if="reportType == 'Generate Analytical Result'">Rock</option>
-              <option value="Carbon" v-if="reportType == 'Generate Certificate of Analysis'">Carbon</option>
-              <option value="Bulk" v-if="reportType == 'Generate Analytical Result'">Bulk</option>
-              <option value="Cut" v-if="reportType == 'Generate Analytical Result'">Cut</option>
-              <option value="Mine Drill" v-if="reportType == 'Generate Analytical Result'">Mine Drill</option>
-              <option value="Solids" v-if="reportType == 'Generate Analytical Result'">Solids</option>
-              <option value="Solutions" v-if="reportType == 'Generate Analytical Result'">Solutions</option>
+              <option
+                value="Rock"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Rock
+              </option>
+              <option
+                value="Carbon"
+                v-if="reportType == 'Generate Certificate of Analysis'"
+              >
+                Carbon
+              </option>
+              <option
+                value="Bulk"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Bulk
+              </option>
+              <option
+                value="Cut"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Cut
+              </option>
+              <option
+                value="Mine Drill"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Mine Drill
+              </option>
+              <option
+                value="Solids"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Solids
+              </option>
+              <option
+                value="Solutions"
+                v-if="reportType == 'Generate Analytical Result'"
+              >
+                Solutions
+              </option>
             </select>
           </div>
         </div>
@@ -94,7 +139,9 @@ export default {
     return {
       errors_exist: false,
       errors: {},
-      reportType :this.dialogRef.data.reportType,
+      reportType: this.dialogRef.data.reportType,
+      supervisors: [],
+      chemists: [],
       form: {
         analyzedBy: "",
         verifiedBy: "",
@@ -102,7 +149,10 @@ export default {
       },
     };
   },
-  mounted() {},
+  created() {
+    this.fetchSupervisor();
+    this.fetchChemist();
+  },
   methods: {
     closeDialog() {
       this.dialogRef.close();
@@ -113,14 +163,12 @@ export default {
           error: ["The field Analyzed By is required!"],
         };
         this.errors_exist = true;
-      }
-      else if(this.form.verifiedBy == ""){
+      } else if (this.form.verifiedBy == "") {
         this.errors = {
           error: ["The field Checked and Verified By is required!"],
         };
         this.errors_exist = true;
-      }
-      else if(this.form.transmittalType == ""){
+      } else if (this.form.transmittalType == "") {
         this.errors = {
           error: ["The field Transmittal Type is required!"],
         };
@@ -135,6 +183,22 @@ export default {
         window.location.href =
           this.$env_Url + "/analyst/AnalyticalResult/" + data;
       }
+    },
+    async fetchSupervisor() {
+      const res = await this.getDataFromDB(
+        "get",
+        "/supervisors/getSupervisorActive"
+      );
+
+      this.supervisors = res.data;
+    },
+    async fetchChemist() {
+      const res = await this.getDataFromDB(
+        "get",
+        "/chiefchemists/getChiefChemistActive"
+      );
+
+      this.chemists = res.data;
     },
   },
 };

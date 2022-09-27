@@ -259,8 +259,7 @@
             v-model="form.fireassayer"
             disabled="true"
           >
-            <option value="">--Select--</option>
-            <option value="fire assayer">Fire Assayer User</option>
+          <option v-for="fireassayer in fireassayers" :key="fireassayer.id" :value="fireassayer.name">{{fireassayer.name}}</option>
           </select>
         </div>
       </div>
@@ -362,6 +361,7 @@ export default {
       editMsg: "Update Sample",
       items: [],
       errors_exist: false,
+      fireassayers : [],
       errors: {},
       form: {
         id: this.worksheet.id,
@@ -384,6 +384,7 @@ export default {
     };
   },
   created() {
+    this.fetchFireAssayer();
     this.fetchItems();
     this.loading = false;
   },
@@ -414,6 +415,11 @@ export default {
         this.form
       );
       this.items = res.data;
+    },
+    async fetchFireAssayer() {
+      const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
+
+      this.fireassayers = res.data;
     },
   },
 };

@@ -253,8 +253,7 @@
             v-model="form.fireassayer"
             disabled="true"
           >
-            <option value="">--Select--</option>
-            <option value="fire assayer">Fire Assayer User</option>
+          <option v-for="fireassayer in fireassayers" :key="fireassayer.id" :value="fireassayer.name">{{fireassayer.name}}</option>
           </select>
         </div>
       </div>
@@ -312,8 +311,13 @@
             name="measured-by"
             v-model="this.form.measuredby"
           >
-            <option value="">--Select--</option>
-            <option value="User">User</option>
+            <option
+              v-for="analyst in analysts"
+              :key="analyst.id"
+              :value="analyst.name"
+            >
+              {{ analyst.name }}
+            </option>
           </select>
         </div>
 
@@ -325,8 +329,13 @@
             name="analyzed-by"
             v-model="this.form.analyzedby"
           >
-            <option value="">--Select--</option>
-            <option value="User">User</option>
+            <option
+              v-for="analyst in analysts"
+              :key="analyst.id"
+              :value="analyst.name"
+            >
+              {{ analyst.name }}
+            </option>
           </select>
         </div>
       </div>
@@ -463,6 +472,8 @@ export default {
       isApproved: this.worksheet.isApproved,
       editMsg: "Update Sample",
       reassayMsg: "Reassay",
+      fireassayers : [],
+      analysts: [],
       form: {
         id: this.worksheet.id,
         labbatch: this.worksheet.labbatch,
@@ -490,7 +501,9 @@ export default {
     };
   },
   created() {
+    this.fetchFireAssayer();
     this.fetchItems();
+    this.fetchAnalyst();
     this.loading = false;
   },
   mounted() {
@@ -516,15 +529,13 @@ export default {
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = today.getFullYear();
-    today = mm + "/" + dd + "/" + yyyy;   
-    
-    console.log(this.worksheet.dateweighed);
-    document.getElementById("date-shift-weighed1").value = this.worksheet.dateweighed;
-   
+    today = mm + "/" + dd + "/" + yyyy;
+
+    document.getElementById("date-shift-weighed1").value =
+      this.worksheet.dateweighed;
+
     if (this.worksheet.dateweighed == null) {
-      document.getElementById(
-        "date-shift-weighed1"
-      ).value = today;
+      document.getElementById("date-shift-weighed1").value = today;
     }
   },
   methods: {
@@ -535,6 +546,11 @@ export default {
         this.form
       );
       this.items = res.data;
+    },
+    async fetchFireAssayer() {
+      const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
+
+      this.fireassayers = res.data;
     },
     async saveWorksheet() {
       this.form.dateweighed = document.getElementById(
@@ -609,7 +625,7 @@ export default {
     },
     reassay(data) {
       this.$confirm.require({
-        message: "Do you want to reassay sample "  + data.data.sampleno + "?",
+        message: "Do you want to reassay sample " + data.data.sampleno + "?",
         header: "Confirmation",
         icon: "pi pi-info-circle",
         acceptClass: "p-button-danger",
@@ -619,10 +635,10 @@ export default {
           });
           if (res.status === 200) {
             this.$toast.add({
-                severity: "warn",
-                summary: "Confirmed",
-                detail: "Sample Code " + data.data.sampleno + " reassayed!",
-                life: 3000,
+              severity: "warn",
+              summary: "Confirmed",
+              detail: "Sample Code " + data.data.sampleno + " reassayed!",
+              life: 3000,
             });
             this.fetchItems();
           } else {
@@ -630,6 +646,14 @@ export default {
           }
         },
       });
+    },
+    async fetchAnalyst() {
+      const res = await this.getDataFromDB(
+        "get",
+        "/qaanalysts/getAnalystActive"
+      );
+
+      this.analysts = res.data;
     },
   },
 };

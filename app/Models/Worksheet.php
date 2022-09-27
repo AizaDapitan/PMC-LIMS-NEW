@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
 use OwenIt\Auditing\Auditable;
 
-class Worksheet extends Model
+class Worksheet extends Model implements AuditableContract
 {
     use Auditable;
 

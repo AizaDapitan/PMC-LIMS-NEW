@@ -46,7 +46,7 @@
 	<script src="{{env('APP_URL')}}/lib/feather-icons/feather.min.js"></script>
 	<script src="{{env('APP_URL')}}/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 
-	<script src="assets/js/dashforge.js"></script>
+	<script src="{{env('APP_URL')}}/assets/js/dashforge.js"></script>
 	@yield('pagejs')
 </body>
 

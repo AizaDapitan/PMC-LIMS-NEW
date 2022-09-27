@@ -253,9 +253,8 @@
             v-model="form.fireassayer"
             disabled="true"
           >
-            <option value="">--Select--</option>
-            <option value="fire assayer">Fire Assayer User</option>
-          </select>
+          <option v-for="fireassayer in fireassayers" :key="fireassayer.id" :value="fireassayer.name">{{fireassayer.name}}</option>
+         </select>
         </div>
       </div>
       <div class="col-lg-4">
@@ -317,8 +316,13 @@
             v-model="this.form.measuredby"
             disabled="true"
           >
-            <option value="">--Select--</option>
-            <option value="User">User</option>
+          <option
+              v-for="analyst in analysts"
+              :key="analyst.id"
+              :value="analyst.name"
+            >
+              {{ analyst.name }}
+            </option>
           </select>
         </div>
 
@@ -331,8 +335,13 @@
             v-model="this.form.analyzedby"
             disabled="true"
           >
-            <option value="">--Select--</option>
-            <option value="User">User</option>
+          <option
+              v-for="analyst in analysts"
+              :key="analyst.id"
+              :value="analyst.name"
+            >
+              {{ analyst.name }}
+            </option>
           </select>
         </div>
       </div>
@@ -443,6 +452,8 @@ export default {
       errors_exist: false,
       errors: {},
       isApproved: this.worksheet.isApproved,
+      fireassayers : [],
+      analysts: [],
       form: {
         id: this.worksheet.id,
         labbatch: this.worksheet.labbatch,
@@ -471,6 +482,8 @@ export default {
     };
   },
   created() {
+    this.fetchFireAssayer();
+    this.fetchAnalyst();
     this.fetchItems();
     this.loading = false;
   },
@@ -517,6 +530,19 @@ export default {
         this.errors_exist = true;
         this.errors = res.data.errors;
       }
+    },
+    async fetchFireAssayer() {
+      const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
+
+      this.fireassayers = res.data;
+    },
+    async fetchAnalyst() {
+      const res = await this.getDataFromDB(
+        "get",
+        "/qaanalysts/getAnalystActive"
+      );
+
+      this.analysts = res.data;
     },
   },
 };

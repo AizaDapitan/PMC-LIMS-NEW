@@ -37,6 +37,19 @@ app.component(
     "login-component",
     require("./components/auth/login.vue").default
 );
+app.component(
+    "adminlogin-component",
+    require("./components/auth/adminlogin.vue").default
+);
+app.component(
+    "change_password-component",
+    require("./components/auth/change_password.vue").default
+);
+app.component(
+    "forgot_password-component",
+    require("./components/auth/forgot_password.vue").default
+);
+
 
 app.component(
     "create_role-component",
@@ -275,6 +288,10 @@ app.component(
     "audit_logs-component",
     require("./components/report/audit_logs.vue").default
 );
+app.component(
+    "error_logs-component",
+    require("./components/report/error_logs.vue").default
+);
 
 app.component(
     "index_application-component",
@@ -287,6 +304,71 @@ app.component(
 app.component(
     "edit_application-component",
     require("./components/application/edit_application.vue").default
+);
+
+app.component(
+    "index_supervisor-component",
+    require("./components/supervisor/index_supervisor.vue").default
+);
+app.component(
+    "create_supervisor-component",
+    require("./components/supervisor/create_supervisor.vue").default
+);
+app.component(
+    "edit_supervisor-component",
+    require("./components/supervisor/edit_supervisor.vue").default
+);
+
+app.component(
+    "index_fireassayer-component",
+    require("./components/fireassayer/index_fireassayer.vue").default
+);
+app.component(
+    "create_fireassayer-component",
+    require("./components/fireassayer/create_fireassayer.vue").default
+);
+app.component(
+    "edit_fireassayer-component",
+    require("./components/fireassayer/edit_fireassayer.vue").default
+);
+
+app.component(
+    "index_assistant-component",
+    require("./components/assistantofficer/index_assistant.vue").default
+);
+app.component(
+    "create_assistant-component",
+    require("./components/assistantofficer/create_assistant.vue").default
+);
+app.component(
+    "edit_assistant-component",
+    require("./components/assistantofficer/edit_assistant.vue").default
+);
+
+app.component(
+    "index_chemist-component",
+    require("./components/chiefchemist/index_chemist.vue").default
+);
+app.component(
+    "create_chemist-component",
+    require("./components/chiefchemist/create_chemist.vue").default
+);
+app.component(
+    "edit_chemist-component",
+    require("./components/chiefchemist/edit_chemist.vue").default
+);
+
+app.component(
+    "index_qaanalyst-component",
+    require("./components/qaanalyst/index_qaanalyst.vue").default
+);
+app.component(
+    "create_qaanalyst-component",
+    require("./components/qaanalyst/create_qaanalyst.vue").default
+);
+app.component(
+    "edit_qaanalyst-component",
+    require("./components/qaanalyst/edit_qaanalyst.vue").default
 );
 
 app.component("DataTable", DataTable);

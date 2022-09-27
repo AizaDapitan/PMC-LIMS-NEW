@@ -4,6 +4,8 @@ use App\Http\Controllers\AccessRightsController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AssayerController;
+use App\Http\Controllers\AssistantQaOfficerController;
+use App\Http\Controllers\ChiefChemistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PermissionController;
@@ -11,9 +13,12 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DeptUserController;
 use App\Http\Controllers\DeptOfficerController;
 use App\Http\Controllers\DigesterController;
+use App\Http\Controllers\FireAssayerController;
 use App\Http\Controllers\OfficerController;
+use App\Http\Controllers\QAAnalystController;
 use App\Http\Controllers\QAQCRecieverController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TransmittalItemController;
 use App\Http\Controllers\UserController;
 use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector;
@@ -31,10 +36,15 @@ use Symfony\Component\HttpKernel\DataCollector\RouterDataCollector;
 
 Route::get('/', [LoginController::class, 'index'])->name("login");
 Route::post('auth/login', [LoginController::class, 'login'])->name("auth.login");
-Route::post('auth/adminlogin', [LoginController::class, 'login'])->name("auth.adminlogin");
+Route::get('auth/adminlogin', [LoginController::class, 'adminIndex'])->name("auth.adminlogin");
+Route::post('auth/adminSubmit', [LoginController::class, 'adminSubmit'])->name("auth.adminSubmit");
+Route::get('auth/forgot_password', [LoginController::class, 'forgot_password'])->name("auth.forgot_password");
+Route::post('auth/sendRequest', [LoginController::class, 'sendRequest'])->name("auth.sendRequest");
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::post('auth/updatePassword', [LoginController::class, 'updatePassword'])->name("auth.updatePassword");
+    Route::get('auth/change_password', [LoginController::class, 'change_password'])->name("auth.change_password");
     Route::get('logout', [LoginController::class, 'logout'])->name("logout");
 
     // Dept User Controller
@@ -249,6 +259,8 @@ Route::middleware(['auth'])->group(function () {
         function () {
             Route::get('/audit-logs', [ReportController::class, 'auditLogs'])->name("reports.auditLogs");
             Route::post('/getAuditLogs', [ReportController::class, 'getAuditLogs'])->name("reports.getAuditLogs");
+            Route::get('/error-logs', [ReportController::class, 'errorLogs'])->name("reports.errorLogs");
+            Route::post('/getErrorLogs', [ReportController::class, 'getErrorLogs'])->name("reports.getErrorLogs");
         }
     );
     // Application Controller
@@ -267,6 +279,70 @@ Route::middleware(['auth'])->group(function () {
             Route::post('systemUp', [ApplicationController::class, 'systemUp'])->name('applications.systemUp');
             Route::post('reindex', [ApplicationController::class, 'reindex'])->name('applications.reindex');
             Route::get('systemDown_auto', [ApplicationController::class, 'systemDown_auto'])->name('applications.systemDown_auto');
+        }
+    );
+     // Supervisor Controller
+     Route::group(
+        ['prefix' => 'supervisors'],
+        function () {
+            Route::get('/dashboard', [SupervisorController::class, 'index'])->name("supervisors.index");
+            Route::get('/getSupervisor', [SupervisorController::class, 'getSupervisor'])->name("supervisors.getSupervisor");
+            Route::get('/create', [SupervisorController::class, 'create'])->name("supervisors.create");
+            Route::post('/store', [SupervisorController::class, 'store'])->name("supervisors.store");
+            Route::get('/edit/{id}', [SupervisorController::class, 'edit'])->name("supervisors.edit");
+            Route::post('/update', [SupervisorController::class, 'update'])->name("supervisors.update");
+            Route::get('/getSupervisorActive', [SupervisorController::class, 'getSupervisorActive'])->name("supervisors.getSupervisorActive");
+        }
+    );
+     // Fire Assayer Controller
+     Route::group(
+        ['prefix' => 'fireassayers'],
+        function () {
+            Route::get('/dashboard', [FireAssayerController::class, 'index'])->name("fireassayers.index");
+            Route::get('/getFireAssayer', [FireAssayerController::class, 'getFireAssayer'])->name("fireassayers.getFireAssayer");
+            Route::get('/create', [FireAssayerController::class, 'create'])->name("fireassayers.create");
+            Route::post('/store', [FireAssayerController::class, 'store'])->name("fireassayers.store");
+            Route::get('/edit/{id}', [FireAssayerController::class, 'edit'])->name("fireassayers.edit");
+            Route::post('/update', [FireAssayerController::class, 'update'])->name("fireassayers.update");
+            Route::get('/getFireAssayerActive', [FireAssayerController::class, 'getFireAssayerActive'])->name("fireassayers.getFireAssayerActive");
+        }
+    );
+     // Assistant QA Officer Controller
+     Route::group(
+        ['prefix' => 'assistantofficers'],
+        function () {
+            Route::get('/dashboard', [AssistantQaOfficerController::class, 'index'])->name("assistantofficers.index");
+            Route::get('/getAssistantOfficer', [AssistantQaOfficerController::class, 'getAssistantOfficer'])->name("assistantofficers.getAssistantOfficer");
+            Route::get('/create', [AssistantQaOfficerController::class, 'create'])->name("assistantofficers.create");
+            Route::post('/store', [AssistantQaOfficerController::class, 'store'])->name("assistantofficers.store");
+            Route::get('/edit/{id}', [AssistantQaOfficerController::class, 'edit'])->name("assistantofficers.edit");
+            Route::post('/update', [AssistantQaOfficerController::class, 'update'])->name("assistantofficers.update");
+        }
+    );
+    // Chief Chemist Controller
+    Route::group(
+        ['prefix' => ''],
+        function () {
+            Route::get('/dashboard', [ChiefChemistController::class, 'index'])->name("chiefchemists.index");
+            Route::get('/getChiefChemist', [ChiefChemistController::class, 'getChiefChemist'])->name("chiefchemists.getChiefChemist");
+            Route::get('/create', [ChiefChemistController::class, 'create'])->name("chiefchemists.create");
+            Route::post('/store', [ChiefChemistController::class, 'store'])->name("chiefchemists.store");
+            Route::get('/edit/{id}', [ChiefChemistController::class, 'edit'])->name("chiefchemists.edit");
+            Route::post('/update', [ChiefChemistController::class, 'update'])->name("chiefchemists.update");
+            Route::get('/getChiefChemistActive', [ChiefChemistController::class, 'getChiefChemistActive'])->name("chiefchemists.getChiefChemistActive");
+        }
+    );
+    // QA Analyst Controller
+    Route::group(
+        ['prefix' => 'qaanalysts'],
+        function () {
+            Route::get('/dashboard', [QAAnalystController::class, 'index'])->name("qaanalysts.index");
+            Route::get('/getAnalyst', [QAAnalystController::class, 'getAnalyst'])->name("qaanalysts.getAnalyst");
+            Route::get('/create', [QAAnalystController::class, 'create'])->name("qaanalysts.create");
+            Route::post('/store', [QAAnalystController::class, 'store'])->name("qaanalysts.store");
+            Route::get('/edit/{id}', [QAAnalystController::class, 'edit'])->name("qaanalysts.edit");
+            Route::post('/update', [QAAnalystController::class, 'update'])->name("qaanalysts.update");
+            Route::get('/getAnalystActive', [QAAnalystController::class, 'getAnalystActive'])->name("qaanalysts.getAnalystActive");
         }
     );
 });

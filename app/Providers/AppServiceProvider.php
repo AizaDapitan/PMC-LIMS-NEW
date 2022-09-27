@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
 
                 $from = now()->setTime(0, 0, 0)->toDateTimeString();
                 $to = now()->subDays(-5)->setTime(0, 0, 0)->toDateTimeString();
-                $schedule =  Application::whereBetween('scheduled_date', [$from, $to])->orderBy('scheduled_date', 'asc')->first();
+                $schedule =  Application::where('deleted_at', null)->whereBetween('scheduled_date', [$from, $to])->orderBy('scheduled_date', 'asc')->first();
                 $datetime = new DateTime();
                 $currentDateTime = new DateTime();
                 if ($schedule) {

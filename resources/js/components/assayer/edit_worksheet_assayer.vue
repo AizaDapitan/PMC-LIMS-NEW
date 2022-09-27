@@ -240,8 +240,7 @@
             name="fire-assayer"
             v-model="form.fireassayer"
           >
-            <option value="">--Select--</option>
-            <option value="fire assayer">Fire Assayer User</option>
+          <option v-for="fireassayer in fireassayers" :key="fireassayer.id" :value="fireassayer.name">{{fireassayer.name}}</option>
           </select>
         </div>
       </div>
@@ -398,6 +397,7 @@ export default {
       itemsList: [],
       errors_exist: false,
       errors: {},
+      fireassayers : [],
       form: {
         id: this.worksheet.id,
         labbatch: this.worksheet.labbatch,
@@ -421,6 +421,7 @@ export default {
   },
   created() {
     // console.log(this.worksheet);
+    this.fetchFireAssayer();
     this.fetchItems();
     this.loading = false;
   },
@@ -451,6 +452,11 @@ export default {
         this.form
       );
       this.items = res.data;
+    },
+    async fetchFireAssayer() {
+      const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
+
+      this.fireassayers = res.data;
     },
     async fetchItemsList() {
       const res = await this.callApiwParam(

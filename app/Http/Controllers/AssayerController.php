@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DeptuserTrans;
+use App\Models\FireAssayer;
 use App\Models\Transmittal;
 use App\Models\TransmittalItem;
 use App\Models\Worksheet;
@@ -326,5 +327,4 @@ class AssayerController extends Controller
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
-    
 }

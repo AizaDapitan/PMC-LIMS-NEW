@@ -103,10 +103,10 @@
           <ul>
             <li class="{{ (request()->is('officer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOfficer}}</span></a></li>
             <li class="{{ (request()->is('officer/posted*')) ? 'active' : '' }}"><a href="{{ route('officer.posted') }}"><span>Posted</span></a></li>
-          <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
+            <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
             <li class="{{ (request()->is('officer/unsaved*')) ? 'active' : '' }}"><a href="{{ route('officer.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsavedOfficer}}</span></a></li>
             <li class="{{ (request()->is('officer/Solutions-dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.solutions') }}"><span>Solutions Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $officerSolutions}}</span></a></li>
-           
+
           </ul>
         </li>
 
@@ -115,7 +115,7 @@
           <a href="#" class="nav-link"><i data-feather="users"></i> <span>User Maintenance</span></a>
           <ul>
             <li class="{{ (request()->is('users/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('users/create*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create New User</a></li>
+            <li class="{{ (request()->is('users/create*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create</a></li>
           </ul>
         </li>
         <li class="nav-item with-sub {{ (request()->is('roles/*')) ? 'active show' : '' }}">
@@ -129,7 +129,7 @@
           <a href="" class="nav-link"><i data-feather="users"></i> <span>Permissions</span></a>
           <ul>
             <li class="{{ (request()->is('permissions/dashboard*')) ? 'active' : '' }}"><a href="{{ route('permissions.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Add New</a></li>
+            <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">create</a></li>
           </ul>
         </li>
         <li class="nav-item {{ (request()->is('accessrights/user*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
@@ -138,10 +138,47 @@
           <a href="" class="nav-link"><i data-feather="file"></i> <span>Reports</span></a>
           <ul>
             <li class="{{ (request()->is('reports/audit-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.auditLogs') }}">User Action Monitoring</a></li>
-            <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Application Error Logs</a></li>
+            <li class="{{ (request()->is('reports/error-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.errorLogs') }}">Application Error Logs</a></li>
           </ul>
         </li>
         <li class="nav-item {{ (request()->is('applications/dashboard*')) ? 'active' : '' }}"><a href="{{ route('applications.index') }}" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>
+        <li class="nav-label mg-t-25">Master File</li>
+        <li class="nav-item with-sub {{ (request()->is('supervisors/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Shifting Supervisor</span></a>
+          <ul>
+            <li  class="{{ (request()->is('supervisors/dashboard*')) ? 'active' : '' }}"><a href="{{ route('supervisors.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('supervisors/create*')) ? 'active' : '' }}"><a href="{{ route('supervisors.create') }}">Create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item with-sub {{ (request()->is('fireassayers/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Fire Assayer</span></a>
+          <ul>
+            <li  class="{{ (request()->is('fireassayers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('fireassayers/create*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.create') }}">Create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item with-sub {{ (request()->is('assistantofficers/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Assistant QA Officer</span></a>
+          <ul>
+            <li  class="{{ (request()->is('assistantofficers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('assistantofficers/create*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.create') }}">Create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item with-sub {{ (request()->is('chiefchemists/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Chief Chemist</span></a>
+          <ul>
+            <li  class="{{ (request()->is('chiefchemists/dashboard*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('chiefchemists/create*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.create') }}">Create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item with-sub {{ (request()->is('qaanalysts/*')) ? 'active show' : '' }}">
+          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Analyst</span></a>
+          <ul>
+            <li  class="{{ (request()->is('qaanalysts/dashboard*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.index') }}">Dashboard</a></li>
+            <li class="{{ (request()->is('qaanalysts/create*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.create') }}">Create</a></li>
+          </ul>
+        </li>
+
       </ul>
     </div>
   </aside>
@@ -167,38 +204,39 @@
             <p class="tx-12 tx-color-03">{{ Auth::user()->role }}</p>
             <div class="dropdown-divider"></div>
 
-            <!-- <a href="account-settings.html" class="dropdown-item"><i data-feather="edit-3"></i> My Account Settings</a> -->
+            <a href="#" class="dropdown-item"><i data-feather="settings"></i> Account Settings</a>
+            <a href="{{ route('auth.change_password') }}" class="dropdown-item"><i data-feather="edit-3"></i>Change Password</a>
             <a href="{{ route('logout') }}" class="dropdown-item"><i data-feather="log-out"></i>Log Out</a>
           </div>
           <!-- dropdown-menu -->
         </div>
       </div>
-      
+
       <!-- dropdown -->
     </div><!-- content-header -->
     <notifications />
-    
+
     <div class="content-body py-5 px-4" id="app">
-    <div id="myModal1" class="modal">
-      <!-- Modal content -->
-      <div class="modal-content" id="content">
-        <span class="close" id="close">&times;</span>
-        <p style="font-size: 18px; font-weight:bold;">In exactly 1 hour the system will undergo maitenance! Please save your work!</p>
+      <div id="myModal1" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content" id="content">
+          <span class="close" id="close">&times;</span>
+          <p style="font-size: 18px; font-weight:bold;">In exactly 1 hour the system will undergo maitenance! Please save your work!</p>
+        </div>
       </div>
-    </div>
-    <div style="margin-top:-40px">
-      @if($reason)
-      <div class="alert alert-danger alert-dismissable">
-        <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button> -->
-        <span class="fa fa-exclamation"></span>
-        <label aria-labelledby="notifications" id="notifications">{{ $reason }} </label>
-        <label aria-labelledby="countdown" id="countdown" style="float:right; font-weight:bold">Time Remaining : </label>
-        <label aria-labelledby="datetime" id="datetime" style="display:block">Shutdown Date : {{ $scheduledate }} {{ $scheduletime}} </label>
+      <div style="margin-top:-40px">
+        @if($reason)
+        <div class="alert alert-danger alert-dismissable">
+          <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button> -->
+          <span class="fa fa-exclamation"></span>
+          <label aria-labelledby="notifications" id="notifications">{{ $reason }} </label>
+          <label aria-labelledby="countdown" id="countdown" style="float:right; font-weight:bold">Time Remaining : </label>
+          <label aria-labelledby="datetime" id="datetime" style="display:block">Shutdown Date : {{ $scheduledate }} {{ $scheduletime}} </label>
+        </div>
+        @else
+        <label aria-labelledby="countdown" id="countdown" style="display:none; font-weight:bold">Time Remaining : </label>
+        @endif
       </div>
-      @else
-      <label aria-labelledby="countdown" id="countdown" style="display:none; font-weight:bold">Time Remaining : </label>
-      @endif
-    </div>
       @yield('content')
     </div>
 
@@ -338,119 +376,118 @@
       };
     </script>
     <script>
-   
-    var modal = document.getElementById("myModal1");
-    var tday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    var tmonth = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var shown = 0;
-    var span = document.getElementById("close");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-      modal.style.display = "none";
-    }
-
-    function GetClock() {
-      var d = new Date();
-      var nday = d.getDay(),
-        nmonth = d.getMonth(),
-        ndate = d.getDate(),
-        nyear = d.getFullYear();
-      var nhour = d.getHours(),
-        nmin = d.getMinutes(),
-        nsec = d.getSeconds(),
-        ap;
-      var ohour = nhour + 1;
-      if (nhour <= 9) nhour = "0" + nhour;
-      if (nhour == 0) {
-        ap = " AM";
-        nhour = 12;
-      } else if (nhour < 12) {
-        ap = " AM";
-      } else if (nhour == 12) {
-        ap = " PM";
-      } else if (nhour > 12) {
-        ap = " PM";
-        nhour -= 12;
+      var modal = document.getElementById("myModal1");
+      var tday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      var tmonth = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      var shown = 0;
+      var span = document.getElementById("close");
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
       }
 
-      if (nmin <= 9) nmin = "0" + nmin;
-      if (nsec <= 9) nsec = "0" + nsec;
+      function GetClock() {
+        var d = new Date();
+        var nday = d.getDay(),
+          nmonth = d.getMonth(),
+          ndate = d.getDate(),
+          nyear = d.getFullYear();
+        var nhour = d.getHours(),
+          nmin = d.getMinutes(),
+          nsec = d.getSeconds(),
+          ap;
+        var ohour = nhour + 1;
+        if (nhour <= 9) nhour = "0" + nhour;
+        if (nhour == 0) {
+          ap = " AM";
+          nhour = 12;
+        } else if (nhour < 12) {
+          ap = " AM";
+        } else if (nhour == 12) {
+          ap = " PM";
+        } else if (nhour > 12) {
+          ap = " PM";
+          nhour -= 12;
+        }
 
-      var clocktext = "" + tday[nday] + ", " + tmonth[nmonth] + " " + ndate + ", " + nyear + " " + nhour + ":" + nmin + ":" + nsec + ap + "";
-      // document.getElementById('clockbox').innerHTML = clocktext;
-      var schedule = {!!json_encode($scheduledate) !!} + ' ' + {!!json_encode($scheduletime) !!};
-      // dt = dt.replace(':00.0000000','');
-      var mnth = nmonth + 1;
-      var dte = ndate;
-      if (mnth <= 9) mnth = "0" + mnth;
-      if (dte <= 9) dte = "0" + dte;
-      var curDateless1hour = nyear + '-' + mnth + '-' + dte + ' ' + ohour + ":" + nmin;
-      var curDate = nyear + '-' + mnth + '-' + dte + ' ' + (ohour - 1) + ":" + nmin;
-      // console.log(dt);
-      // console.log(dd2);
-      if (schedule == curDateless1hour && shown == 0) {
-        shown = 1;
-        //    alert("In exactly 1 hour the system will undergo maitenance! Please save your work.");
+        if (nmin <= 9) nmin = "0" + nmin;
+        if (nsec <= 9) nsec = "0" + nsec;
 
-        modal.style.display = "block";
-        return false;
+        var clocktext = "" + tday[nday] + ", " + tmonth[nmonth] + " " + ndate + ", " + nyear + " " + nhour + ":" + nmin + ":" + nsec + ap + "";
+        // document.getElementById('clockbox').innerHTML = clocktext;
+        var schedule = {!!json_encode($scheduledate) !!} + ' ' + {!!json_encode($scheduletime) !!};
+        // dt = dt.replace(':00.0000000','');
+        var mnth = nmonth + 1;
+        var dte = ndate;
+        if (mnth <= 9) mnth = "0" + mnth;
+        if (dte <= 9) dte = "0" + dte;
+        var curDateless1hour = nyear + '-' + mnth + '-' + dte + ' ' + ohour + ":" + nmin;
+        var curDate = nyear + '-' + mnth + '-' + dte + ' ' + (ohour - 1) + ":" + nmin;
+        // console.log(dt);
+        // console.log(dd2);
+        if (schedule == curDateless1hour && shown == 0) {
+          shown = 1;
+          //    alert("In exactly 1 hour the system will undergo maitenance! Please save your work.");
+
+          modal.style.display = "block";
+          return false;
+        }
+        if (schedule == curDate) {
+          $.ajax({
+            url: '{!! route('applications.systemDown_auto') !!}',
+            type: 'GET',
+            async: false,
+            success: function(response) {}
+          });
+        }
+        // console.log(schedule);
+        // console.log(curDate);
+        if (schedule > curDate) {
+          var TimeDiff = timeDiffCalc(new Date(schedule), new Date());
+        } else {
+          TimeDiff = "Maintenance is in progress!";
+        }
+
+        document.getElementById('countdown').innerHTML = "Time Remaining : " + TimeDiff;
       }
-      if (schedule == curDate) {
-        $.ajax({
-          url: '{!! route('applications.systemDown_auto') !!}',
-          type: 'GET',
-          async: false,
-          success: function(response) {}
-        });
+      GetClock();
+      setInterval(GetClock, 1000);
+
+      function timeDiffCalc(dateFuture, dateNow) {
+        // console.log(dateNow);
+        let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+        // calculate days
+        const days = Math.floor(diffInMilliSeconds / 86400);
+        diffInMilliSeconds -= days * 86400;
+
+        // calculate hours
+        const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
+        diffInMilliSeconds -= hours * 3600;
+
+        // calculate minutes
+        const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+        diffInMilliSeconds -= minutes * 60;
+
+        // calculate minutes
+        const seconds = Math.floor(diffInMilliSeconds);
+        diffInMilliSeconds -= seconds;
+        // if(seconds > 0){
+
+        let difference = '';
+        if (days > 0) {
+          difference += (days === 1) ? `${days} day, ` : `${days} days, `;
+        }
+
+        difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
+
+        difference += (minutes === 0 || hours === 1) ? `${minutes} minute, ` : `${minutes} minutes, `;
+
+        difference += (seconds === 0 || seconds === 1) ? `${seconds} seconds` : `${seconds} seconds`;
+
+        return difference;
+        // }
       }
-      // console.log(schedule);
-      // console.log(curDate);
-      if (schedule > curDate) {
-        var TimeDiff = timeDiffCalc(new Date(schedule), new Date());
-      } else {
-        TimeDiff = "Maintenance is in progress!";
-      }
-
-      document.getElementById('countdown').innerHTML = "Time Remaining : " + TimeDiff;
-    }
-    GetClock();
-    setInterval(GetClock, 1000);
-
-    function timeDiffCalc(dateFuture, dateNow) {
-      // console.log(dateNow);
-      let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
-      // calculate days
-      const days = Math.floor(diffInMilliSeconds / 86400);
-      diffInMilliSeconds -= days * 86400;
-
-      // calculate hours
-      const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
-      diffInMilliSeconds -= hours * 3600;
-
-      // calculate minutes
-      const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
-      diffInMilliSeconds -= minutes * 60;
-
-      // calculate minutes
-      const seconds = Math.floor(diffInMilliSeconds);
-      diffInMilliSeconds -= seconds;
-      // if(seconds > 0){
-
-      let difference = '';
-      if (days > 0) {
-        difference += (days === 1) ? `${days} day, ` : `${days} days, `;
-      }
-
-      difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
-
-      difference += (minutes === 0 || hours === 1) ? `${minutes} minute, ` : `${minutes} minutes, `;
-
-      difference += (seconds === 0 || seconds === 1) ? `${seconds} seconds` : `${seconds} seconds`;
-
-      return difference;
-      // }
-    }
-  </script>
+    </script>
 </body>
 
 </html>

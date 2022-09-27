@@ -39,6 +39,7 @@
                            </div>      -->
                  <button class="btn btn-primary tx-13 btn-uppercase" type="submit">Login</button>
                </form>
+              
                <div class="cms-footer mg-t-50">
                  <hr>
                  <p class="tx-gray-500 tx-10">Admin Portal v1.0 • Developed by WebFocus Solutions, Inc. 2022</p>
@@ -53,41 +54,41 @@
 <script  type="application/javascript">
 const env_Url = process.env.MIX_APP_URL;
 export default {
- name: "Login",
- data() {
-   return {
-     errors: [],
-     result: "",
-     forgot_password: this.$env_Url + "/auth/forgot_password",
-     input: {
-       username: "",
-       password: "",
-       passexpiration: 0,
-     },
-   };
- },
- methods: {
-   login: function (e) {
-     this.errors = [];
-     if (!this.input.username) {
-       this.errors.push("Username required!");
-     } else if (!this.input.password) {
-       this.errors.push("Password required!");
-     } else {
-       axios
-         .post(this.$env_Url + "/auth/login", this.input)
-         .then((response) => {
-           if (response.data.result == "Success") {
-             window.location.href = this.$env_Url + "/deptuser/dashboard";
-           } else {
-             this.errors.push("Invalid Credential or User is Inactive!");
-           }
-         })
-         .catch(function (error) {});
-     }
+  name: "Login",
+  data() {
+    return {
+      errors: [],
+      result: "",
+      forgot_password: this.$env_Url + "/auth/forgot_password",
+      input: {
+        username: "",
+        password: "",
+        passexpiration: 0,
+      },
+    };
+  },
+  methods: {
+    login: function (e) {
+      this.errors = [];
+      if (!this.input.username) {
+        this.errors.push("Username required!");
+      } else if (!this.input.password) {
+        this.errors.push("Password required!");
+      } else {
+        axios
+          .post(this.$env_Url + "/auth/adminSubmit", this.input)
+          .then((response) => {
+            if (response.data.result == "Success") {
+              window.location.href = this.$env_Url + "/applications/dashboard";
+            } else {
+              this.errors.push("Invalid Credential or User is Inactive!");
+            }
+          })
+          .catch(function (error) {});
+      }
 
-     e.preventDefault();
-   },
- },
+      e.preventDefault();
+    },
+  },
 };
 </script>
