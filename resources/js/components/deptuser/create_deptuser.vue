@@ -512,7 +512,6 @@ export default {
         "/deptuser/checkTransNo",
         this.form
       );
-
       if (res.data.length > 0) {
         var status = "Active";
         if (res.data[0]["isdeleted"] == 1) {
@@ -655,13 +654,14 @@ export default {
         },
       });
     },
+    
     editItem(data) {
       this.showDialog(data.data);
     },
     async autosave() {
       this.seconds = this.seconds + 1;
-      if (this.seconds == 30) {
-        if (this.form.transmittalno != "" || this.form.transmittalno != null) {
+      if (this.seconds == 60) {
+        if (this.form.transmittalno != "") {
           if (this.form.purpose == null) {
             this.form.purpose = "";
           }

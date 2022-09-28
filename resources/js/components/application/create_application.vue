@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     async save() {
-      const res = await this.submit("post", "/applications/update", this.form, {
+      const res = await this.submit("post", "/applications/store", this.form, {
         headers: {
           "Content-Type":
             "multipart/form-data; charset=utf-8; boundary=" +

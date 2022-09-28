@@ -289,7 +289,7 @@ class DeptUserController extends Controller
     }
     public function checkTransNo(Request $request)
     {
-        $transmittal = DeptuserTrans::where('transmittalno', $request->transmittalno)->get();
+        $transmittal = DeptuserTrans::where([['transmittalno', $request->transmittalno],['isSaved',1]])->get();
         // $exists = false;
         // if (count($transmittal) > 0) {
         //     $exists = true;

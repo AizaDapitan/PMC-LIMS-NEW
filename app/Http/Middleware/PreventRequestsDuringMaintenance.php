@@ -43,7 +43,8 @@ class PreventRequestsDuringMaintenance extends Middleware
     {
         if ($this->app->isDownForMaintenance() && !$this->isBackendRequest($request)) {
             $data = json_decode(file_get_contents($this->app->storagePath() . '/framework/down'), true);
-            throw new HttpException(503);
+            // throw new HttpException(503);
+            return redirect()->route('auth.adminlogin');
             // throw new MaintenanceModeException($data['time'], $data['retry'], $data['message']);
         }
         return $next($request);

@@ -321,7 +321,7 @@ Route::middleware(['auth'])->group(function () {
     );
     // Chief Chemist Controller
     Route::group(
-        ['prefix' => ''],
+        ['prefix' => 'chiefchemists'],
         function () {
             Route::get('/dashboard', [ChiefChemistController::class, 'index'])->name("chiefchemists.index");
             Route::get('/getChiefChemist', [ChiefChemistController::class, 'getChiefChemist'])->name("chiefchemists.getChiefChemist");

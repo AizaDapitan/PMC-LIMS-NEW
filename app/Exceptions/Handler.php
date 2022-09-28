@@ -41,7 +41,6 @@ class Handler extends ExceptionHandler
             //
         });
         $this->renderable(function (MaintenanceModeException $e, $request) {
-            dd($request);
             return redirect()->route('auth.adminLogin');
         });
     }

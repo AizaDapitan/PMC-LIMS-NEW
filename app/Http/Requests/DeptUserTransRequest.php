@@ -24,7 +24,7 @@ class DeptUserTransRequest extends FormRequest
     public function rules()
     {
         return [
-            'transmittalno' => 'required|max:255|unique:deptuser_trans,transmittalno',
+            'transmittalno' => 'required|max:255|unique:deptuser_trans,transmittalno,NULL,id,isSaved,1',
             'purpose' => 'required|max:255',
             'datesubmitted' => 'required',
             'timesubmitted' => 'required',

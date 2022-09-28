@@ -31,15 +31,11 @@
                    </div>
                    <input type="password" class="form-control" id="password" name="password" v-model="input.password" placeholder="•••••••">
                  </div>
-                 <!-- <div class="form-group">
-                               <button type="submit" class="btn btn-primary btn-sm">Login</button>
-                               &nbsp;
-                               <a :href="forgot_password" class="btn btn-info btn-sm">Forgot Password</a>
-                               
-                           </div>      -->
                  <button class="btn btn-primary tx-13 btn-uppercase" type="submit">Login</button>
                </form>
-              
+               <div class="form-actions">
+            <p class="text-center" style="color:#d32424;margin-top:50px;font-size:14px;font-weight:bold;">The System is in Maintenance Mode!</p>
+        </div>
                <div class="cms-footer mg-t-50">
                  <hr>
                  <p class="tx-gray-500 tx-10">Admin Portal v1.0 • Developed by WebFocus Solutions, Inc. 2022</p>
@@ -80,6 +76,8 @@ export default {
           .then((response) => {
             if (response.data.result == "Success") {
               window.location.href = this.$env_Url + "/applications/dashboard";
+            } else if (response.data.result == "Not Admin") {
+              this.errors.push("This page is for Admin only!");
             } else {
               this.errors.push("Invalid Credential or User is Inactive!");
             }

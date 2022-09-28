@@ -660,8 +660,8 @@
       },
       async autosave() {
         this.seconds = this.seconds + 1;
-        if (this.seconds == 30) {
-          if (this.form.transmittalno != "" || this.form.transmittalno != null) {
+        if (this.seconds == 60) {
+          if (this.form.transmittalno != "") {
             if (this.form.purpose == null) {
               this.form.purpose = "";
             }
@@ -679,7 +679,7 @@
             _.each(this.form, (value, key) => {
               form.append(key, value);
             });
-            const res = await this.submit("post", "/deptuser/autosave", form, {
+            const res = await this.submit("post", "/officer/autosave", form, {
               headers: {
                 "Content-Type":
                   "multipart/form-data; charset=utf-8; boundary=" +

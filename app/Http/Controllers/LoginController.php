@@ -137,7 +137,7 @@ class LoginController extends Controller
            }
            else
            {
-               abort(503);
+            return response()->json(['result' => 'Not Admin']);
            }
         } else {
             return response()->json(['result' => 'Failed']);

@@ -149,7 +149,7 @@ class OfficerController extends Controller
     }
     public function checkTransNo(Request $request)
     {
-        $transmittal = DeptuserTrans::where('transmittalno', $request->transmittalno)->get();
+        $transmittal = DeptuserTrans::where([['transmittalno', $request->transmittalno],['isSaved',1]])->get();
         return $transmittal;
     }
     public function store(DeptUserTransRequest $request)
@@ -177,7 +177,6 @@ class OfficerController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $filenametostore,
-                    'status' =>  $request->status,
                     'created_by' => auth()->user()->username,
                     'isSaved'   => 1,
                     'transType' => $request->transType,
