@@ -76,7 +76,7 @@ class UserController extends Controller
     public static function userList()
     {
 
-        $users = User::where('active', 1)->get();
+        $users = User::where('isActive', 1)->get();
 
         return json_encode($users);
     }

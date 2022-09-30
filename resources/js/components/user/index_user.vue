@@ -244,7 +244,6 @@ export default {
             "/users/activate",
             this.form
           );
-          console.log(res.status);
           if (res.status === 200) {
             this.amessage();
             this.fetchRecord();

@@ -437,7 +437,7 @@ export default {
 
       this.form.assreadingppm = 0;
       this.form.initialaggpt = 0;
-    } else if (this.dialogRef.data.transType == "Cut") {
+    } else if (this.dialogRef.data.transType == "Cut" || this.dialogRef.data.transType == "Bulk") {
       this.showauprill = true;
       this.showaugrade = true;
       this.showcclearance = true;
