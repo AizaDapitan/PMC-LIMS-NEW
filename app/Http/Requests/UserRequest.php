@@ -28,7 +28,8 @@ class UserRequest extends FormRequest
             'name' => 'required',
             'dept' => 'string|max:150',
             'role_id'   => 'required',
-            'assigned_module' => 'required'
+            'assigned_module' => 'required',
+            'section' => 'required',
         ];
     }
 }   

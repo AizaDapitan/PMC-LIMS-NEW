@@ -109,6 +109,12 @@
                 style="min-width: 13rem"
               ></Column>
               <Column
+                field="section_desc"
+                header="Section"
+                :sortable="true"
+                style="min-width: 13rem"
+              ></Column>
+              <Column
                 field="role"
                 header="Role"
                 :sortable="true"

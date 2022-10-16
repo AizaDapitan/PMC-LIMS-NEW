@@ -57,14 +57,14 @@ class DeptUserController extends Controller
 
     public function getDeptUsers()
     {
-        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1]])->orderBy('datesubmitted', 'desc')->get();
+        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])->orderBy('datesubmitted', 'desc')->get();
 
         return $deptusers;
     }
 
     public function deptusersList(DeptuserTrans $deptuser)
     {
-        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1], ['transcode', 1]])->get();
+        $deptusers = $deptuser->where([['active', 1], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])->get();
         return $deptusers;
     }
     public function create()
@@ -100,10 +100,9 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $filenametostore,
-                    'created_by' => auth()->user()->username,
                     'isSaved'   => 1,
                     'transType' => $request->transType,
-                    'transcode' => 1
+                    'transcode' => 1,
                 ];
                 $deptuserTrans->update($data);
             } else {
@@ -121,7 +120,8 @@ class DeptUserController extends Controller
                     'created_by' => auth()->user()->username,
                     'isSaved'   => 1,
                     'transType' => $request->transType,
-                    'transcode' => 1
+                    'transcode' => 1,
+                    'section'   => auth()->user()->section
                 ]);
             }
             TransmittalItem::where('transmittalno', $request->transmittalno)->update(['source' => $request->source]);
@@ -180,7 +180,6 @@ class DeptUserController extends Controller
                 'email_address' => $request->email_address,
                 'source' =>  $request->source,
                 'cocFile' => $request->hasFile('cocFile') ? $filenametostore : $deptuserTrans->cocFile,
-                'created_by' => auth()->user()->username,
                 'isSaved'   => 1,
                 'transType' => $request->transType,
             ];
@@ -245,8 +244,7 @@ class DeptUserController extends Controller
                     'email_address' => $request->email_address,
                     'source' =>  $request->source,
                     'cocFile' => $request->hasFile('cocFile') ? $filenametostore : $deptuserTrans->cocFile,
-                    'transType' => $request->transType,
-                    'created_by' => auth()->user()->username,
+                    'transType' => $request->transType
                 ];
                 $deptuserTrans->update($data);
                 return response()->json(['id' => $deptuserTrans->id]);
@@ -264,7 +262,8 @@ class DeptUserController extends Controller
                     'cocFile' => $filenametostore,
                     'transType' => $request->transType,
                     'created_by' => auth()->user()->username,
-                    'transcode' => 1
+                    'transcode' => 1,
+                    'section'   => auth()->user()->section
                 ];
                 $transmittal = DeptuserTrans::create($data);
                 return response()->json(['id' => $transmittal->id]);

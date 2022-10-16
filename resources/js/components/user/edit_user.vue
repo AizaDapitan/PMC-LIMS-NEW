@@ -76,7 +76,6 @@
             id="dept"
             name="dept"
             v-model="form.dept"
-            disabled
           />
         </div>
         <div class="form-group">
@@ -105,7 +104,23 @@
             disabled
           />
         </div>
-
+        <div class="form-group">
+          <label for="section"
+            >Section<span class="text-danger" aria-required="true">
+              *
+            </span></label
+          >
+          <select
+            class="custom-select tx-base"
+            id="section"
+            name="section"
+            v-model="form.section"
+          >
+            <option v-for="section in sections" :key="section.id" :value="section.id">
+              {{ section.name }}
+            </option>
+          </select>
+        </div>
         <div class="form-group">
           <label for="role"
             >Role<span class="text-danger" aria-required="true">
@@ -170,6 +185,7 @@ export default {
   data() {
     return {
       roles: [],
+      sections: [],
       employees: [],
       loading: false,
       success: "",
@@ -187,6 +203,7 @@ export default {
         email: this.user.email,
         id: this.user.id,
         assigned_module: this.user.assigned_module,
+        section: this.user.section
       },
     };
   },
@@ -195,8 +212,13 @@ export default {
   },
   mounted() {
     this.fetchRoles();
+    this.fetchSections();
   },
   methods: {
+    async fetchSections() {
+      const res = await this.getDataFromDB("get", "/users/getSections");
+      this.sections = res.data;
+    },
     async fetchRoles() {
       const res = await this.getDataFromDB("get", "/roles/getRoles");
       this.roles = res.data;

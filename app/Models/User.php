@@ -22,10 +22,10 @@ class User extends Authenticatable implements AuditableContract, UserResolver
      * @var array<int, string>
      */
     protected $fillable = [
-        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role',  'email', 'remember_token', 'assigned_module'
+        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role',  'email', 'remember_token', 'assigned_module', 'section'
     ];
     protected $auditInclude = [
-        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role', 'email', 'assigned_module'
+        'username', 'password', 'name', 'dept', 'isActive',  'role_id', 'role', 'email', 'assigned_module', 'section'
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -36,8 +36,8 @@ class User extends Authenticatable implements AuditableContract, UserResolver
         'password',
         'remember_token',
     ];
-    // protected $attributes = ['appRoleDesc'];
-    protected $appends = ['status'];
+    // protected $attributes = ['section_desc'];
+    protected $appends = ['status', 'section_desc'];
 
     /**
      * The attributes that should be cast.
@@ -58,5 +58,16 @@ class User extends Authenticatable implements AuditableContract, UserResolver
     public static function resolve()
     {
         return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
+    }
+    public function getSectionDescAttribute()
+    {
+        $sectionDesc = "";
+
+        if ($this->section != null) {
+            $section = Section::find($this->section);
+            $sectionDesc = $section->name;
+        }
+
+        return $sectionDesc;
     }
 }

@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Services\accessRightService;
+use App\Services\AccessRightService;
 use Exception;
 
 class AccessRightsController extends Controller
 {
     protected $accessRightService;
 
-    public function __construct(accessRightService $accessRightService)
+    public function __construct(AccessRightService $accessRightService)
     {
         $this->accessRightService = $accessRightService;
     }

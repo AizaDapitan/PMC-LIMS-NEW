@@ -209,6 +209,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update', [UserController::class, 'update'])->name("users.update");
             Route::post('/deactivate', [UserController::class, 'deactivate'])->name("users.deactivate");
             Route::post('/activate', [UserController::class, 'activate'])->name("users.activate");
+            Route::get('/getSections', [UserController::class, 'getSections'])->name("roles.getSections");
         }
     );
     // Access Rights

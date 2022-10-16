@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\Permission;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Section;
 use App\Models\UsersPermissions;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -70,7 +71,7 @@ class UserController extends Controller
             ]
         ]);
         $employees = file_get_contents(config('app.api_path') . "hris-api-2.php", false, $streamContext);
-        //  $employees = file_get_contents("https://localhost/camm/api/hris-api-2.php", false, $streamContext);
+        // $employees = file_get_contents("https://localhost/camm/api/hris-api-2.php", false, $streamContext);
         return $employees;
     }
     public static function userList()
@@ -140,7 +141,8 @@ class UserController extends Controller
             'name' => 'required',
             'dept' => 'string|max:150',
             'role_id'   => 'required',
-            'assigned_module' => 'required'
+            'assigned_module' => 'required',
+            'section' => 'required'
         ]);
         try {
 
@@ -149,5 +151,10 @@ class UserController extends Controller
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);
         }
+    }
+    public function getSections()
+    {
+        $sections = Section::where('active', 1)->OrderBy('name')->get();
+        return $sections;
     }
 }

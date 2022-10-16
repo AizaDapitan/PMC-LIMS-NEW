@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         view()->composer(
             'layouts.app',
             function ($view) {
-                $forOffApproval = DeptuserTrans::where([['status', 'Pending'], ['isdeleted', false], ['isSaved', 1],['transcode',1]])->count();
+                $forOffApproval = DeptuserTrans::where([['status', 'Pending'], ['isdeleted', false], ['isSaved', 1],['transcode',1], ['section', auth()->user()->section]])->count();
                 $forReceive = DeptuserTrans::where([['status', 'Approved'], ['isReceived', false], ['transcode', 1]])->WhereNotIn('transType', ['Solids', 'Solutions'])->count();
                 $unsaved = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0], ['transcode', 1]])->count();
                 // $usertrans = DeptuserTrans::where([['isReceived', true], ['isdeleted', 0]])->get();

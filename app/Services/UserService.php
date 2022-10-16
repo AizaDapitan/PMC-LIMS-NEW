@@ -48,7 +48,8 @@ class UserService
             'dept' => $fields->dept,
             'isActive' => 1,
             'email' => $fields->email,
-            'assigned_module' => $fields->assigned_module
+            'assigned_module' => $fields->assigned_module,
+            'section' => $fields->section
         ];
         $user = $this->repository->create($data);
 
@@ -71,7 +72,8 @@ class UserService
             'role' => $roles->role_name,
             'dept' => $fields->dept,
             'email' => $fields->email,
-            'assigned_module' => $fields->assigned_module
+            'assigned_module' => $fields->assigned_module,
+            'section' => $fields->section
         ];
 
         $user = $this->repository->update($data, $fields->id);
