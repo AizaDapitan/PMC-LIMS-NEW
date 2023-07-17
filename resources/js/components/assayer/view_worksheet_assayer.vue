@@ -22,7 +22,7 @@
             </li>
           </ol>
         </nav>
-        <h4 class="mg-b-0 tx-spacing--1">View Worksheet - Assayer</h4>
+        <h4 class="mg-b-0 tx-spacing--1">View Worksheet - Assayers</h4>
       </div>
     </div>
     <div v-if="errors_exist" class="alert alert-danger" role="alert">

@@ -34,9 +34,25 @@ class DeptOfficerController extends Controller
         return view('deptofficer.index');
     }
 
-    public function getDeptOfficers()
+    public function getDeptOfficers(Request $request)
     {
-        $deptofficers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['section', auth()->user()->section]])->orderBy('datesubmitted', 'desc')->get();
+        $currentMonth = Carbon::now()->month;
+
+        $firstDay = Carbon::createFromDate(null, $currentMonth, 1);
+        $lastDay = Carbon::createFromDate(null, $currentMonth, $firstDay->daysInMonth);
+
+        $dateFrom = $firstDay->toDateString();
+        $dateTo = $lastDay->toDateString();
+        if (isset($request->dateFrom)) {
+            $dateFrom = $request->dateFrom;
+        }
+        if (isset($request->dateTo)) {
+            $dateTo = $request->dateTo;
+        }
+
+        $deptofficers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['section', auth()->user()->section]])
+            ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
+            ->orderBy('datesubmitted', 'desc')->get();
 
         return $deptofficers;
     }

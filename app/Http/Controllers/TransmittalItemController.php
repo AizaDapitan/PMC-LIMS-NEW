@@ -53,10 +53,10 @@ class TransmittalItemController extends Controller
                     $error =   ['Uploading Item' => ['Headers do not match: '  . implode(', ', $foundHeaders)]];
                     return response()->json(['errors' => $error], 500);
                 }
-
+                
                 while (($data = fgetcsv($open, 1000, ",")) !== FALSE) {
                     $count++;
-                    if ($count == 1) {
+                    if ($count == 0) {
                         continue;
                     }
                     $row = $count;
@@ -87,6 +87,7 @@ class TransmittalItemController extends Controller
                         return response()->json(['errors' => $validator->errors()], 500);
                     }
                     $items[] = $data;
+                    
                 }
 
                 fclose($open);
@@ -109,7 +110,12 @@ class TransmittalItemController extends Controller
     }
     public function getItems(Request $request)
     {
-        $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
+        $items = TransmittalItem::where([['isdeleted', 0], ['isAssayed', 0], ['transmittalno', $request->transmittalno]])->get();
+        $items->transform(function ($item) {
+            $item->samplewtvolume = intval($item->samplewtvolume);
+            return $item;
+        });
+        
         return  $items;
     }
     public function store(Request $request)
@@ -275,7 +281,36 @@ class TransmittalItemController extends Controller
     }
     public function getWorksheetItems(Request $request)
     {
-        $items = TransmittalItem::where('labbatch', $request->labbatch)->OrderBy('sampleno')->get();
-        return  $items;
+        $items = [];
+
+        if ($request->reqfrom === "edit_analyst" || $request->reqfrom === "view_analyst") {
+            $items = TransmittalItem::where('labbatch', $request->labbatch)
+                ->where('reassayed', 0)
+                ->orderBy('sampleno')
+                ->get();
+        } else {
+            $items = TransmittalItem::where('labbatch', $request->labbatch)
+                ->orderBy('sampleno')
+                ->get();
+        }
+
+        $items->transform(function ($item) {
+            $item->samplewtgrams = intval($item->samplewtgrams);
+            $item->fluxg = intval($item->fluxg);
+            $item->flourg = intval($item->flourg);
+            $item->niterg = intval($item->niterg);
+            $item->leadg = intval($item->leadg);
+            $item->silicang = intval($item->silicang);
+
+            $item->auprillmg = intval($item->auprillmg) != 0 ? intval($item->auprillmg) : '';
+            $item->augradegpt = intval($item->augradegpt) != 0 ? intval($item->augradegpt) : '';
+            $item->assreadingppm = intval($item->assreadingppm) != 0 ? intval($item->assreadingppm) : '';
+            $item->agdoremg = intval($item->agdoremg) != 0 ? intval($item->agdoremg) : '';
+            $item->initialaggpt = intval($item->initialaggpt) != 0 ? intval($item->initialaggpt) : '';
+            $item->inquartmg = intval($item->inquartmg) != 0 ? intval($item->inquartmg) : '';
+            return $item;
+        });
+        return $items;
     }
+
 }

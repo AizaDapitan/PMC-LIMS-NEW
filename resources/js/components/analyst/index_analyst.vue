@@ -234,6 +234,9 @@ export default {
       deleteMsg: "Delete Worksheet",
       transIds: null,
       isDisabled: false,
+      form: {
+        reqfrom: "index_analyst",
+      }
     };
   },
   created() {

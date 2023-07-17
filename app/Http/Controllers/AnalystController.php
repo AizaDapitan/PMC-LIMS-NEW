@@ -86,9 +86,15 @@ class AnalystController extends Controller
         }
         return view('analyst.transmittal');
     }
-    public function getTransmittal()
+    public function getTransmittal(Request $request)
     {
+        $currentMonth = Carbon::now()->month;
+
+        $dateFrom = $request->dateFrom ?? Carbon::createFromDate(null, $currentMonth, 1)->toDateString();
+        $dateTo = $request->dateTo ?? Carbon::createFromDate(null, $currentMonth, Carbon::createFromDate(null, $currentMonth, 1)->daysInMonth)->toDateString();
+
         $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transType', 'Solutions']])
+            ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
             ->orderBy('transmittalno', 'asc')->get();
 
         return $transmittal;
@@ -156,11 +162,11 @@ class AnalystController extends Controller
         try {
             $item = TransmittalItem::find($request->id);
             $data = [
-                'labbatch' => NULL,
+                //'labbatch' => NULL,
                 'reassayed' => 1,
                 'reaasyedby' => auth()->user()->username,
-                'isAssayed' => 0,
-                'assayedby' => NULL,
+                //'isAssayed' => 0,
+                //'assayedby' => NULL,
 
             ];
             $item->update($data);

@@ -55,9 +55,25 @@ class DeptUserController extends Controller
         }
     }
 
-    public function getDeptUsers()
+    public function getDeptUsers(Request $request)
     {
-        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])->orderBy('datesubmitted', 'desc')->get();
+        $currentMonth = Carbon::now()->month;
+
+        $firstDay = Carbon::createFromDate(null, $currentMonth, 1);
+        $lastDay = Carbon::createFromDate(null, $currentMonth, $firstDay->daysInMonth);
+
+        $dateFrom = $firstDay->toDateString();
+        $dateTo = $lastDay->toDateString();
+        if (isset($request->dateFrom)) {
+            $dateFrom = $request->dateFrom;
+        }
+        if (isset($request->dateTo)) {
+            $dateTo = $request->dateTo;
+        }
+
+        $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])
+            ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
+            ->orderBy('datesubmitted', 'desc')->get();
 
         return $deptusers;
     }

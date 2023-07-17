@@ -361,6 +361,10 @@
             v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
+            editMode="row"
+            dataKey="id"
+            v-model:editingRows="editingRows"
+            @row-edit-save="onRowEditSave"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
@@ -377,39 +381,138 @@
               header="Source"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)"></Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
+              </template>
+            </Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
             <Column field="transmittalno" header="Transmittal No."></Column>
-            <Column field="fluxg" header="Flux (Grams)"></Column>
-            <Column field="flourg" header="Flour (Grams)"></Column>
-            <Column field="niterg" header="Niter (Grams)"></Column>
-            <Column field="leadg" header="Lead (Grams)"></Column>
-            <Column field="silicang" header="Silican (Grams)"></Column>
-            <Column field="auprillmg" header="Au, Prill(Mg)"></Column>
-            <Column field="augradegpt" header="Au, Grade(Gpt)"></Column>
-            <Column field="assreadingppm" header="ASS Reading, ppm"></Column>
-            <Column field="agdoremg" header="Ag, Dore(Mg)"></Column>
-            <Column field="initialaggpt" header="Initial Ag (Gpt)"></Column>
+            <Column field="fluxg" header="Flux (Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.fluxg ? parseInt(slotProps.data.fluxg) : '' }}
+              </template>
+            </Column>
+            <Column field="flourg" header="Flour (Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.flourg ? parseInt(slotProps.data.flourg) : '' }}
+              </template>
+            </Column>
+            <Column field="niterg" header="Niter (Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.niterg ? parseInt(slotProps.data.niterg) : '' }}
+              </template>
+            </Column>
+            <Column field="leadg" header="Lead (Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.leadg ? parseInt(slotProps.data.leadg) : '' }}
+              </template>
+            </Column>
+            <Column field="silicang" header="Silican (Grams)">
+              <template #body="slotProps">
+                {{ slotProps.data.silicang ? parseInt(slotProps.data.silicang) : '' }}
+              </template>
+            </Column>
+            <Column field="auprillmg" header="Au, Prill(Mg)">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="augradegpt" header="Au, Grade(Gpt)">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="assreadingppm" header="ASS Reading, ppm">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="agdoremg" header="Ag, Dore(Mg)">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="initialaggpt" header="Initial Ag (Gpt)">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="crusibleclearance" header="Crusible Clearance">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                  min="0"
+                  autofocus
+                />
+              </template></Column>
+            <Column field="inquartmg" header="For Inquart (Mg)">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="methodremarks" header="Remarks">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="trans_type" hidden="true"></Column>
             <Column
-              field="crusibleclearance"
-              header="Crusible Clearance"
-            ></Column>
-            <Column field="inquartmg" header="For Inquart (Mg)"></Column>
-            <Column field="methodremarks" header="Remarks"></Column>
+              :rowEditor="true"
+              style="width: 7%; min-width: 8rem"
+              bodyStyle="text-align:right"
+            >
+            </Column>
             <Column
               :exportable="false"
               style="min-width: 8rem"
               header="Actions"
             >
               <template #body="slotProps">
-                <Button
+                <!--<Button
                   v-bind:title="editMsg"
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
                   @click="editItem(slotProps)"
                   :id="'btn' + slotProps.data.id"
                   name="btnedit"
-                />
+                />-->
                 <Button
                   v-bind:title="reassayMsg"
                   icon="pi pi-refresh"
@@ -466,6 +569,7 @@ export default {
     return {
       dashboard: this.$env_Url + "/analyst/dashboard",
       loading: true,
+      editingRows: [],
       items: [],
       errors_exist: false,
       errors: {},
@@ -497,6 +601,7 @@ export default {
         micnocheckweights: this.worksheet.micnocheckweights,
         measuredby: this.worksheet.measuredby,
         analyzedby: this.worksheet.analyzedby,
+        reqfrom: "edit_analyst",
       },
     };
   },
@@ -569,6 +674,67 @@ export default {
         this.errors_exist = true;
         this.errors = res.data.errors;
       }
+    },
+    async onRowEditSave(event) {
+      let { newData, index } = event;
+      this.items[index] = newData;
+
+      if(newData.trans_type === 'Bulk' || newData.trans_type === 'Cut'){
+        newData.assreadingppm = 0;
+        newData.agdoremg = 0;
+        newData.initialaggpt = 0;
+        newData.inquartmg = 0;
+      }else if(newData.trans_type === 'Rock' || newData.trans_type === 'Mine Drill'){
+        newData.agdoremg = 0;
+        newData.initialaggpt = 0;
+        newData.crusibleclearance = "";
+        newData.inquartmg = 0;
+      }else if(newData.trans_type === 'Carbon'){
+        newData.auprillmg = 0;
+        newData.augradegpt = 0;
+        newData.assreadingppm = 0;
+        newData.inquartmg = 0;
+      }else if(newData.trans_type === 'Solids'){
+        newData.assreadingppm = 0;
+        newData.initialaggpt = 0;
+      }else if(newData.trans_type === 'Solutions'){
+        newData.auprillmg = 0;
+        newData.augradegpt = 0;
+        newData.assreadingppm = 0;
+        newData.agdoremg = 0;
+        newData.initialaggpt = 0;
+        newData.crusibleclearance = "";
+        newData.inquartmg = 0;
+      }
+
+      let itemForm = {
+        id: newData.id,
+        auprillmg: newData.auprillmg,
+        augradegpt: newData.augradegpt,
+        assreadingppm: newData.assreadingppm,
+        agdoremg: newData.agdoremg,
+        initialaggpt: newData.initialaggpt,
+        crusibleclearance: newData.crusibleclearance,
+        inquartmg: newData.inquartmg,
+        methodremarks: newData.methodremarks,
+        isAnalyst: true,
+      }
+      const res = await this.submit("post", "/transItem/update", itemForm, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+      
     },
     editItem(data) {
       this.showDialog(data.data);

@@ -458,6 +458,7 @@ export default {
         micnocheckweights: this.worksheet.micnocheckweights,
         measuredby: this.worksheet.measuredby,
         analyzedby: this.worksheet.analyzedby,
+        reqfrom: "view_analyst",
       },
     };
   },

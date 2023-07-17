@@ -50,7 +50,7 @@ class DeptuserTrans extends Model implements AuditableContract
     public function getIsupdatedAttribute()
     {
         if ($this->transType != 'Solutions') {
-            $items = TransmittalItem::where('transmittalno', $this->transmittalno)->get();
+            $items = TransmittalItem::where([['transmittalno', $this->transmittalno], ['isdeleted', '<>', '1']])->get();
             if (count($items) > 0) {
                 $count = 0;
                 foreach ($items as $item) {

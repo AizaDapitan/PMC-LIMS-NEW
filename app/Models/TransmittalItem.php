@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
+use App\Models\DeptuserTrans;
 use OwenIt\Auditing\Auditable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
 
 class TransmittalItem extends Model implements AuditableContract
 {
@@ -23,4 +24,11 @@ class TransmittalItem extends Model implements AuditableContract
         'samplewtgrams','fluxg','flourg','niterg','leadg','silicang','crusibleused','assayedby','assayed_at','isAssayed','auprillmg',
         'augradegpt','assreadingppm','agdoremg','initialaggpt','crusibleclearance','inquartmg','methodremarks','isDuplicate'
     ];
+
+    protected $appends = ["trans_type"];
+
+    public function getTransTypeAttribute(){
+        $transmittals = DeptuserTrans::where('transmittalno', $this->transmittalno)->pluck('transType')->implode(', ');
+        return $transmittals;
+    }
 }

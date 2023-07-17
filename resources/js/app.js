@@ -20,6 +20,7 @@ import Dropdown from "primevue/dropdown";
 import DynamicDialog from 'primevue/dynamicdialog';
 import Tooltip from 'primevue/tooltip';
 import Calendar from 'primevue/calendar';
+import InputText from 'primevue/inputtext';
 
 // import 'primeicons/primeicons.css';
 
@@ -381,6 +382,7 @@ app.component("ConfirmDialog", ConfirmDialog);
 app.component("DynamicDialog", DynamicDialog);
 app.component("Dropdown", Dropdown);
 app.component("Calendar", Calendar);
+app.component("InputText", InputText);
 
 app.mount("#app");
 

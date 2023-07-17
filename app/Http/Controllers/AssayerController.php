@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DeptuserTrans;
+use Exception;
+use Carbon\Carbon;
+use App\Models\Worksheet;
 use App\Models\FireAssayer;
 use App\Models\Transmittal;
-use App\Models\TransmittalItem;
-use App\Models\Worksheet;
-use Carbon\Carbon;
-use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\DeptuserTrans;
+use App\Models\TransmittalItem;
 use App\Services\AccessRightService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class AssayerController extends Controller
 {
@@ -28,9 +31,25 @@ class AssayerController extends Controller
         }
         return view('assayer.index');
     }
-    public function getTransmittal()
+    public function getTransmittal(Request $request)
     {
-        $transmittals = DeptuserTrans::where([['isdeleted', 0], ['isReceived', 1],['transType','<>','Solutions']])->orderBy('created_at', 'asc')->get();
+        $currentMonth = Carbon::now()->month;
+
+        $firstDay = Carbon::createFromDate(null, $currentMonth, 1);
+        $lastDay = Carbon::createFromDate(null, $currentMonth, $firstDay->daysInMonth);
+
+        $dateFrom = $firstDay->toDateString();
+        $dateTo = $lastDay->toDateString();
+        if (isset($request->dateFrom)) {
+            $dateFrom = $request->dateFrom;
+        }
+        if (isset($request->dateTo)) {
+            $dateTo = $request->dateTo;
+        }
+
+        $transmittals = DeptuserTrans::where([['isdeleted', 0], ['isReceived', 1],['transType','<>','Solutions']])
+            ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
+            ->orderBy('created_at', 'desc')->get();
         $transnos = [];
         foreach ($transmittals as $transmittal) {
             $count = 0;
@@ -110,6 +129,7 @@ class AssayerController extends Controller
             $itemdata = [
                 'labbatch' => $request->labbatch,
                 'isAssayed' => 1,
+                'reassayed' => 0,
                 'assayedby' => auth()->user()->username,
                 'assayed_at' => Carbon::now(),
             ];
@@ -132,7 +152,17 @@ class AssayerController extends Controller
         // $items = TransmittalItem::whereIn('transmittalno', $transids)->where(function($q){
         //     $q->where( 'isAssayed', 0)->orWhere('reAssayed',1);
         // })->Orwhere('labbatch', $labbatch)->get();
-        $items = TransmittalItem::whereIn('transmittalno', $transids)->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('sampleno')->get();
+        $items = TransmittalItem::whereIn('transmittalno', $transids)->where('isdeleted', '<>', '1')->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('sampleno')->get();
+        $items->transform(function ($item) {
+            $item->samplewtgrams = intval($item->samplewtgrams);
+            $item->fluxg = intval($item->fluxg);
+            $item->flourg = intval($item->flourg);
+            $item->niterg = intval($item->niterg);
+            $item->leadg = intval($item->leadg);
+            $item->silicang = intval($item->silicang);
+            return $item;
+        });
+
         return  $items;
     }
     public function worksheet()
@@ -143,11 +173,23 @@ class AssayerController extends Controller
         }
         return view('assayer.worksheet');
     }
-    public function getWorksheet()
+    public function getWorksheet(Request $request)
     {
-        $worksheet = Worksheet::where('isdeleted', 0)->orderBy('created_at', 'desc')->get();
+        $currentMonth = Carbon::now()->month;
+
+        $dateFrom = $request->dateFrom ?? Carbon::createFromDate(null, $currentMonth, 1)->toDateString();
+        $dateTo = $request->dateTo ?? Carbon::createFromDate(null, $currentMonth, Carbon::createFromDate(null, $currentMonth, 1)->daysInMonth)->toDateString();
+
+        $worksheet = Worksheet::where('isdeleted', 0)
+            ->when(!$request->reqfrom, function ($query) use ($dateFrom, $dateTo) {
+                return $query->whereBetween('dateshift', [$dateFrom, $dateTo]);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return $worksheet;
     }
+
     public function Edit($id)
     {
         $rolesPermissions = $this->accessRightService->hasPermissions("Assayer Worksheets");
@@ -161,6 +203,16 @@ class AssayerController extends Controller
     {
         // $transids = explode(',', $request->ids);
         $items = TransmittalItem::where('labbatch', $request->labbatch)->get();
+        $items->transform(function ($item) {
+            $item->samplewtvolume = intval($item->samplewtvolume);
+            $item->samplewtgrams = intval($item->samplewtgrams);
+            $item->fluxg = intval($item->fluxg);
+            $item->flourg = intval($item->flourg);
+            $item->niterg = intval($item->niterg);
+            $item->leadg = intval($item->leadg);
+            $item->silicang = intval($item->silicang);
+            return $item;
+        });
         return  $items;
     }
     public function update(Request $request)
@@ -205,6 +257,7 @@ class AssayerController extends Controller
             ];
 
             $worksheet->update($data);
+            TransmittalItem::where('labbatch', $request->labbatch)->update(['reassayed' => 0]);
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);
@@ -302,6 +355,7 @@ class AssayerController extends Controller
 
             TransmittalItem::create([
                 'sampleno' => $item->sampleno,
+                'samplewtvolume' => $item->samplewtvolume,
                 'samplewtgrams' => $item->samplewtgrams,
                 'fluxg' => $item->fluxg,
                 'flourg' =>  $item->flourg,
@@ -325,6 +379,165 @@ class AssayerController extends Controller
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' => $e->getMessage(), 500]);
+        }
+    }
+
+    public function downloadCSV(Request $request){
+
+        $labbatch = $request->labbatch;
+        if ($labbatch == "") {
+            $labbatch = "0";
+        }
+    
+        $transids = explode(',', $request->ids);
+        
+        //$items = TransmittalItem::whereIn('transmittalno', $transids)->where('isdeleted', '<>', '1')->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('sampleno')->get();
+    
+        $items = TransmittalItem::select('id', 'sampleno', 'description', 'source', 'transmittalno', 'samplewtgrams', 'fluxg', 'flourg', 'niterg', 'leadg', 'silicang', 'crusibleused')
+            ->whereIn('transmittalno', $transids)
+            ->where([['isdeleted', 0],['isAssayed', 0]])
+            ->Orwhere('labbatch', $labbatch)
+            ->OrderBy('sampleno')->get();
+    
+        $result = [['Item Id', 'Sample No', 'Description', 'Source', 'Transmittal No', 'Sample Wt. (Grams)', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Crusible Used']];
+        foreach ($items as $item) {
+            $result[] = [
+                $item->id,
+                $item->sampleno,
+                $item->description,
+                $item->source,
+                $item->transmittalno,
+                $item->samplewtgrams,
+                $item->fluxg,
+                $item->flourg,
+                $item->niterg,
+                $item->leadg,
+                $item->silicang,
+                $item->crusibleused
+            ];
+        }
+    
+        $filename = 'csv_' . Str::random(8) . '.csv';
+        $filePath = 'template/' . $filename;
+        $csvContent = '';
+    
+        foreach ($result as $row) {
+            $csvContent .= implode(',', $row) . "\n";
+        }
+    
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename=' . $filename);
+    }
+    public function uploadItems(Request $request)
+    {
+        $request->validate(['itemFile' => "required|mimes:csv,txt"]);
+
+        try {
+
+            $filenamewithextension = $request->file('itemFile')->getClientOriginalName();
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+
+            //get file extension
+            $extension = $request->file('itemFile')->getClientOriginalExtension();
+
+            //filename to store
+            $filenametostore = $filename . auth()->user()->id . '.' . $extension;
+
+            $request->file('itemFile')->storeAs(('public/items files/'), $filenametostore);
+
+            $items = [];
+
+            $count = 0;
+
+            $requiredHeaders = array('Item Id', 'Sample No', 'Description', 'Source', 'Transmittal No', 'Sample Wt. (Grams)', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Crusible Used'); //headers we expect
+
+            if (($open = fopen(storage_path() . "/app/public/items files/" . $filenametostore, "r")) !== FALSE) {
+
+                $firstLine = fgets($open); //get first line of csv file
+
+                $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+
+                if ($foundHeaders !== $requiredHeaders) {
+                    fclose($open);
+                    $error =   ['Uploading Item' => ['Headers do not match: '  . implode(', ', $foundHeaders)]];
+                    return response()->json(['errors' => $error], 500);
+                }
+                
+                while (($data = fgetcsv($open, 1000, ",")) !== FALSE) {
+                    $count++;
+                    if ($count == 0) {
+                        continue;
+                    }
+                    $row = $count;
+
+                    $validator = Validator::make(
+                        [
+                            'id' => $data[0],
+                            'samplewtgrams' => $data[5],
+                            'fluxg' => $data[6],
+                            'flourg' => $data[7],
+                            'niterg' => $data[8],
+                            'leadg' => $data[9],
+                            'silicang' => $data[10],
+                            'crusibleused' => $data[11],
+                        ],
+                        [
+                            'id' => 'required',
+                            'samplewtgrams' => 'required',
+                            'fluxg' => 'required',
+                            'flourg' => 'required',
+                            'niterg' => 'required',
+                            'leadg' => 'required',
+                            'silicang' => 'required',
+                            'crusibleused' => 'required',
+                        ],
+                        [
+                            'id.required' => 'Uploading Item: ID is required! Check csv file row # ' . $row,
+                            'samplewtgrams.required' => 'Uploading Item: Samplewtgrams is required! Check csv file row # ' . $row,
+                            'fluxg.required' => 'Uploading Item: Flux (Grams) is required! Check csv file row # ' . $row,
+                            'flourg.required' => 'Uploading Item: Flour (Grams) is required! Check csv file row # ' . $row,
+                            'niterg.required' => 'Uploading Item: Niter (Grams) is required! Check csv file row # ' . $row,
+                            'leadg.required' => 'Uploading Item: Lead (Grams) is required! Check csv file row # ' . $row,
+                            'silicang.required' => 'Uploading Item: Silican (Grams) is required! Check csv file row # ' . $row,
+                            'crusibleused.required' => 'Uploading Item: Crusible Used is required! Check csv file row # ' . $row,
+                        ]
+                    );
+                    // dd($validator->errors());
+                    if ($validator->fails()) {
+                        fclose($open);
+                        return response()->json(['errors' => $validator->errors()], 500);
+                    }
+                    $items[] = $data;
+                    
+                }
+
+                fclose($open);
+            }
+            foreach ($items as $item) {
+                $id = $item[0];
+                $samplewtgrams = $item[5];
+                $fluxg = $item[6];
+                $flourg = $item[7];
+                $niterg = $item[8];
+                $leadg = $item[9];
+                $silicang = $item[10];
+                $crusibleused = $item[11];
+                
+                TransmittalItem::where('id', $id)->update([
+                    'samplewtgrams' => $samplewtgrams,
+                    'fluxg' => $fluxg,
+                    'flourg' => $flourg,
+                    'niterg' => $niterg,
+                    'leadg' => $leadg,
+                    'silicang' => $silicang,
+                    'crusibleused' => $crusibleused
+                ]);
+            }
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
         }
     }
 }

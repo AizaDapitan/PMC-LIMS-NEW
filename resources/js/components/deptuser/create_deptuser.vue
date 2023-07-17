@@ -262,6 +262,7 @@
     </div>
     <div class="row row-xs">
       <div class="col-lg-6 d-flex justify-content-start">
+        <!--
         <button
           class="btn btn-primary tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
           @click="showDialog"
@@ -269,6 +270,7 @@
         >
           <i data-feather="plus" class="mg-r-5"></i> Add Item
         </button>
+        -->
         <a
           :href="this.templatePath + '/template/Item Template.csv'"
           class="btn btn-success tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
@@ -292,6 +294,10 @@
             v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
+            editMode="row"
+            dataKey="id"
+            v-model:editingRows="editingRows"
+            @row-edit-save="onRowEditSave"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
@@ -302,24 +308,65 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No."></Column>
-            <Column field="description" header="Description"></Column>
-            <Column field="elements" header="Elements"></Column>
-            <Column field="methodcode" header="Method Code"></Column>
-            <Column field="comments" header="Comments"></Column>
-
+            <Column field="sampleno" header="Sample No.">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="description" header="Description">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="elements" header="Elements">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="methodcode" header="Method Code">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="comments" header="Comments">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column
+              :rowEditor="true"
+              style="width: 7%; min-width: 8rem"
+              bodyStyle="text-align:right"
+            >
+            </Column>
             <Column
               :exportable="false"
               style="min-width: 8rem"
               header="Actions"
             >
               <template #body="slotProps">
-                <Button
+                <!--<Button
                   v-bind:title="edititem"
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
                   @click="editItem(slotProps)"
-                />
+                />-->
                 <Button
                   v-bind:title="deleteitem"
                   icon="pi pi-trash"
@@ -333,7 +380,59 @@
       </div>
     </div>
     <!-- row -->
-
+    <div class="col-lg-12" style="margin-top: 10px">
+      <div class="row row-sm">
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_sampleno" name="add_sampleno" placeholder="Sample No."
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_description" name="add_description" placeholder="Description"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_elements" name="add_elements" placeholder="Elements"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_methodcode" name="add_methodcode" placeholder="Method Code"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_comments" name="add_comments" placeholder="Comments"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <button
+              class="
+                btn btn-primary
+                tx-13
+                btn-uppercase
+                mr-2
+                mb-2
+                ml-lg-1
+                mr-lg-0
+              "
+              @click="addItem"
+              :disabled="disableUpload"
+            >
+              <i data-feather="plus" class="mg-r-5"></i> Add Item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <hr class="mg-t-30 mg-b-30" />
 
     <div class="row">
@@ -435,6 +534,7 @@ export default {
       dashboard: this.$env_Url + "/deptuser/dashboard",
       loading: true,
       disableUpload: true,
+      editingRows: [],
       items: [],
       itemFile: null,
       COCitemFile: null,
@@ -445,6 +545,7 @@ export default {
       seconds: 0,
       errors: {},
       transNoExists: false,
+      timed: '',
       form: {
         id: 0,
         transmittalno: "",
@@ -473,11 +574,14 @@ export default {
     var time = hour + ":" + minutes;
     today = mm + "/" + dd + "/" + yyyy;
 
+    this.timed = time;
     this.form.datesubmitted = today;
+    //this.form.date_needed = today
     this.form.timesubmitted = time;
   },
   mounted() {
     this.tempInsert();
+    this.tempChangePrio();
   },
   updated() {
     this.disableUpload = true;
@@ -654,7 +758,84 @@ export default {
         },
       });
     },
-    
+    async addItem(){
+      var error = "";
+      if (document.getElementById("add_sampleno").value == "") {
+        error = "Required Field: Sample No not found!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_description").value == "") {
+        error = "Required Field: Description is required!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_elements").value == "") {
+        error = "Required Field: Elements is required!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_methodcode").value == "") {
+        error = "Required Field: Method Code is required!";
+        this.singleermessage(error);
+      }
+
+      if (error == "") {
+        const obj = {
+          sampleno: document.getElementById("add_sampleno").value,
+          description: document.getElementById("add_description").value,
+          elements: document.getElementById("add_elements").value,
+          methodcode: document.getElementById("add_methodcode").value,
+          comments: document.getElementById("add_comments").value,
+          transmittalno: this.form.transmittalno,
+          source: this.form.source,
+        }
+        const res = await this.submit("post", "/transItem/store", obj, {
+          headers: {
+            "Content-Type":
+              "multipart/form-data; charset=utf-8; boundary=" +
+              Math.random().toString().substr(2),
+          },
+        });
+        if (res.status === 200) {
+          this.fetchItems();
+          document.getElementById("add_sampleno").value = "";
+          document.getElementById("add_description").value = "";
+          document.getElementById("add_elements").value = "";
+          document.getElementById("add_methodcode").value = "";
+          document.getElementById("add_comments").value = "";
+        } else {
+          this.errors_exist = true;
+          this.errors = res.data.errors;
+          // this.ermessage(res.data.errors);
+        }
+      }
+    },
+    async onRowEditSave(event) {
+      let { newData, index } = event;
+      this.items[index] = newData;
+
+      let itemForm = {
+        id: newData.id,
+        sampleno: newData.sampleno,
+        description: newData.description,
+        elements: newData.elements,
+        comments: newData.comments,
+        methodcode: newData.methodcode,
+        transmittalno: this.form.transmittalno,
+        source: this.form.source
+      }
+      const res = await this.submit("post", "/transItem/update", itemForm, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+      
+    },
     editItem(data) {
       this.showDialog(data.data);
     },
@@ -693,11 +874,33 @@ export default {
         this.seconds = 0;
       }
     },
+
+    async autoSetPrio(){
+      const dateA = new Date(this.form.datesubmitted+' '+this.timed);
+      const dateB = new Date(document.getElementById("date-needed").value+' '+this.timed);
+      const timeDiff = dateB - dateA;
+      const hoursDiff = timeDiff / (1000 * 60 * 60);
+      const roundedDiff = hoursDiff.toFixed(2);
+      if(parseInt(roundedDiff) <= 24){
+        this.form.priority = 'High'
+      }else if(parseInt(roundedDiff) > 24 && parseInt(roundedDiff) <= 48){
+        this.form.priority = 'Medium'
+      }else{
+        this.form.priority = 'Low'
+      }
+    }, 
+
     tempInsert: function () {
       setInterval(() => {
         this.autosave();
       }, 1000);
     },
+
+    tempChangePrio: function(){
+      setInterval(() => {
+        this.autoSetPrio()
+      }, 100);
+    }
   },
 };
 </script>
