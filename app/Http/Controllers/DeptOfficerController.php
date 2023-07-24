@@ -53,7 +53,14 @@ class DeptOfficerController extends Controller
         $deptofficers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['section', auth()->user()->section]])
             ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
             ->orderBy('datesubmitted', 'desc')->get();
-
+        
+        $deptofficers->transform(function ($item) {
+            // Transform the timesubmitted field to 12-hour format (2:56 PM)
+            $timestamp = strtotime($item->timesubmitted);
+            $item->timesubmitted = date('g:i A', $timestamp);
+        
+            return $item;
+        });
         return $deptofficers;
     }
 

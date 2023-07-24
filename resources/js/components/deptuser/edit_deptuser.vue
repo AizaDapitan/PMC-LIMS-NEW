@@ -305,7 +305,7 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No.">
+            <Column field="sampleno" header="Sample No." :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -314,7 +314,7 @@
                 />
               </template>
             </Column>
-            <Column field="description" header="Description">
+            <Column field="description" header="Description" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -322,7 +322,7 @@
                 />
               </template>
             </Column>
-            <Column field="elements" header="Elements">
+            <Column field="elements" header="Elements" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -330,7 +330,7 @@
                 />
               </template>
             </Column>
-            <Column field="methodcode" header="Method Code">
+            <Column field="methodcode" header="Method Code" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -338,7 +338,7 @@
                 />
               </template>
             </Column>
-            <Column field="comments" header="Comments">
+            <Column field="comments" header="Comments" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"

@@ -290,20 +290,21 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code"></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
             <Column
               field="source"
               header="Source"
+              :sortable="true"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)"></Column>
-            <Column field="crusibleused" header="Crusible Used"></Column>
-            <Column field="transmittalno" header="Transmittal No."></Column>
-            <Column field="fluxg" header="Flux (Grams)"></Column>
-            <Column field="flourg" header="Flour (Grams)"></Column>
-            <Column field="niterg" header="Niter (Grams)"></Column>
-            <Column field="leadg" header="Lead (Grams)"></Column>
-            <Column field="silicang" header="Silican (Grams)"></Column>
+            <Column field="samplewtvolume" header="Sample Wt.(Grams)" :sortable="true"></Column>
+            <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="fluxg" header="Flux (Grams)" :sortable="true"></Column>
+            <Column field="flourg" header="Flour (Grams)" :sortable="true"></Column>
+            <Column field="niterg" header="Niter (Grams)" :sortable="true"></Column>
+            <Column field="leadg" header="Lead (Grams)" :sortable="true"></Column>
+            <Column field="silicang" header="Silican (Grams)" :sortable="true"></Column>
           </DataTable>
         </div>
       </div>

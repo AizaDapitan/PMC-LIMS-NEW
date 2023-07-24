@@ -297,13 +297,14 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code"></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
             <Column
               field="source"
               header="Source"
+              :sortable="true"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtgrams" header="Sample Wt.(Grams)">
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -313,7 +314,7 @@
                 />
               </template>
             </Column>
-            <Column field="crusibleused" header="Crusible Used">
+            <Column field="crusibleused" header="Crusible Used" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -323,8 +324,8 @@
                 />
               </template>
             </Column>
-            <Column field="transmittalno" header="Transmittal No."></Column>
-            <Column field="fluxg" header="Flux (Grams)">
+            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="fluxg" header="Flux (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -334,7 +335,7 @@
                 />
               </template>
             </Column>
-            <Column field="flourg" header="Flour (Grams)">
+            <Column field="flourg" header="Flour (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -344,7 +345,7 @@
                 />
               </template>
             </Column>
-            <Column field="niterg" header="Niter (Grams)">
+            <Column field="niterg" header="Niter (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -354,7 +355,7 @@
                 />
               </template>
             </Column>
-            <Column field="leadg" header="Lead (Grams)">
+            <Column field="leadg" header="Lead (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -364,7 +365,7 @@
                 />
               </template>
             </Column>
-            <Column field="silicang" header="Silican (Grams)">
+            <Column field="silicang" header="Silican (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -374,7 +375,7 @@
                 />
               </template>
             </Column>
-            <Column field="reassayed" header="Is Reassayed?">
+            <Column field="reassayed" header="Is Reassayed?" :sortable="true">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
                   {{ slotProps.data.reassayed == 1 ? 'Yes' : '' }}

@@ -177,63 +177,105 @@ class AnalystController extends Controller
     }
     public function AnalyticalResult($data)
     {
-        $input = explode(',', $data);
+        $input = explode('*', $data);
         $transType = $input[2];
+        //dd($data);
         if ($input[2] == "Mine Drill") {
             $transType = "Minedrill";
         };
         $pdf = new \setasign\Fpdi\Fpdi('P');
-        // Reference the PDF you want to use (use relative path)
-        // DD(env('APP_URL') . '/template/certificate.pdf');
         $streamContext = stream_context_create([
             'ssl' => [
                 'verify_peer'      => false,
                 'verify_peer_name' => false
             ]
         ]);
-        // $filecontent = file_get_contents('https://localhost/camm/api/' . $transType . '.pdf', false, $streamContext);
         $filecontent = file_get_contents(config('app.api_path') . $transType . '.pdf', false, $streamContext);
         $pagecount = $pdf->setSourceFile(\setasign\Fpdi\PdfParser\StreamReader::createByString($filecontent));
-        // $pagecount = $pdf->setSourceFile("https://localhost/camm/api/certificate.pdf");
-        // Import the first page from the PDF and add to dynamic PDF
         $tpl = $pdf->importPage(1);
         $pdf->AddPage();
-        // Use the imported page as the template
         $pdf->useTemplate($tpl, 5, 0, 200);
-        // Set the default font to use
         $pdf->SetFont('Helvetica');
-        $pdf->SetFontSize('6'); // set font size
+        $pdf->SetFontSize('6');
+        
+        //ROCK
         if ($transType == "Rock") {
-            $pdf->SetXY(95, 247); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(94, 247);
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
-            $pdf->SetXY(142, 247); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+            $pdf->SetXY(162, 247);
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $yy = 67; $i = 1;
+
+            foreach($items as $item){
+                $pdf->SetXY(25, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $yy+=4.85; $i++;
+            }
+
+        // BULK
         } else if ($transType == "Bulk") {
-            $pdf->SetXY(89, 249); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(89, 249);
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
-            $pdf->SetXY(137, 249); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+            $pdf->SetXY(156, 249);
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
+
+            $pdf->SetXY(89, 35);
+            $pdf->Cell(50, 10, $input[3], 0, 0, 'L');
+
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $yy = 70; $i = 1;
+
+            foreach($items as $item){
+                $pdf->SetXY(10, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
+                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, 'LEVEL 5', 0, 0, 'L');
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
+                $yy+=5; $i++;
+            }
+
         } else if ($transType == "Carbon") {
-            $pdf->SetXY(44, 226); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(44, 226);
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
-            $pdf->SetXY(119, 226); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+            $pdf->SetXY(139, 226);
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
+
+            $items = TransmittalItem::where('labbatch', $input[3])->get();
+            $yy = 94; $i = 1;
+
+            foreach($items as $item){
+                $pdf->SetXY(20, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
+                $pdf->SetXY(27, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(138, $yy); $pdf->Cell(50, 10, $item->initialaggpt, 0, 0, 'L');
+                $pdf->SetXY(162, $yy); $pdf->Cell(50, 10, $item->agdoremg, 0, 0, 'L');
+                $yy+=4.3; $i++;
+            }
+
         } else if ($transType == "Minedrill") {
-            $pdf->SetXY(94, 247); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(94, 247); 
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); 
 
-            $pdf->SetXY(142, 247); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+            $pdf->SetXY(162, 247); 
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
+
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $yy = 67; $i = 1;
+
+            foreach($items as $item){
+                $pdf->SetXY(25, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $yy+=4.85; $i++;
+            }
 
         } else if ($transType == "Solids") {
-            $pdf->SetXY(49, 202); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(49, 202); 
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); 
 
-            $pdf->SetXY(124, 202); // set the position of the box
+            $pdf->SetXY(124, 202); 
             $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
 
         } else if ($transType == "Solutions") {
@@ -250,6 +292,9 @@ class AnalystController extends Controller
             $pdf->SetXY(137, 249); // set the position of the box
             $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
         }
-        $pdf->Output('' , $transType .'.pdf',false);
+
+        
+        $pdf->Output('' , $input[3]."_".$transType .'.pdf',false);
+
     }
 }

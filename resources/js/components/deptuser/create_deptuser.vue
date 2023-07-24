@@ -308,7 +308,7 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No.">
+            <Column field="sampleno" header="Sample No." :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -317,7 +317,7 @@
                 />
               </template>
             </Column>
-            <Column field="description" header="Description">
+            <Column field="description" header="Description" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -325,7 +325,7 @@
                 />
               </template>
             </Column>
-            <Column field="elements" header="Elements">
+            <Column field="elements" header="Elements" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -333,7 +333,7 @@
                 />
               </template>
             </Column>
-            <Column field="methodcode" header="Method Code">
+            <Column field="methodcode" header="Method Code" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -341,7 +341,7 @@
                 />
               </template>
             </Column>
-            <Column field="comments" header="Comments">
+            <Column field="comments" header="Comments" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -372,6 +372,7 @@
                   icon="pi pi-trash"
                   class="p-button-rounded p-button-warning mr-2"
                   @click="deleteItem(slotProps)"
+                  :disabled="!disableClick"
                 />
               </template>
             </Column>
@@ -531,6 +532,7 @@ import Button from "primevue/button";
 export default {
   data() {
     return {
+      disableClick: true,
       dashboard: this.$env_Url + "/deptuser/dashboard",
       loading: true,
       disableUpload: true,
@@ -670,6 +672,7 @@ export default {
       }
     },
     async saveTransmittal() {
+      this.disableClick = false;
       this.form.date_needed = document.getElementById("date-needed").value;
       this.form.datesubmitted = document.getElementById("date-submitted").value;
       this.cocFileLabel = this.form.transmittalno + "_" + this.cocFileLabel;
@@ -688,6 +691,7 @@ export default {
       if (res.status === 200) {
         window.location.href = this.$env_Url + "/deptuser/dashboard";
       } else {
+        this.disableClick = true;
         this.errors_exist = true;
         this.errors = res.data.errors;
         // this.ermessage(res.data.errors);

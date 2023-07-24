@@ -42,6 +42,14 @@ class QAQCRecieverController extends Controller
             ->WhereNotIn('transType',['Solids','Solutions'])
             ->orderBy('datesubmitted', 'desc')->get();
 
+        $transmittal->transform(function ($item) {
+            // Transform the timesubmitted field to 12-hour format (2:56 PM)
+            $timestamp = strtotime($item->timesubmitted);
+            $item->timesubmitted = date('g:i A', $timestamp);
+        
+            return $item;
+        });
+
         return $transmittal;
     }
     public function view($id)

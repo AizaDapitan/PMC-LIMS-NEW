@@ -375,45 +375,46 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code"></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
             <Column
               field="source"
               header="Source"
+              :sortable="true"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtgrams" header="Sample Wt.(Grams)">
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
               </template>
             </Column>
-            <Column field="crusibleused" header="Crusible Used"></Column>
-            <Column field="transmittalno" header="Transmittal No."></Column>
-            <Column field="fluxg" header="Flux (Grams)">
+            <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="fluxg" header="Flux (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.fluxg ? parseInt(slotProps.data.fluxg) : '' }}
               </template>
             </Column>
-            <Column field="flourg" header="Flour (Grams)">
+            <Column field="flourg" header="Flour (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.flourg ? parseInt(slotProps.data.flourg) : '' }}
               </template>
             </Column>
-            <Column field="niterg" header="Niter (Grams)">
+            <Column field="niterg" header="Niter (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.niterg ? parseInt(slotProps.data.niterg) : '' }}
               </template>
             </Column>
-            <Column field="leadg" header="Lead (Grams)">
+            <Column field="leadg" header="Lead (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.leadg ? parseInt(slotProps.data.leadg) : '' }}
               </template>
             </Column>
-            <Column field="silicang" header="Silican (Grams)">
+            <Column field="silicang" header="Silican (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.silicang ? parseInt(slotProps.data.silicang) : '' }}
               </template>
             </Column>
-            <Column field="auprillmg" header="Au, Prill(Mg)">
+            <Column field="auprillmg" header="Au, Prill(Mg)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -423,7 +424,7 @@
                 />
               </template>
             </Column>
-            <Column field="augradegpt" header="Au, Grade(Gpt)">
+            <Column field="augradegpt" header="Au, Grade(Gpt)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -433,7 +434,7 @@
                 />
               </template>
             </Column>
-            <Column field="assreadingppm" header="ASS Reading, ppm">
+            <Column field="assreadingppm" header="ASS Reading, ppm" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -443,7 +444,7 @@
                 />
               </template>
             </Column>
-            <Column field="agdoremg" header="Ag, Dore(Mg)">
+            <Column field="agdoremg" header="Ag, Dore(Mg)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -453,7 +454,7 @@
                 />
               </template>
             </Column>
-            <Column field="initialaggpt" header="Initial Ag (Gpt)">
+            <Column field="initialaggpt" header="Initial Ag (Gpt)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -463,7 +464,7 @@
                 />
               </template>
             </Column>
-            <Column field="crusibleclearance" header="Crusible Clearance">
+            <Column field="crusibleclearance" header="Crusible Clearance" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -472,7 +473,7 @@
                   autofocus
                 />
               </template></Column>
-            <Column field="inquartmg" header="For Inquart (Mg)">
+            <Column field="inquartmg" header="For Inquart (Mg)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -482,7 +483,7 @@
                 />
               </template>
             </Column>
-            <Column field="methodremarks" header="Remarks">
+            <Column field="methodremarks" header="Remarks" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"

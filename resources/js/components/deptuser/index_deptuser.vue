@@ -136,11 +136,7 @@
                 header="Time Submitted"
                 :sortable="true"
               >
-                <template #body="slotProps">
-                  <span>{{
-                    slotProps.data.timesubmitted.replace(":00.0000000", "")
-                  }}</span>
-                </template></Column
+              </Column
               >
               <Column
                 field="email_address"

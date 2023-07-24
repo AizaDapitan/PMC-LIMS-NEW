@@ -74,7 +74,13 @@ class DeptUserController extends Controller
         $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])
             ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
             ->orderBy('datesubmitted', 'desc')->get();
-
+        $deptusers->transform(function ($item) {
+            // Transform the timesubmitted field to 12-hour format (2:56 PM)
+            $timestamp = strtotime($item->timesubmitted);
+            $item->timesubmitted = date('g:i A', $timestamp);
+        
+            return $item;
+        });
         return $deptusers;
     }
 
@@ -299,7 +305,13 @@ class DeptUserController extends Controller
     public function getUnsaved()
     {
         $unsavedTrans = DeptuserTrans::where([['isSaved', 0], ['created_by', auth()->user()->username], ['isdeleted', 0], ['transcode', 1]])->orderBy('transmittalno', 'asc')->get();
-
+        $unsavedTrans->transform(function ($item) {
+            // Transform the timesubmitted field to 12-hour format (2:56 PM)
+            $timestamp = strtotime($item->timesubmitted);
+            $item->timesubmitted = date('g:i A', $timestamp);
+        
+            return $item;
+        });
         return $unsavedTrans;
     }
     public function checkTransNo(Request $request)
