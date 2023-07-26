@@ -43,8 +43,7 @@
             "
           >
             <label for="customFile" class="mg-r-10"
-              >Attached COC
-              <span class="text-danger" aria-required="true"> * </span></label
+              >Attached COC</label
             >
             <div class="custom-file mb-0 mb-lg-2">
               <input

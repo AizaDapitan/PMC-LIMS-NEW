@@ -33,7 +33,7 @@ class DeptUserTransRequest extends FormRequest
             'status' => 'required',
             'email_address' => 'required|email',
             'source' => 'required|max:255',
-            'cocFile' => 'required|mimes:pdf,png,docx,doc,jpg,jpeg,zip|max:5120',
+            //'cocFile' => 'required|mimes:pdf,png,docx,doc,jpg,jpeg,zip|max:5120',
         ];
     }
     public function messages()

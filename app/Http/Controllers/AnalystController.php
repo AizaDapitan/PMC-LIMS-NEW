@@ -6,6 +6,7 @@ use App\Models\DeptuserTrans;
 use App\Models\TransmittalItem;
 use App\Models\Worksheet;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Exception;
 use Illuminate\Http\Request;
 use App\Services\AccessRightService;
@@ -175,6 +176,132 @@ class AnalystController extends Controller
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
+
+    public function downloadCSV(Request $request){
+        $items = TransmittalItem::where('labbatch', $request->labbatch)
+            ->where('reassayed', 0)
+            ->orderBy('sampleno')
+            ->get();
+        $result = [['Item Id', 'Sample No', 'Transmittal No', 'Sample Wt. (Grams)', 'Crusible Used', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Au Prill (Mg)', 'Au Grade (Mg)', 'ASS Reading ppm', 'Ag Dore (Mg)', 'Initial Ag (Gpt)', 'Crucible Clearance', 'For Inquart (Mg)', 'Remarks']];
+        foreach ($items as $item) {
+            $result[] = [
+                $item->id, //0
+                $item->sampleno, //1
+                $item->transmittalno, //2
+                $item->samplewtgrams, //3
+                $item->crusibleused, //4
+                $item->fluxg, //5
+                $item->flourg, //6
+                $item->niterg, //7
+                $item->leadg, //8
+                $item->silicang, //9
+                $item->auprillmg, //10
+                $item->augradegpt, //11
+                $item->assreadingppm, //12
+                $item->agdoremg, //13
+                $item->initialaggpt, //14
+                $item->crusibleclearance, //15
+                $item->inquartmg, //16
+                $item->methodremarks //17
+            ];
+        }
+    
+        $filename = 'csv_' . Str::random(8) . '.csv';
+        $filePath = 'template/' . $filename;
+        $csvContent = '';
+    
+        foreach ($result as $row) {
+            $csvContent .= implode(',', $row) . "\n";
+        }
+    
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename=' . $filename);
+        
+        //return response()->json($result);
+    }
+
+    public function uploadItems(Request $request){
+        $request->validate(['itemFile' => "required|mimes:csv,txt"]);
+
+        try {
+            $filenamewithextension = $request->file('itemFile')->getClientOriginalName();
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+            $extension = $request->file('itemFile')->getClientOriginalExtension();
+
+            $filenametostore = $filename . auth()->user()->id . '.' . $extension;
+
+            $request->file('itemFile')->storeAs(('public/items files/'), $filenametostore);
+            $items = [];
+            $count = 0;
+
+            $requiredHeaders = array('Item Id', 'Sample No', 'Transmittal No', 'Sample Wt. (Grams)', 'Crusible Used', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Au Prill (Mg)', 'Au Grade (Mg)', 'ASS Reading ppm', 'Ag Dore (Mg)', 'Initial Ag (Gpt)', 'Crucible Clearance', 'For Inquart (Mg)', 'Remarks'); //headers we expect
+
+            if (($open = fopen(storage_path() . "/app/public/items files/" . $filenametostore, "r")) !== FALSE) {
+
+                $firstLine = fgets($open); //get first line of csv file
+
+                $foundHeaders = str_getcsv(trim($firstLine), ',', '"'); //parse to array
+
+                if ($foundHeaders !== $requiredHeaders) {
+                    fclose($open);
+                    $error =   ['Uploading Item' => ['Headers do not match: '  . implode(', ', $foundHeaders)]];
+                    return response()->json(['errors' => $error], 500);
+                }
+                
+                while (($data = fgetcsv($open, 1000, ",")) !== FALSE) {
+                    $count++;
+                    if ($count == 0) {
+                        continue;
+                    }
+                    $row = $count;
+                    $items[] = $data;
+                    
+                }
+
+                fclose($open);
+            }
+            foreach ($items as $item) {
+                $id = $item[0];
+                TransmittalItem::where('id', $id)->update($this->getUpdateFields($request->transType, $item));
+            }
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
+    }
+    
+    public function getUpdateFields($transType, $item)
+    {
+        switch ($transType) {
+            case "Rock":
+            case "Mine Drill":
+                return [
+                    "auprillmg" => $item[10],
+                    "augradegpt" => $item[11],
+                    "assreadingppm" => $item[12],
+                    "methodremarks" => $item[17]
+                ];
+            case "Carbon":
+                return [
+                    "agdoremg" => $item[13],
+                    "initialaggpt" => $item[14],
+                    "crusibleclearance" => $item[15],
+                    "methodremarks" => $item[17]
+                ];
+            case "Bulk":
+            case "Cut":
+                return [
+                    "auprillmg" => $item[10],
+                    "augradegpt" => $item[11],
+                    "crusibleclearance" => $item[15],
+                    "methodremarks" => $item[17]
+                ];
+            default:
+                return [];
+        }
+    }
+
     public function AnalyticalResult($data)
     {
         $input = explode('*', $data);
@@ -289,8 +416,8 @@ class AnalystController extends Controller
             $pdf->SetXY(89, 249); // set the position of the box
             $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
 
-            $pdf->SetXY(137, 249); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
+            $pdf->SetXY(156, 249); // set the position of the box
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L'); // add the text, align to Center of cell
         }
 
         

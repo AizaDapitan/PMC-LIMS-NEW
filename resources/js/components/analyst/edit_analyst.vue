@@ -346,6 +346,15 @@
 
     <div class="row row-xs">
       <div class="col-lg-12">
+        <button
+          @click="downloadCSV"
+          class="btn btn-success tx-13 btn-uppercase  mg-b-25"
+          :disabled="this.disableAdd"
+        >
+          <i data-feather="download" class="mg-r-5"></i> Download Item Template
+        </button>
+      </div>
+      <div class="col-lg-12">
         <div class="table-responsive-lg">
           <DataTable
             ref="dt"
@@ -530,6 +539,57 @@
     </div>
     <!-- row -->
     <hr class="mg-t-30 mg-b-30" />
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="d-lg-flex justify-content-lg-end">
+          <div
+            class="
+              form-group
+              d-flex
+              flex-column flex-lg-row
+              align-items-lg-center
+            "
+          >
+            <input type="hidden" v-model="form.itemFile" />
+            <label for="customFile" class="mg-r-10">Attached CSV</label>
+            <div class="custom-file mb-0 mb-lg-2">
+              <input
+                type="file"
+                class="custom-file-input"
+                id="customFile"
+                ref="file"
+                name="attached-csv"
+                v-on:change="onFileChange"
+                :disabled="disableAdd"
+                accept=".csv"
+              />
+              <label
+                class="custom-file-label"
+                for="customFile"
+                data-button-label="Browse"
+                >{{ fileLabel }}</label
+              >
+            </div>
+            <button
+              type="submit"
+              class="
+                btn btn-primary
+                tx-13
+                btn-uppercase
+                mr-2
+                mb-2
+                ml-lg-1
+                mr-lg-0
+              "
+              :disabled="disableAdd"
+              @click.prevent="uploadItem"
+            >
+              <i data-feather="upload" class="mg-r-5"></i> Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="row flex-column-reverse flex-lg-row">
       <div class="col-lg-6">
@@ -570,10 +630,12 @@ export default {
     return {
       dashboard: this.$env_Url + "/analyst/dashboard",
       loading: true,
+      fileLabel: "Choose File",
       editingRows: [],
       items: [],
       errors_exist: false,
       errors: {},
+      disableAdd: false,
       isApproved: this.worksheet.isApproved,
       editMsg: "Update Sample",
       reassayMsg: "Reassay",
@@ -602,6 +664,7 @@ export default {
         micnocheckweights: this.worksheet.micnocheckweights,
         measuredby: this.worksheet.measuredby,
         analyzedby: this.worksheet.analyzedby,
+        itemFile: null,
         reqfrom: "edit_analyst",
       },
     };
@@ -657,6 +720,10 @@ export default {
       const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
 
       this.fireassayers = res.data;
+    },
+    onFileChange(e) {
+      this.form.itemFile = this.$refs.file.files[0];
+      this.fileLabel = this.form.itemFile.name;
     },
     async saveWorksheet() {
       this.form.dateweighed = document.getElementById(
@@ -736,6 +803,43 @@ export default {
         // this.ermessage(res.data.errors);
       }
       
+    },
+    downloadCSV() {
+      axios.post('/analyst/download-csv', this.form, { responseType: 'blob' })
+        .then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'Labbatch_'+this.form.labbatch+'_.csv');
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          alert("Error: "+error)
+        });
+    },
+    async uploadItem() {
+      //this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
+      let form = new FormData();
+      form.append("itemFile", this.form.itemFile);
+      _.each(this.form, (value, key) => {
+        form.append(key, value);
+      });
+      const res = await this.submit("post", "/analyst/uploaditems", form, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
     },
     editItem(data) {
       this.showDialog(data.data);

@@ -100,14 +100,16 @@ class DeptUserController extends Controller
     public function store(DeptUserTransRequest $request)
     {
         try {
-            $filenamewithextension = $request->file('cocFile')->getClientOriginalName();
-            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
-            $extension = $request->file('cocFile')->getClientOriginalExtension();
+            if ($request->hasFile('cocFile')) {
+                $filenamewithextension = $request->file('cocFile')->getClientOriginalName();
+                $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+                $extension = $request->file('cocFile')->getClientOriginalExtension();
 
-            //filename to store
-            $filenametostore = $filename . '_' . $request->transmittalno .  '.' . $extension;
-
-            $request->file('cocFile')->storeAs(('public/coc files/'), $filenametostore);
+                $filenametostore = $filename . '_' . $request->transmittalno .  '.' . $extension;
+                $request->file('cocFile')->storeAs('public/coc files/', $filenametostore);
+            }else{
+                $filenametostore = "";
+            }
             $deptuserTrans = DeptuserTrans::find($request->id);
 
             if ($deptuserTrans) {

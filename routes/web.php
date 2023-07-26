@@ -126,7 +126,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/addSample', [AssayerController::class, 'addSample'])->name("assayer.addSample");
             Route::post('/excludeSample', [AssayerController::class, 'excludeSample'])->name("assayer.excludeSample");
             Route::post('/duplicateSample', [AssayerController::class, 'duplicateSample'])->name("assayer.duplicateSample");
-            Route::post('download-csv', [AssayerController::class, 'downloadCSV'])->name("assayer.downloadCsv");
+            Route::post('/download-csv', [AssayerController::class, 'downloadCSV'])->name("assayer.downloadCsv");
             Route::post('/uploaditems', [AssayerController::class, 'uploadItems'])->name("assayer.uploadItems");
         }
     );
@@ -164,6 +164,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/getItems', [AnalystController::class, 'getItems'])->name("analyst.getItems");
             Route::post('/reassay', [AnalystController::class, 'reassay'])->name("analyst.reassay");
             Route::get('/AnalyticalResult/{data}', [AnalystController::class, 'analyticalResult'])->name("analyst.analyticalresult");
+            Route::post('/download-csv', [AnalystController::class, 'downloadCSV'])->name("analyst.downloadCsv");
+            Route::post('/uploaditems', [AnalystController::class, 'uploadItems'])->name("analyst.uploadItems");
         }
     );
     // Officer
