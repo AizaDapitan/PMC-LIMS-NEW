@@ -805,7 +805,7 @@ export default {
       
     },
     downloadCSV() {
-      axios.post('/analyst/download-csv', this.form, { responseType: 'blob' })
+      axios.post(this.$env_Url+'/analyst/download-csv', this.form, { responseType: 'blob' })
         .then(response => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');

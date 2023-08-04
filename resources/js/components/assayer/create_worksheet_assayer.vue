@@ -812,7 +812,7 @@ export default {
       }
     },
     downloadCSV() {
-      axios.post('/assayer/download-csv', this.form, { responseType: 'blob' })
+      axios.post(this.$env_Url+'/assayer/download-csv', this.form, { responseType: 'blob' })
         .then(response => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
@@ -822,7 +822,7 @@ export default {
           link.click();
         })
         .catch(error => {
-          
+          alert("Error: "+error)
         });
     },
     checkAll(event) {
