@@ -69,6 +69,15 @@ export default {
                 return e.response;
             }
         },
+        //custom alert message
+        async customMessage(severity, summary, detail, life){
+            this.$toast.add({
+                severity: severity,
+                summary: summary,
+                detail: detail,
+                life: life,
+            });
+        },
         //alert message
         async smessage() {
             this.$toast.add({

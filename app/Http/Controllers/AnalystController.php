@@ -168,6 +168,21 @@ class AnalystController extends Controller
                 'reaasyedby' => auth()->user()->username,
                 //'isAssayed' => 0,
                 //'assayedby' => NULL,
+                'fluxg' => 0,
+                'flourg' => 0,
+                'niterg' => 0,
+                'leadg' => 0,
+                'silicang' => 0,
+                'crusibleused' => "",
+                'samplewtgrams' => 0,
+                'auprillmg' => 0,
+                'augradegpt' => 0,
+                'assreadingppm' => 0,
+                'agdoremg' => 0,
+                'initialaggpt' => 0,
+                'crusibleclearance' => null,
+                'inquartmg' => 0,
+                'methodremarks' => "",
 
             ];
             $item->update($data);
@@ -277,24 +292,24 @@ class AnalystController extends Controller
             case "Rock":
             case "Mine Drill":
                 return [
-                    "auprillmg" => $item[10],
-                    "augradegpt" => $item[11],
-                    "assreadingppm" => $item[12],
+                    "auprillmg" => is_numeric($item[10]) ? $item[10] : 0,
+                    "augradegpt" => is_numeric($item[11]) ? $item[11] : 0,
+                    "assreadingppm" => is_numeric($item[12]) ? $item[12] : 0,
                     "methodremarks" => $item[17]
                 ];
             case "Carbon":
                 return [
-                    "agdoremg" => $item[13],
-                    "initialaggpt" => $item[14],
-                    "crusibleclearance" => $item[15],
+                    "agdoremg" => is_numeric($item[13]) ? $item[13] : 0,
+                    "initialaggpt" => is_numeric($item[14]) ? $item[14] : 0,
+                    "crusibleclearance" => is_numeric($item[15]) ? $item[15] : 0,
                     "methodremarks" => $item[17]
                 ];
             case "Bulk":
             case "Cut":
                 return [
-                    "auprillmg" => $item[10],
-                    "augradegpt" => $item[11],
-                    "crusibleclearance" => $item[15],
+                    "auprillmg" => is_numeric($item[10]) ? $item[10] : 0,
+                    "augradegpt" => is_numeric($item[11]) ? $item[11] : 0,
+                    "crusibleclearance" => is_numeric($item[15]) ? $item[15] : 0,
                     "methodremarks" => $item[17]
                 ];
             default:

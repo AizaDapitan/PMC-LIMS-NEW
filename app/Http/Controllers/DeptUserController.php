@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DeptUserTransRequest;
-use App\Http\Requests\TransmittalRequest;
-use App\Http\Requests\UserRequest;
+use Exception;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Transmittal;
 use Illuminate\Http\Request;
 use App\Models\DeptuserTrans;
-use App\Models\Transmittal;
+use PhpParser\Node\Stmt\Else_;
 use App\Models\TransmittalItem;
+use App\Http\Requests\UserRequest;
 use App\Services\UserRightService;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
+use App\Services\AccessRightService;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use App\Services\AccessRightService;
-use PhpParser\Node\Stmt\Else_;
+use App\Http\Requests\TransmittalRequest;
+use App\Http\Requests\DeptUserTransRequest;
 
 class DeptUserController extends Controller
 {
@@ -324,5 +325,10 @@ class DeptUserController extends Controller
         //     $exists = true;
         // }
         return $transmittal;
+    }
+
+    public function getDeptOfficerEmails(){
+        $officers = User::where([['isActive', 1], ['assigned_module', 'Department Officer'], ['dept', auth()->user()->dept]])->get();
+        return $officers;
     }
 }

@@ -285,7 +285,7 @@ class TransmittalItemController extends Controller
 
         if ($request->reqfrom === "edit_analyst" || $request->reqfrom === "view_analyst") {
             $items = TransmittalItem::where('labbatch', $request->labbatch)
-                ->where('reassayed', 0)
+                //->where('reassayed', 0)
                 ->orderBy('sampleno')
                 ->get();
         } else {

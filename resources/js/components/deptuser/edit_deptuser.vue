@@ -43,9 +43,7 @@
             "
           >
             <label for="customFile" class="mg-r-10"
-              >Attached COC
-              <span class="text-danger" aria-required="true"> * </span></label
-            >
+              >Attached COC</label>
             <div class="custom-file mb-0 mb-lg-2">
               <input
                 type="file"
@@ -129,13 +127,14 @@
               *
             </span></label
           >
-          <input
-            type="email"
-            class="form-control"
-            id="email-address"
-            name="email-address"
+          <select
+            class="custom-select tx-base"
+            id="type"
+            name="type"
             v-model="form.email_address"
-          />
+          >
+            <option v-for="officer in officers" :key="officer.id" :value="officer.email">{{officer.email}}</option>
+          </select>
         </div>
       </div>
 
@@ -542,6 +541,7 @@ export default {
       errors: {},
       seconds: 0,
       templatePath: window.location.origin,
+      officers: [],
       form: {
         id: this.transmittal.id,
         transmittalno: this.transmittal.transmittalno,
@@ -559,6 +559,7 @@ export default {
   },
   created() {
     this.fetchItems();
+    this.fetchDeptOfficerEmails();
     this.loading = false;
   },
   mounted() {
@@ -598,13 +599,15 @@ export default {
       this.fetchItems();
     },
     async fetchItems() {
-      const res = await this.callApiwParam(
-        "post",
-        "/transItem/getItems",
-        this.form
-      );
+      const res = await this.callApiwParam("post","/transItem/getItems",this.form);
       this.items = res.data;
     },
+
+    async fetchDeptOfficerEmails(){
+      const res = await this.getDataFromDB("get", "/deptuser/getDeptOfficerEmails");
+      this.officers = res.data;
+    },
+
     async uploadItem() {
       this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
       let form = new FormData();

@@ -380,24 +380,39 @@
 
             <Column header="Sample No.">
               <template #body="slotProps">
-                {{ slotProps.index + 1 }}
-              </template></Column
-            >
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.index + 1 }}
+                </span>
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
-            <Column
-              field="source"
-              header="Source"
-              :sortable="true"
-              style="min-width: 8rem"
-            ></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.sampleno }}
+                </span>
+              </template>
+            </Column>
+            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.source }}
+                </span>
+              </template>
+            </Column>
             <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
               </template>
             </Column>
             <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
-            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.transmittalno }}
+                </span>
+              </template>
+            </Column>
             <Column field="fluxg" header="Flux (Grams)" :sortable="true">
               <template #body="slotProps">
                 {{ slotProps.data.fluxg ? parseInt(slotProps.data.fluxg) : '' }}
@@ -423,7 +438,7 @@
                 {{ slotProps.data.silicang ? parseInt(slotProps.data.silicang) : '' }}
               </template>
             </Column>
-            <Column field="auprillmg" header="Au, Prill(Mg)" :sortable="true">
+            <Column field="auprillmg" header="Au, Prill(Mg)" :sortable="true" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -433,7 +448,7 @@
                 />
               </template>
             </Column>
-            <Column field="augradegpt" header="Au, Grade(Gpt)" :sortable="true">
+            <Column field="augradegpt" header="Au, Grade(Gpt)" :sortable="true" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -443,7 +458,7 @@
                 />
               </template>
             </Column>
-            <Column field="assreadingppm" header="ASS Reading, ppm" :sortable="true">
+            <Column field="assreadingppm" header="ASS Reading, ppm" :sortable="true" :hidden="['Bulk', 'Cut', 'Carbon', 'Solids', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -453,7 +468,7 @@
                 />
               </template>
             </Column>
-            <Column field="agdoremg" header="Ag, Dore(Mg)" :sortable="true">
+            <Column field="agdoremg" header="Ag, Dore(Mg)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -463,7 +478,7 @@
                 />
               </template>
             </Column>
-            <Column field="initialaggpt" header="Initial Ag (Gpt)" :sortable="true">
+            <Column field="initialaggpt" header="Initial Ag (Gpt)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solids', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -473,7 +488,7 @@
                 />
               </template>
             </Column>
-            <Column field="crusibleclearance" header="Crusible Clearance" :sortable="true">
+            <Column field="crusibleclearance" header="Crusible Clearance" :sortable="true" :hidden="['Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -482,7 +497,7 @@
                   autofocus
                 />
               </template></Column>
-            <Column field="inquartmg" header="For Inquart (Mg)" :sortable="true">
+            <Column field="inquartmg" header="For Inquart (Mg)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill','Carbon','Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -503,6 +518,7 @@
               </template>
             </Column>
             <Column field="trans_type" hidden="true"></Column>
+            <Column field="reassayed" hidden="true"></Column>
             <Column
               :rowEditor="true"
               style="width: 7%; min-width: 8rem"
@@ -530,6 +546,7 @@
                   @click="reassay(slotProps)"
                   :id="'btn' + slotProps.data.id"
                   name="btnedit"
+                  :disabled="(slotProps.data.reassayed == 1) ? true : false"
                 />
               </template>
             </Column>
@@ -745,64 +762,67 @@ export default {
     },
     async onRowEditSave(event) {
       let { newData, index } = event;
-      this.items[index] = newData;
+      if(newData.reassayed == 1){
+        this.customMessage("error", "Failed", "Reassayed sample can't be edited.", 5000);
+      }else{
+        this.items[index] = newData;
 
-      if(newData.trans_type === 'Bulk' || newData.trans_type === 'Cut'){
-        newData.assreadingppm = 0;
-        newData.agdoremg = 0;
-        newData.initialaggpt = 0;
-        newData.inquartmg = 0;
-      }else if(newData.trans_type === 'Rock' || newData.trans_type === 'Mine Drill'){
-        newData.agdoremg = 0;
-        newData.initialaggpt = 0;
-        newData.crusibleclearance = "";
-        newData.inquartmg = 0;
-      }else if(newData.trans_type === 'Carbon'){
-        newData.auprillmg = 0;
-        newData.augradegpt = 0;
-        newData.assreadingppm = 0;
-        newData.inquartmg = 0;
-      }else if(newData.trans_type === 'Solids'){
-        newData.assreadingppm = 0;
-        newData.initialaggpt = 0;
-      }else if(newData.trans_type === 'Solutions'){
-        newData.auprillmg = 0;
-        newData.augradegpt = 0;
-        newData.assreadingppm = 0;
-        newData.agdoremg = 0;
-        newData.initialaggpt = 0;
-        newData.crusibleclearance = "";
-        newData.inquartmg = 0;
-      }
+        if(newData.trans_type === 'Bulk' || newData.trans_type === 'Cut'){
+          newData.assreadingppm = 0;
+          newData.agdoremg = 0;
+          newData.initialaggpt = 0;
+          newData.inquartmg = 0;
+        }else if(newData.trans_type === 'Rock' || newData.trans_type === 'Mine Drill'){
+          newData.agdoremg = 0;
+          newData.initialaggpt = 0;
+          newData.crusibleclearance = 0;
+          newData.inquartmg = 0;
+        }else if(newData.trans_type === 'Carbon'){
+          newData.auprillmg = 0;
+          newData.augradegpt = 0;
+          newData.assreadingppm = 0;
+          newData.inquartmg = 0;
+        }else if(newData.trans_type === 'Solids'){
+          newData.assreadingppm = 0;
+          newData.initialaggpt = 0;
+        }else if(newData.trans_type === 'Solutions'){
+          newData.auprillmg = 0;
+          newData.augradegpt = 0;
+          newData.assreadingppm = 0;
+          newData.agdoremg = 0;
+          newData.initialaggpt = 0;
+          newData.crusibleclearance = 0;
+          newData.inquartmg = 0;
+        }
 
-      let itemForm = {
-        id: newData.id,
-        auprillmg: newData.auprillmg,
-        augradegpt: newData.augradegpt,
-        assreadingppm: newData.assreadingppm,
-        agdoremg: newData.agdoremg,
-        initialaggpt: newData.initialaggpt,
-        crusibleclearance: newData.crusibleclearance,
-        inquartmg: newData.inquartmg,
-        methodremarks: newData.methodremarks,
-        isAnalyst: true,
+        let itemForm = {
+          id: newData.id,
+          auprillmg: newData.auprillmg,
+          augradegpt: newData.augradegpt,
+          assreadingppm: newData.assreadingppm,
+          agdoremg: newData.agdoremg,
+          initialaggpt: newData.initialaggpt,
+          crusibleclearance: newData.crusibleclearance,
+          inquartmg: newData.inquartmg,
+          methodremarks: newData.methodremarks,
+          isAnalyst: true,
+        }
+        const res = await this.submit("post", "/transItem/update", itemForm, {
+          headers: {
+            "Content-Type":
+              "multipart/form-data; charset=utf-8; boundary=" +
+              Math.random().toString().substr(2),
+          },
+        });
+        if (res.status === 200) {
+          this.smessage();
+          this.fetchItems();
+        } else {
+          this.errors_exist = true;
+          this.errors = res.data.errors;
+          // this.ermessage(res.data.errors);
+        }
       }
-      const res = await this.submit("post", "/transItem/update", itemForm, {
-        headers: {
-          "Content-Type":
-            "multipart/form-data; charset=utf-8; boundary=" +
-            Math.random().toString().substr(2),
-        },
-      });
-      if (res.status === 200) {
-        this.smessage();
-        this.fetchItems();
-      } else {
-        this.errors_exist = true;
-        this.errors = res.data.errors;
-        // this.ermessage(res.data.errors);
-      }
-      
     },
     downloadCSV() {
       axios.post(this.$env_Url+'/analyst/download-csv', this.form, { responseType: 'blob' })
@@ -929,3 +949,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .hidden-column {
+    display: none;
+  }
+</style>

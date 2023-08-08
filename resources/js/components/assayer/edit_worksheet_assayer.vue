@@ -293,17 +293,26 @@
 
             <Column header="Sample No.">
               <template #body="slotProps">
-                {{ slotProps.index + 1 }}
-              </template></Column
-            >
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.index + 1 }}
+                </span>
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
-            <Column
-              field="source"
-              header="Source"
-              :sortable="true"
-              style="min-width: 8rem"
-            ></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.sampleno }}
+                </span>
+              </template>
+            </Column>
+            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.source }}
+                </span>
+              </template>
+            </Column>
             <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
@@ -324,7 +333,13 @@
                 />
               </template>
             </Column>
-            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.transmittalno }}
+                </span>
+              </template>
+            </Column>
             <Column field="fluxg" header="Flux (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
@@ -375,7 +390,7 @@
                 />
               </template>
             </Column>
-            <Column field="reassayed" header="Is Reassayed?" :sortable="true">
+            <Column field="reassayed" header="Is Reassayed?" :sortable="true" hidden="true">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
                   {{ slotProps.data.reassayed == 1 ? 'Yes' : '' }}

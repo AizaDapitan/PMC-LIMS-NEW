@@ -128,13 +128,14 @@
               *
             </span></label
           >
-          <input
-            type="email"
-            class="form-control"
-            id="email-address"
-            name="email-address"
+          <select
+            class="custom-select tx-base"
+            id="type"
+            name="type"
             v-model="form.email_address"
-          />
+          >
+            <option v-for="officer in officers" :key="officer.id" :value="officer.email">{{officer.email}}</option>
+          </select>
         </div>
       </div>
 
@@ -547,6 +548,7 @@ export default {
       errors: {},
       transNoExists: false,
       timed: '',
+      officers: [],
       form: {
         id: 0,
         transmittalno: "",
@@ -565,6 +567,7 @@ export default {
   },
   created() {
     // this.fetchItems();
+    this.fetchDeptOfficerEmails();
     this.loading = false;
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -647,6 +650,12 @@ export default {
       );
       this.items = res.data;
     },
+
+    async fetchDeptOfficerEmails(){
+      const res = await this.getDataFromDB("get", "/deptuser/getDeptOfficerEmails");
+      this.officers = res.data;
+    },
+
     async uploadItem() {
       this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
       let form = new FormData();
