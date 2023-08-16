@@ -263,6 +263,7 @@
             >
             <Column field="id" hidden="true"></Column>
             <Column field="sampleno" header="Sample No."></Column>
+            <Column field="samplewtvolume" header="Sample Wt./Volume"></Column>
             <Column field="description" header="Description"></Column>
             <Column field="elements" header="Elements"></Column>
             <Column field="methodcode" header="Method Code"></Column>

@@ -215,6 +215,13 @@
                     :disabled="slotProps.data.status == 'Approved'"
                   />
                   <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-upload"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printTrans(slotProps)"
+                    :disabled="false"
+                  />
+                  <Button
                     v-bind:title="deleteMsg"
                     icon="pi pi-trash"
                     class="p-button-rounded p-button-warning mr-2"
@@ -253,6 +260,7 @@ export default {
       dashboard: this.$env_Url + "deptuser/dashboard",
       filters: null,
       editMsg: "Edit Transmittal",
+      printMsg: "Generate Transmittal",
       viewMsg: "View Transmittal",
       deleteMsg: "Delete Transmittal",
       errors_exist: false,
@@ -332,6 +340,10 @@ export default {
         },
       });
     },
+    printTrans(data){
+      alert(data.data.transmittalno+","+data.data.transType);
+      //window.location.href = this.$env_Url + "/analyst/AnalyticalResult/" + data.data.transmittalno+","+data.data.transType;
+    }
   },
 };
 </script>

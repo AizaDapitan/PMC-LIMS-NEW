@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/view-transmittal/{id}', [DeptUserController::class, 'view'])->name("deptuser.view");
             Route::post('/checkTransNo', [DeptUserController::class, 'checkTransNo'])->name("deptuser.checkTransNo");
             Route::get('/getDeptOfficerEmails', [DeptUserController::class, 'getDeptOfficerEmails'])->name("deptuser.getDeptOfficerEmails");
+            Route::get('/printTransmittal/{data}', [DeptUserController::class, 'printTransmittal'])->name("deptuser.printTransmittal");
         }
     );
     Route::group(

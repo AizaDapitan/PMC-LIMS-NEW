@@ -373,7 +373,7 @@ class AnalystController extends Controller
 
             foreach($items as $item){
                 $pdf->SetXY(10, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
-                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, 'LEVEL 5', 0, 0, 'L');
+                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
                 $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
                 $yy+=5; $i++;

@@ -429,6 +429,7 @@
                   @click="duplicateSample(slotProps)"
                   :id="'btndup' + slotProps.data.id"
                   name="btndup"
+                  :disabled="slotProps.data.isDuplicate == 1"
                 />
               </template>
             </Column>

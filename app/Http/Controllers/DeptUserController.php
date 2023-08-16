@@ -15,6 +15,7 @@ use App\Services\UserRightService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Services\AccessRightService;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\TransmittalRequest;
@@ -150,6 +151,29 @@ class DeptUserController extends Controller
                 ]);
             }
             TransmittalItem::where('transmittalno', $request->transmittalno)->update(['source' => $request->source]);
+            
+            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
+            $data = [
+                'transmittalno' => $request->transmittalno,
+                'purpose' => $request->purpose,
+                'datesubmitted' =>  $request->datesubmitted,
+                'timesubmitted' =>   $request->timesubmitted,
+                'date_needed'    =>  $request->date_needed,
+                'priority' => $request->priority,
+                'status' =>  $request->status,
+                'email_address' => $request->email_address,
+                'source' =>  $request->source,
+                'transType' => $request->transType,
+                'name' => auth()->user()->name,
+                'items' => $items,
+            ];
+
+            Mail::send('emails.transmittalStored', $data,
+            function($message) use ($request){
+                $message->to($request->email_address, auth()->user()->dept)
+                ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' successfully created.');
+            });
+            
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);
@@ -210,6 +234,13 @@ class DeptUserController extends Controller
             ];
             $deptuserTrans->update($data);
             TransmittalItem::where('transmittalno', $request->transmittalno)->update(['source' => $request->source]);
+            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
+            $data["items"] = $items;
+            Mail::send('emails.transmittalSaved', $data,
+            function($message) use ($request){
+                $message->to($request->email_address, auth()->user()->dept)
+                ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' details successfully updated.');
+            });
 
             return response()->json('success');
         } catch (Exception $e) {
@@ -330,5 +361,9 @@ class DeptUserController extends Controller
     public function getDeptOfficerEmails(){
         $officers = User::where([['isActive', 1], ['assigned_module', 'Department Officer'], ['dept', auth()->user()->dept]])->get();
         return $officers;
+    }
+
+    public function printTransmittal($data){
+
     }
 }

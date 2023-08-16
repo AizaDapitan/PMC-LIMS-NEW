@@ -110,7 +110,13 @@ class TransmittalItemController extends Controller
     }
     public function getItems(Request $request)
     {
-        $items = TransmittalItem::where([['isdeleted', 0], ['isAssayed', 0], ['transmittalno', $request->transmittalno]])->get();
+        $items = [];
+        if($request->reqfrom === "view_assayer"){
+            $items = TransmittalItem::where([['isdeleted', 0], ['isAssayed', 0], ['transmittalno', $request->transmittalno]])->get();
+        }else{
+            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
+        }
+        
         $items->transform(function ($item) {
             $item->samplewtvolume = intval($item->samplewtvolume);
             return $item;

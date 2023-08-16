@@ -324,17 +324,26 @@
             </Column>
             <Column header="Sample No.">
               <template #body="slotProps">
-                {{ slotProps.index + 1 }}
-              </template></Column
-            >
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.index + 1 }}
+                </span>
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code" :sortable="true"></Column>
-            <Column
-              field="source"
-              header="Source"
-              :sortable="true"
-              style="min-width: 8rem"
-            ></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.sampleno }}
+                </span>
+              </template>
+            </Column>
+            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.source }}
+                </span>
+              </template>
+            </Column>
             <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
@@ -355,7 +364,13 @@
                 />
               </template>
             </Column>
-            <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.transmittalno }}
+                </span>
+              </template>
+            </Column>
             <Column field="fluxg" header="Flux (Grams)" :sortable="true">
               <template #editor="{ data, field }">
                 <InputText
@@ -802,7 +817,7 @@ export default {
       if (event.target.checked) {
         this.selectedItemsId.push(sample.data);
         //document.getElementById("btn" + sample.data.id).disabled = false;
-        document.getElementById("btndup" + sample.data.id).disabled = false;
+        document.getElementById("btndup" + sample.data.id).disabled = (sample.data.isDuplicate == 1 ? true : false);
       } else {
         //document.getElementById("btn" + sample.data.id).disabled = true;
         document.getElementById("btndup" + sample.data.id).disabled = true;
