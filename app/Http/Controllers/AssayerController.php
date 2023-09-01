@@ -202,7 +202,7 @@ class AssayerController extends Controller
     public function getWorksheetItems(Request $request)
     {
         // $transids = explode(',', $request->ids);
-        $items = TransmittalItem::where('labbatch', $request->labbatch)->get();
+        $items = TransmittalItem::where('labbatch', $request->labbatch)->orderBy('sampleno')->get();
         $items->transform(function ($item) {
             $item->samplewtvolume = intval($item->samplewtvolume);
             $item->samplewtgrams = intval($item->samplewtgrams);
@@ -535,6 +535,7 @@ class AssayerController extends Controller
                     'crusibleused' => $crusibleused
                 ]);
             }
+            //Storage::delete('public/items files/' . $filenametostore);
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);

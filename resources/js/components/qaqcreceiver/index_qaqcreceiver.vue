@@ -205,6 +205,13 @@
                     :disabled="slotProps.data.isReceived == 1"
                   />
                   <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-print"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printTrans(slotProps)"
+                    :disabled="!slotProps.data.isReceived == 1"
+                  />
+                  <Button
                     v-bind:title="editMsg"
                     icon="pi pi-pencil"
                     class="p-button-rounded p-button-success mr-2"
@@ -244,6 +251,7 @@ export default {
       viewMsg: "View Transmittal",
       editMsg: "Edit Transmittal",
       receiveMsg: "Receive Transmittal",
+      printMsg: "Generate Transmittal",
       statuses: ["Pending", "Approved", "Received"],
       form: {
         id: 0,
@@ -300,6 +308,11 @@ export default {
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
+
+    printTrans(data){
+      //alert(data.data.transmittalno+"*"+data.data.transType);
+      window.location.href = this.$env_Url + "/qaqcreceiver/printTransmittal/" + data.data.transmittalno+"*"+data.data.transType+"*3";
+    }
   },
 };
 </script>

@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/getItems', [QAQCRecieverController::class, 'getItems'])->name("qaqcreceiver.getItems");
             Route::post('/download-csv', [QAQCRecieverController::class, 'downloadCSV'])->name("qaqcreceiver.downloadCsv");
             Route::post('/uploaditems', [QAQCRecieverController::class, 'uploadItems'])->name("qaqcreceiver.uploadItems");
+            Route::get('/printTransmittal/{data}', [QAQCRecieverController::class, 'printTransmittal'])->name("qaqcreceiver.printTransmittal");
             // Route::post('/update', [DeptOfficerController::class, 'update'])->name("deptofficer.update");
         }
     );

@@ -204,6 +204,14 @@
                     @click="editDeptOfficer(slotProps)"
                     :disabled="slotProps.data.isReceived == 1"
                   />
+
+                  <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-print"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printTrans(slotProps)"
+                    :disabled="!slotProps.data.approver"
+                  />
                 </template>
               </Column>
             </DataTable>
@@ -236,6 +244,7 @@ export default {
       filters: null,
       viewMsg: "View Transmittal",
       editMsg: "Edit Transmittal",
+      printMsg: "Generate Transmittal",
       form: {
         id: 0,
         dateFrom: new Date(),
@@ -285,6 +294,10 @@ export default {
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
+    printTrans(data){
+      //alert(data.data.transmittalno+"*"+data.data.transType);
+      window.location.href = this.$env_Url + "/deptuser/printTransmittal/" + data.data.transmittalno+"*"+data.data.transType+"*2";
+    }
   },
 };
 </script>

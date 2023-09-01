@@ -201,7 +201,7 @@
                   />
                   <Button
                     v-bind:title="printMsg"
-                    icon="pi pi-upload"
+                    icon="pi pi-print"
                     class="p-button-rounded p-button-info mr-2"
                     @click="printCertificate(slotProps)"
                     :disabled="slotProps.data.isAnalyzed == 0"

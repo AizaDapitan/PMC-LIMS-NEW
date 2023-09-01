@@ -329,7 +329,7 @@
                 </span>
               </template>
             </Column>
-            <Column field="id" hidden="true"></Column>
+            <Column field="id" :hidden="true"></Column>
             <Column field="sampleno" header="Sample Code" :sortable="true">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
@@ -571,6 +571,7 @@ export default {
       labbatchExists: false,
       selectedItemsId: [],
       fireassayers : [],
+      filters: [],
       form: {
         labbatch: "",
         dateshift: "",
@@ -677,12 +678,18 @@ export default {
       this.fileLabel = this.form.itemFile.name;
     },
     async uploadItem() {
-      //this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
+      if (!this.form.itemFile) {
+        // Handle the case where no file is selected or the file is undefined.
+        console.error("No file selected.");
+        return;
+      }
+
       let form = new FormData();
       form.append("itemFile", this.form.itemFile);
       _.each(this.form, (value, key) => {
         form.append(key, value);
       });
+      
       const res = await this.submit("post", "/assayer/uploaditems", form, {
         headers: {
           "Content-Type":
@@ -696,8 +703,9 @@ export default {
       } else {
         this.errors_exist = true;
         this.errors = res.data.errors;
-        // this.ermessage(res.data.errors);
+        //this.ermessage(res.data.errors);
       }
+
     },
     async onRowEditSave(event) {
       let { newData, index } = event;

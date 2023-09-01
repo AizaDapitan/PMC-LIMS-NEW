@@ -216,7 +216,7 @@
                   />
                   <Button
                     v-bind:title="printMsg"
-                    icon="pi pi-upload"
+                    icon="pi pi-print"
                     class="p-button-rounded p-button-info mr-2"
                     @click="printTrans(slotProps)"
                     :disabled="false"
@@ -341,8 +341,8 @@ export default {
       });
     },
     printTrans(data){
-      alert(data.data.transmittalno+","+data.data.transType);
-      //window.location.href = this.$env_Url + "/analyst/AnalyticalResult/" + data.data.transmittalno+","+data.data.transType;
+      //alert(data.data.transmittalno+"*"+data.data.transType);
+      window.location.href = this.$env_Url + "/deptuser/printTransmittal/" + data.data.transmittalno+"*"+data.data.transType+"*1";
     }
   },
 };

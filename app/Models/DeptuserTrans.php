@@ -72,7 +72,7 @@ class DeptuserTrans extends Model implements AuditableContract
     public function getIsEditableAttribute()
     {
         if ($this->isReceived) {
-            $items = TransmittalItem::where('transmittalno', $this->transmittalno)->get();
+            $items = TransmittalItem::where('transmittalno', $this->transmittalno)->where('isdeleted', '0')->get();
             if (count($items) > 0) {
                 $count = 0;
                 foreach ($items as $item) {
