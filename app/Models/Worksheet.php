@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use DateTime;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Date;
-use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
 use OwenIt\Auditing\Auditable;
+use App\Models\TransmittalItem;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable  as AuditableContract;
 
 class Worksheet extends Model implements AuditableContract
 {
@@ -25,7 +26,7 @@ class Worksheet extends Model implements AuditableContract
         'isdeleted', 'deleted_at', 'updatedby', 'deleteby','isApproved','approvedby','approved_at','transType','dateweighed','shiftweighed','micnocheckweights',
         'measuredby','analyzedby','isAnalyzed','isPosted','posted_at','posted_by'
     ];
-    protected $appends = ['fusion_furnace','cupellation_furnace','statuses'];
+    protected $appends = ['fusion_furnace','cupellation_furnace','statuses','is_reassay'];
 
     public function getFusionFurnaceAttribute()
     {
@@ -53,4 +54,15 @@ class Worksheet extends Model implements AuditableContract
         } 
         return $statuses;
     }
+
+    public function getIsReassayAttribute(){
+        $items = TransmittalItem::where('labbatch', $this->labbatch)->get();
+        foreach ($items as $item) {
+            if ($item->reassayed) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

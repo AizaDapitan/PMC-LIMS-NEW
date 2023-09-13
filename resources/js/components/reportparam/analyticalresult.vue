@@ -13,6 +13,21 @@
         <div class="col-lg-12">
           <div class="form-group">
             <label
+              >Lab Batch<span class="text-danger" aria-required="true">
+                *
+              </span></label
+            >
+            <input
+              class="form-control input-sm"
+              v-model="form.labbatch"
+              disabled="true"
+            />
+          </div>
+        </div>
+        <div class="col-lg-12"></div>
+        <div class="col-lg-12">
+          <div class="form-group">
+            <label
               >Analyze by<span class="text-danger" aria-required="true">
                 *
               </span></label
@@ -63,6 +78,7 @@
               id="type"
               name="type"
               v-model="form.transmittalType"
+              :disabled="true"
             >
               <option
                 value="Rock"
@@ -143,9 +159,10 @@ export default {
       supervisors: [],
       chemists: [],
       form: {
+        labbatch: this.dialogRef.data.labbatch,
         analyzedBy: "",
         verifiedBy: "",
-        transmittalType: "",
+        transmittalType: this.dialogRef.data.transType,
       },
     };
   },
@@ -176,10 +193,13 @@ export default {
       } else {
         var data =
           this.form.analyzedBy +
-          "," +
+          "*" +
           this.form.verifiedBy +
-          "," +
-          this.form.transmittalType;
+          "*" +
+          this.form.transmittalType +
+          "*" +
+          this.form.labbatch
+          ;
         window.location.href =
           this.$env_Url + "/analyst/AnalyticalResult/" + data;
       }

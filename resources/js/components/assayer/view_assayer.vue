@@ -258,16 +258,54 @@
 
             <Column header="Item No.">
               <template #body="slotProps">
-                {{ slotProps.index + 1 }}
-              </template></Column
-            >
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.index + 1 }}
+                </span>
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No."></Column>
-            <Column field="samplewtvolume" header="Sample Wt./Volume"></Column>
-            <Column field="description" header="Description"></Column>
-            <Column field="elements" header="Elements"></Column>
-            <Column field="methodcode" header="Method Code"></Column>
-            <Column field="comments" header="Comments"></Column>
+            <Column field="sampleno" header="Sample No.">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.sampleno }}
+                </span>
+              </template>
+            </Column>
+            <Column field="samplewtvolume" header="Sample Wt./Volume">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.samplewtvolume }}
+                </span>
+              </template>
+            </Column>
+            <Column field="description" header="Description">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.description }}
+                </span>
+              </template>
+            </Column>
+            <Column field="elements" header="Elements">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.elements }}
+                </span>
+              </template>
+            </Column>
+            <Column field="methodcode" header="Method Code">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.methodcode }}
+                </span>
+              </template>
+            </Column>
+            <Column field="comments" header="Comments">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
+                  {{ slotProps.data.comments }}
+                </span>
+              </template>
+            </Column>
           </DataTable>
         </div>
       </div>
@@ -329,6 +367,7 @@ export default {
         email_address: this.transmittal.email_address,
         transType: this.transmittal.transType,
         source: this.transmittal.source,
+        reqfrom: "view_assayer",
       },
     };
   },

@@ -43,9 +43,7 @@
             "
           >
             <label for="customFile" class="mg-r-10"
-              >Attached COC
-              <span class="text-danger" aria-required="true"> * </span></label
-            >
+              >Attached COC</label>
             <div class="custom-file mb-0 mb-lg-2">
               <input
                 type="file"
@@ -129,13 +127,14 @@
               *
             </span></label
           >
-          <input
-            type="email"
-            class="form-control"
-            id="email-address"
-            name="email-address"
+          <select
+            class="custom-select tx-base"
+            id="type"
+            name="type"
             v-model="form.email_address"
-          />
+          >
+            <option v-for="officer in officers" :key="officer.id" :value="officer.email">{{officer.email}}</option>
+          </select>
         </div>
       </div>
 
@@ -261,13 +260,13 @@
 
     <div class="row row-xs">
       <div class="col-lg-6 d-flex justify-content-start">
-        <button
+        <!--<button
           class="btn btn-primary tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
           @click="showDialog"
           :disabled="disableUpload"
         >
           <i data-feather="plus" class="mg-r-5"></i> Add Item
-        </button>
+        </button>-->
         <a
           :href="this.templatePath + '/template/Item Template.csv'"
           class="btn btn-success tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
@@ -291,6 +290,10 @@
             v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
+            editMode="row"
+            dataKey="id"
+            v-model:editingRows="editingRows"
+            @row-edit-save="onRowEditSave"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
@@ -301,24 +304,65 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No."></Column>
-            <Column field="description" header="Description"></Column>
-            <Column field="elements" header="Elements"></Column>
-            <Column field="methodcode" header="Method Code"></Column>
-            <Column field="comments" header="Comments"></Column>
-
+            <Column field="sampleno" header="Sample No." :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="description" header="Description" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="elements" header="Elements" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="methodcode" header="Method Code" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column field="comments" header="Comments" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                />
+              </template>
+            </Column>
+            <Column
+              :rowEditor="true"
+              style="width: 7%; min-width: 8rem"
+              bodyStyle="text-align:right"
+            >
+            </Column>
             <Column
               :exportable="false"
               style="min-width: 8rem"
               header="Actions"
             >
               <template #body="slotProps">
-                <Button
+                <!--<Button
                   v-bind:title="edititem"
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
                   @click="editItem(slotProps)"
-                />
+                />-->
                 <Button
                   v-bind:title="deleteitem"
                   icon="pi pi-trash"
@@ -332,6 +376,59 @@
       </div>
     </div>
     <!-- row -->
+    <div class="col-lg-12" style="margin-top: 10px">
+      <div class="row row-sm">
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_sampleno" name="add_sampleno" placeholder="Sample No."
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_description" name="add_description" placeholder="Description"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_elements" name="add_elements" placeholder="Elements"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_methodcode" name="add_methodcode" placeholder="Method Code"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="add_comments" name="add_comments" placeholder="Comments"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div class="form-group">
+            <button
+              class="
+                btn btn-primary
+                tx-13
+                btn-uppercase
+                mr-2
+                mb-2
+                ml-lg-1
+                mr-lg-0
+              "
+              @click="addItem"
+              :disabled="disableUpload"
+            >
+              <i data-feather="plus" class="mg-r-5"></i> Add Item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <hr class="mg-t-30 mg-b-30" />
 
@@ -434,6 +531,7 @@ export default {
       dashboard: this.$env_Url + "/deptuser/dashboard",
       loading: true,
       disableUpload: true,
+      editingRows: [],
       items: [],
       itemFile: null,
       COCitemFile: null,
@@ -443,6 +541,7 @@ export default {
       errors: {},
       seconds: 0,
       templatePath: window.location.origin,
+      officers: [],
       form: {
         id: this.transmittal.id,
         transmittalno: this.transmittal.transmittalno,
@@ -460,6 +559,7 @@ export default {
   },
   created() {
     this.fetchItems();
+    this.fetchDeptOfficerEmails();
     this.loading = false;
   },
   mounted() {
@@ -499,13 +599,15 @@ export default {
       this.fetchItems();
     },
     async fetchItems() {
-      const res = await this.callApiwParam(
-        "post",
-        "/transItem/getItems",
-        this.form
-      );
+      const res = await this.callApiwParam("post","/transItem/getItems",this.form);
       this.items = res.data;
     },
+
+    async fetchDeptOfficerEmails(){
+      const res = await this.getDataFromDB("get", "/deptuser/getDeptOfficerEmails");
+      this.officers = res.data;
+    },
+
     async uploadItem() {
       this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
       let form = new FormData();
@@ -608,6 +710,84 @@ export default {
           }
         },
       });
+    },
+    async addItem(){
+      var error = "";
+      if (document.getElementById("add_sampleno").value == "") {
+        error = "Required Field: Sample No not found!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_description").value == "") {
+        error = "Required Field: Description is required!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_elements").value == "") {
+        error = "Required Field: Elements is required!";
+        this.singleermessage(error);
+      } else if (document.getElementById("add_methodcode").value == "") {
+        error = "Required Field: Method Code is required!";
+        this.singleermessage(error);
+      }
+
+      if (error == "") {
+        const obj = {
+          sampleno: document.getElementById("add_sampleno").value,
+          description: document.getElementById("add_description").value,
+          elements: document.getElementById("add_elements").value,
+          methodcode: document.getElementById("add_methodcode").value,
+          comments: document.getElementById("add_comments").value,
+          transmittalno: this.form.transmittalno,
+          source: this.form.source,
+        }
+        const res = await this.submit("post", "/transItem/store", obj, {
+          headers: {
+            "Content-Type":
+              "multipart/form-data; charset=utf-8; boundary=" +
+              Math.random().toString().substr(2),
+          },
+        });
+        if (res.status === 200) {
+          this.fetchItems();
+          document.getElementById("add_sampleno").value = "";
+          document.getElementById("add_description").value = "";
+          document.getElementById("add_elements").value = "";
+          document.getElementById("add_methodcode").value = "";
+          document.getElementById("add_comments").value = "";
+        } else {
+          this.errors_exist = true;
+          this.errors = res.data.errors;
+          // this.ermessage(res.data.errors);
+        }
+      }
+    },
+    async onRowEditSave(event) {
+      let { newData, index } = event;
+      this.items[index] = newData;
+
+      let itemForm = {
+        id: newData.id,
+        sampleno: newData.sampleno,
+        description: newData.description,
+        elements: newData.elements,
+        comments: newData.comments,
+        methodcode: newData.methodcode,
+        transmittalno: this.form.transmittalno,
+        source: this.form.source
+      }
+      const res = await this.submit("post", "/transItem/update", itemForm, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+      
     },
     editItem(data) {
       this.showDialog(data.data);

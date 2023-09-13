@@ -34,6 +34,30 @@
               class="p-button-help p-button-sm mr-2"
               @click="exportCSV($event)"
             />
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon"
+                v-model="form.dateFrom"
+                :showIcon="true"
+                v-tooltip="'Date From'"
+                pattern="dd/MM/yyyy"
+                autocomplete="off"
+              />
+            </div>
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon2"
+                v-model="form.dateTo"
+                :showIcon="true"
+                v-tooltip="'Date To'"
+              />
+            </div>
+            <Button
+              icon="pi pi-search"
+              class="p-button-success p-button-sm mr-2"
+              v-tooltip="'Search'"
+              @click="fetchRecord()"
+            />
           </template>
           <template #end>
             <div class="search-form mg-r-10">
@@ -96,11 +120,12 @@
                 header="Time Submitted"
                 :sortable="true"
               >
-                <template #body="slotProps">
+                <!--<template #body="slotProps">
                   <span>{{
-                    slotProps.data.timesubmitted.replace(":00.0000000", "")
+                    formatTime(slotProps.data.timesubmitted.replace(":00.0000000", ""))
                   }}</span>
-                </template></Column
+                </template>-->
+              </Column
               >
               <Column
                 field="email_address"
@@ -180,6 +205,13 @@
                     :disabled="slotProps.data.isReceived == 1"
                   />
                   <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-print"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printTrans(slotProps)"
+                    :disabled="!slotProps.data.isReceived == 1"
+                  />
+                  <Button
                     v-bind:title="editMsg"
                     icon="pi pi-pencil"
                     class="p-button-rounded p-button-success mr-2"
@@ -219,10 +251,19 @@ export default {
       viewMsg: "View Transmittal",
       editMsg: "Edit Transmittal",
       receiveMsg: "Receive Transmittal",
+      printMsg: "Generate Transmittal",
       statuses: ["Pending", "Approved", "Received"],
+      form: {
+        id: 0,
+        dateFrom: new Date(),
+        dateTo: new Date(),
+      },
     };
   },
   created() {
+    const today = new Date();
+    this.form.dateFrom = new Date(today.getFullYear(),today.getMonth(),1);
+    this.form.dateTo =  new Date(today.getFullYear(),today.getMonth() + 1,0);
     this.fetchRecord();
     this.initFilters();
   },
@@ -267,6 +308,11 @@ export default {
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
+
+    printTrans(data){
+      //alert(data.data.transmittalno+"*"+data.data.transType);
+      window.location.href = this.$env_Url + "/qaqcreceiver/printTransmittal/" + data.data.transmittalno+"*"+data.data.transType+"*3";
+    }
   },
 };
 </script>

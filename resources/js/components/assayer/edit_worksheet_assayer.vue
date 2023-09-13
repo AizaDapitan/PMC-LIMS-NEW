@@ -272,6 +272,7 @@
           <DataTable
             ref="dt"
             :value="items"
+            :rowReorder="true"
             :paginator="true"
             :rows="10"
             stripedRows
@@ -283,42 +284,139 @@
             v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
+            editMode="row"
+            dataKey="id"
+            v-model:editingRows="editingRows"
+            @row-edit-save="onRowEditSave"
+            @rowReorder="onRowReorder"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
-
+            <Column rowReorder headerStyle="width: 3rem" :reorderableColumn="false" />
             <Column header="Sample No.">
               <template #body="slotProps">
-                {{ slotProps.index + 1 }}
-              </template></Column
-            >
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.index + 1 }}
+                </span>
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code"></Column>
+            <Column field="sampleno" header="Sample Code" :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.sampleno + (slotProps.data.reassayed == 1 ? ' (reassay)' : '') }}
+                </span>
+              </template>
+            </Column>
+            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.source }}
+                </span>
+              </template>
+            </Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="crusibleused" header="Crusible Used" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="text"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.transmittalno }}
+                </span>
+              </template>
+            </Column>
+            <Column field="fluxg" header="Flux (Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="flourg" header="Flour (Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="niterg" header="Niter (Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="leadg" header="Lead (Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="silicang" header="Silican (Grams)" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="reassayed" header="Is Reassayed?" :sortable="true" hidden="true">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                  {{ slotProps.data.reassayed == 1 ? 'Yes' : '' }}
+                </span>
+              </template>
+            </Column>
             <Column
-              field="source"
-              header="Source"
-              style="min-width: 8rem"
-            ></Column>
-            <Column field="samplewtgrams" header="Sample Wt.(Grams)"></Column>
-            <Column field="crusibleused" header="Crusible Used"></Column>
-            <Column field="transmittalno" header="Transmittal No."></Column>
-            <Column field="fluxg" header="Flux (Grams)"></Column>
-            <Column field="flourg" header="Flour (Grams)"></Column>
-            <Column field="niterg" header="Niter (Grams)"></Column>
-            <Column field="leadg" header="Lead (Grams)"></Column>
-            <Column field="silicang" header="Silican (Grams)"></Column>
+              :rowEditor="true"
+              style="width: 7%; min-width: 8rem"
+              bodyStyle="text-align:right"
+            >
+            </Column>
             <Column
               :exportable="false"
               style="min-width: 12rem"
               header="Actions"
             >
               <template #body="slotProps">
-                <Button
+                <!--<Button
                   v-bind:title="editMsg"
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
                   @click="editItem(slotProps)"
-                />
+                />-->
                 <Button
                   v-bind:title="deleteMsg"
                   icon="pi pi-times"
@@ -333,6 +431,7 @@
                   @click="duplicateSample(slotProps)"
                   :id="'btndup' + slotProps.data.id"
                   name="btndup"
+                  :disabled="slotProps.data.isDuplicate == 1"
                 />
               </template>
             </Column>
@@ -391,6 +490,7 @@ export default {
       dashboard: this.$env_Url + "/assayer/worksheet",
       loading: true,
       cocPath: "",
+      editingRows: [],
       editMsg: "Update Sample",
       deleteMsg: "Exclude Sample",
       items: [],
@@ -416,6 +516,7 @@ export default {
         fireassayer: this.worksheet.fireassayer,
         ids: this.transids,
         transType: this.worksheet.transType,
+        reqfrom: "edit_worksheet",
       },
     };
   },
@@ -453,6 +554,16 @@ export default {
       );
       this.items = res.data;
     },
+    async updateItemOrder(){
+      const requestData = {
+        items: this.items // Assuming this.items is an array of items
+      };
+      const res = await this.callApiwParam(
+        "post",
+        "/assayer/updateItemOrder",
+        requestData
+      );
+    },
     async fetchFireAssayer() {
       const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
 
@@ -466,6 +577,58 @@ export default {
       );
       this.itemsList = res.data;
       this.showItemsDialog();
+    },
+
+    async onRowReorder(event){
+      console.log(event);
+
+      const draggedItem = this.items[event.dragIndex];
+      this.items.splice(event.dragIndex, 1);
+      this.items.splice(event.dropIndex, 0, draggedItem);
+      
+      this.updateItemOrder();
+      this.customMessage("success", "Confirmed!", "Sample reordered successfully.", 3000);
+
+    },
+
+    async onRowEditSave(event) {
+      let { newData, index } = event;
+      newData.samplewtgrams = parseInt(newData.samplewtgrams)
+      newData.fluxg = parseInt(newData.fluxg)
+      newData.flourg = parseInt(newData.flourg)
+      newData.niterg = parseInt(newData.niterg)
+      newData.leadg = parseInt(newData.leadg)
+      newData.silicang = parseInt(newData.silicang)
+      this.items[index] = newData;
+
+      let itemForm = {
+        id: newData.id,
+        sampleno: newData.sampleno,
+        samplewtgrams: newData.samplewtgrams,
+        fluxg: newData.fluxg,
+        flourg: newData.flourg,
+        niterg: newData.niterg,
+        leadg: newData.leadg,
+        silicang: newData.silicang,
+        crusibleused: newData.crusibleused,
+        isAssayer: true,
+      }
+      const res = await this.submit("post", "/transItem/update", itemForm, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+      
     },
     editItem(data) {
       this.showDialog(data.data);

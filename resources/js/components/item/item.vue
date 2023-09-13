@@ -39,6 +39,7 @@
               name="sample-no"
               v-model="form.sampleno"
               :disabled="this.isdisabled"
+              style="color: black; background-color: white;"
             />
           </div>
         </div>
@@ -55,6 +56,7 @@
               name="drescription"
               v-model="form.description"
               :disabled="!this.isDeptUser"
+              style="color: black; background-color: white;"
             ></textarea>
           </div>
           <div class="form-group">
@@ -70,6 +72,7 @@
               name="elements"
               v-model="form.elements"
               :disabled="!this.isDeptUser"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -85,6 +88,7 @@
               name="method-code"
               v-model="form.methodcode"
               :disabled="!this.isDeptUser"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -95,6 +99,7 @@
               name="comments"
               v-model="form.comments"
               :disabled="!this.isDeptUser"
+              style="color: black; background-color: white;"
             ></textarea>
           </div>
           <div class="form-group">
@@ -108,6 +113,7 @@
               class="form-control input-sm"
               v-model="form.samplewtvolume"
               :disabled="!this.isReceiving"
+              style="color: black; background-color: white;"
             />
           </div>
         </div>
@@ -134,6 +140,7 @@
               class="form-control input-sm"
               v-model="form.samplewtgrams"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -146,9 +153,10 @@
               class="form-control input-sm"
               v-model="form.crusibleused"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
-          <h4>Elements</h4>
+          <h4 style="color: black;">Elements</h4>
           <div class="form-group">
             <label for="sample-no"
               >Flux (Grams)<span class="text-danger" aria-required="true">
@@ -160,6 +168,7 @@
               class="form-control input-sm"
               v-model="form.fluxg"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -173,6 +182,7 @@
               class="form-control input-sm"
               v-model="form.flourg"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -186,6 +196,7 @@
               class="form-control input-sm"
               v-model="form.niterg"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -199,6 +210,7 @@
               class="form-control input-sm"
               v-model="form.leadg"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div class="form-group">
@@ -212,13 +224,14 @@
               class="form-control input-sm"
               v-model="form.silicang"
               :disabled="!this.form.isAssayer"
+              style="color: black; background-color: white;"
             />
           </div>
           <div v-if="this.form.isAnalyst">
             <div>
               <hr class="mg-t-10 mg-b-30" />
             </div>
-            <h5 class="mb-4">{{ this.methodheader }}</h5>
+            <h5 style="color: black;" class="mb-4">{{ this.methodheader }}</h5>
             <h6 v-if="this.isfa30g" class="mb-4">FA30G</h6>
 
             <div class="form-group" v-if="this.showauprill">
@@ -231,6 +244,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.auprillmg"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group" v-if="this.showaugrade">
@@ -243,6 +257,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.augradegpt"
+                style="color: black; background-color: white;"
               />
             </div>
             <h6 class="mb-4" v-if="this.isfa30a">FA30A</h6>
@@ -256,6 +271,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.assreadingppm"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group" v-if="this.showagdore">
@@ -268,6 +284,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.agdoremg"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group" v-if="this.form.transType == 'Carbon'">
@@ -280,6 +297,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.initialaggpt"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group" v-if="this.showcclearance">
@@ -295,6 +313,7 @@
                 type=""
                 class="form-control input-sm"
                 v-model="form.crusibleclearance"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group" v-if="this.form.transType == 'Solids'">
@@ -307,6 +326,7 @@
                 type="number"
                 class="form-control input-sm"
                 v-model="form.inquartmg"
+                style="color: black; background-color: white;"
               />
             </div>
             <div class="form-group">
@@ -319,6 +339,7 @@
                 type=""
                 class="form-control input-sm"
                 v-model="form.methodremarks"
+                style="color: black; background-color: white;"
               />
             </div>
           </div>

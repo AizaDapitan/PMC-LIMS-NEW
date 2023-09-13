@@ -262,11 +262,11 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No."></Column>
-            <Column field="description" header="Description"></Column>
-            <Column field="elements" header="Elements"></Column>
-            <Column field="methodcode" header="Method Code"></Column>
-            <Column field="comments" header="Comments"></Column>
+            <Column field="sampleno" header="Sample No." :sortable="true"></Column>
+            <Column field="description" header="Description" :sortable="true"></Column>
+            <Column field="elements" header="Elements" :sortable="true"></Column>
+            <Column field="methodcode" header="Method Code" :sortable="true"></Column>
+            <Column field="comments" header="Comments" :sortable="true"></Column>
           </DataTable>
         </div>
       </div>

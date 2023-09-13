@@ -179,6 +179,7 @@
                   <span v-else>Pending</span>
                 </template>
               </Column>
+              <Column field="transType" hidden="true"></Column>
               <Column
                 :exportable="false"
                 style="min-width: 13rem"
@@ -197,6 +198,13 @@
                     class="p-button-rounded p-button-success mr-2"
                     @click="editWorksheet(slotProps)"
                     :disabled="slotProps.data.isApproved == 0 || slotProps.data.isPosted == 1"
+                  />
+                  <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-print"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printCertificate(slotProps)"
+                    :disabled="slotProps.data.isAnalyzed == 0"
                   />
                 </template>
               </Column>
@@ -232,8 +240,12 @@ export default {
       viewMsg: "View Worksheet",
       editMsg: "Edit Worksheet",
       deleteMsg: "Delete Worksheet",
+      printMsg: "Export Analysis",
       transIds: null,
       isDisabled: false,
+      form: {
+        reqfrom: "index_analyst",
+      }
     };
   },
   created() {
@@ -271,11 +283,16 @@ export default {
         alt = data.data.id;
       window.location.href = this.$env_Url + "/analyst/edit/" + alt;
     },
+    printCertificate(data){
+      var reportType = data.data.transType === "Carbon" ? "Generate Certificate of Analysis" : "Generate Analytical Result"
+      //alert(data.data.transType)
+      this.showDialog(reportType, data.data.labbatch, data.data.transType)
+    },
     generateAnaReport(){
       window.location.href = this.$env_Url + "/analyst/AnalyticalResult";
       this.showDialog()
     },
-    showDialog(ReportType) {
+    showDialog(ReportType, labbatch = "", transType = "") {
       const dialogRef = this.$dialog.open(reportparam, {
         props: {
           header: ReportType,
@@ -290,7 +307,8 @@ export default {
         },
         data: {
           reportType: ReportType,
-          
+          labbatch: labbatch,
+          transType: transType,
         },
         onClose: (options) => {
         },

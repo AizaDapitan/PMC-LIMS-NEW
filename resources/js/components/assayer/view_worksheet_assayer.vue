@@ -312,7 +312,7 @@
               header="Source"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)"></Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)"></Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
             <Column field="transmittalno" header="Transmittal No."></Column>
             <Column field="fluxg" header="Flux (Grams)"></Column>

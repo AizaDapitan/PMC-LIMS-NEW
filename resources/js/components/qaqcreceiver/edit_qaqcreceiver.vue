@@ -236,6 +236,14 @@
     </div>
 
     <div class="row row-xs">
+      <div class="col-lg-6 d-flex justify-content-start">
+        <a
+          @click="downloadCSV"
+          class="btn btn-success tx-13 btn-uppercase mr-2 mb-2 ml-lg-1 mr-lg-0"
+        >
+          <i data-feather="download" class="mg-r-5"></i> Download Item Template
+        </a>
+      </div>
       <div class="col-lg-12">
         <div class="table-responsive-lg">
           <DataTable
@@ -252,6 +260,10 @@
             v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
+            editMode="row"
+            dataKey="id"
+            v-model:editingRows="editingRows"
+            @row-edit-save="onRowEditSave"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
@@ -259,20 +271,31 @@
             <Column header="Item No.">
               <template #body="slotProps">
                 {{ slotProps.index + 1 }}
-              </template></Column
-            >
+              </template>
+            </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No."></Column>
-            <Column field="samplewtvolume" header="Sample Wt./Volume"></Column>
-            <Column field="description" header="Description"></Column>
-            <Column field="elements" header="Elements"></Column>
-            <Column field="methodcode" header="Method Code"></Column>
-            <Column field="comments" header="Comments"></Column>
+            <Column field="sampleno" header="Sample No." :sortable="true"></Column>
+            <Column field="samplewtvolume" header="Sample Wt./Volume" :sortable="true">
+              <template #editor="{ data, field }">
+                <InputText
+                  v-model="data[field]"
+                  type="number"
+                  min="0"
+                  autofocus
+                />
+              </template>
+            </Column>
+            <Column field="description" header="Description" :sortable="true"></Column>
+            <Column field="elements" header="Elements" :sortable="true"></Column>
+            <Column field="methodcode" header="Method Code" :sortable="true"></Column>
+            <Column field="comments" header="Comments" :sortable="true"></Column>
             <Column
-              :exportable="false"
-              style="min-width: 8rem"
-              header="Actions"
+              :rowEditor="true"
+              style="width: 7%; min-width: 8rem"
+              bodyStyle="text-align:center"
             >
+
+              <!--
               <template #body="slotProps">
                 <Button
                   v-bind:title="editMsg"
@@ -281,6 +304,7 @@
                   @click="editItem(slotProps)"
                 />
               </template>
+              -->
             </Column>
           </DataTable>
         </div>
@@ -289,6 +313,58 @@
     <!-- row -->
 
     <hr class="mg-t-30 mg-b-30" />
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="d-lg-flex justify-content-lg-end">
+          <div
+            class="
+              form-group
+              d-flex
+              flex-column flex-lg-row
+              align-items-lg-center
+            "
+          >
+            <input type="hidden" v-model="form.itemFile" />
+            <label for="customFile" class="mg-r-10">Attached CSV</label>
+            <div class="custom-file mb-0 mb-lg-2">
+              <input
+                type="file"
+                class="custom-file-input"
+                id="customFile"
+                ref="file"
+                name="attached-csv"
+                v-on:change="onFileChange"
+                :disabled="disableUpload"
+                accept=".csv"
+              />
+              <label
+                class="custom-file-label"
+                for="customFile"
+                data-button-label="Browse"
+                >{{ fileLabel }}</label
+              >
+            </div>
+            <button
+              type="submit"
+              class="
+                btn btn-primary
+                tx-13
+                btn-uppercase
+                mr-2
+                mb-2
+                ml-lg-1
+                mr-lg-0
+              "
+              :disabled="disableUpload"
+              @click.prevent="uploadItem"
+            >
+              <i data-feather="upload" class="mg-r-5"></i> Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="row flex-column-reverse flex-lg-row">
       <div class="col-lg-6">
@@ -315,12 +391,17 @@
 import item from "../../components/item/item";
 import { h } from "vue";
 import Button from "primevue/button";
+import axios from "axios";
+
 export default {
   props: ["transmittal"],
   data() {
     return {
       dashboard: this.$env_Url + "/qaqcreceiver/dashboard",
       loading: true,
+      disableUpload: false,
+      fileLabel: "Choose File",
+      editingRows: [],
       items: [],
       itemFile: null,
       COCitemFile: null,
@@ -365,6 +446,10 @@ export default {
     }
   },
   methods: {
+    onFileChange(e) {
+      this.itemFile = this.$refs.file.files[0];
+      this.fileLabel = this.itemFile.name;
+    },
     async fetchItems() {
       const res = await this.callApiwParam(
         "post",
@@ -373,8 +458,79 @@ export default {
       );
       this.items = res.data;
     },
+    async uploadItem() {
+      //this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
+      let form = new FormData();
+      form.append("itemFile", this.itemFile);
+      _.each(this.form, (value, key) => {
+        form.append(key, value);
+      });
+      const res = await this.submit("post", "/qaqcreceiver/uploaditems", form, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+    },
     editItem(data) {
       this.showDialog(data.data);
+    },
+    async onRowEditSave(event) {
+      let { newData, index } = event;
+      newData.samplewtvolume = parseInt(newData.samplewtvolume)
+      this.items[index] = newData;
+
+      let itemForm = {
+        id: newData.id,
+        sampleno: newData.sampleno,
+        description: newData.description,
+        elements: newData.elements,
+        comments: newData.comments,
+        methodcode: newData.methodcode,
+        transmittalno: this.transmittal.transmittalno,
+        samplewtvolume: newData.samplewtvolume,
+        source: this.transmittal.source,
+        receiving: true,
+      }
+      const res = await this.submit("post", "/transItem/update", itemForm, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; charset=utf-8; boundary=" +
+            Math.random().toString().substr(2),
+        },
+      });
+      if (res.status === 200) {
+        this.smessage();
+        this.fetchItems();
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
+      
+    },
+    downloadCSV() {
+      axios.post(this.$env_Url+'/qaqcreceiver/download-csv', this.form, { responseType: 'blob' })
+        .then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'TransmittalNo_'+this.form.transmittalno+'_.csv');
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          alert("Error: "+error)
+        });
     },
     showDialog(data) {
       const dialogRef = this.$dialog.open(item, {

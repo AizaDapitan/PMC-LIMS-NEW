@@ -63,6 +63,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/delete', [DeptUserController::class, 'delete'])->name("deptuser.delete");
             Route::get('/view-transmittal/{id}', [DeptUserController::class, 'view'])->name("deptuser.view");
             Route::post('/checkTransNo', [DeptUserController::class, 'checkTransNo'])->name("deptuser.checkTransNo");
+            Route::get('/getDeptOfficerEmails', [DeptUserController::class, 'getDeptOfficerEmails'])->name("deptuser.getDeptOfficerEmails");
+            Route::get('/printTransmittal/{data}', [DeptUserController::class, 'printTransmittal'])->name("deptuser.printTransmittal");
         }
     );
     Route::group(
@@ -99,6 +101,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/receiveTransmittal', [QAQCRecieverController::class, 'receiveTransmittal'])->name("qaqcreceiver.receiveTransmittal");
             Route::get('/edit-transmittal/{id}', [QAQCRecieverController::class, 'edit'])->name("qaqcreceiver.edit");
             Route::post('/getItems', [QAQCRecieverController::class, 'getItems'])->name("qaqcreceiver.getItems");
+            Route::post('/download-csv', [QAQCRecieverController::class, 'downloadCSV'])->name("qaqcreceiver.downloadCsv");
+            Route::post('/uploaditems', [QAQCRecieverController::class, 'uploadItems'])->name("qaqcreceiver.uploadItems");
+            Route::get('/printTransmittal/{data}', [QAQCRecieverController::class, 'printTransmittal'])->name("qaqcreceiver.printTransmittal");
             // Route::post('/update', [DeptOfficerController::class, 'update'])->name("deptofficer.update");
         }
     );
@@ -124,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/addSample', [AssayerController::class, 'addSample'])->name("assayer.addSample");
             Route::post('/excludeSample', [AssayerController::class, 'excludeSample'])->name("assayer.excludeSample");
             Route::post('/duplicateSample', [AssayerController::class, 'duplicateSample'])->name("assayer.duplicateSample");
+            Route::post('/download-csv', [AssayerController::class, 'downloadCSV'])->name("assayer.downloadCsv");
+            Route::post('/uploaditems', [AssayerController::class, 'uploadItems'])->name("assayer.uploadItems");
+            Route::post('/updateItemOrder', [AssayerController::class, 'updateItemOrder'])->name("assayer.updateItemOrder");
         }
     );
     // Digester
@@ -160,6 +168,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/getItems', [AnalystController::class, 'getItems'])->name("analyst.getItems");
             Route::post('/reassay', [AnalystController::class, 'reassay'])->name("analyst.reassay");
             Route::get('/AnalyticalResult/{data}', [AnalystController::class, 'analyticalResult'])->name("analyst.analyticalresult");
+            Route::post('/download-csv', [AnalystController::class, 'downloadCSV'])->name("analyst.downloadCsv");
+            Route::post('/uploaditems', [AnalystController::class, 'uploadItems'])->name("analyst.uploadItems");
         }
     );
     // Officer

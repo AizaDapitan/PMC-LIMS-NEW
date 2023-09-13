@@ -75,9 +75,25 @@ class DigesterController extends Controller
             return response()->json(['errors' => $e->getMessage(), 500]);
         }
     }
-    public function getWorksheet()
+    public function getWorksheet(Request $request)
     {
-        $worksheet = Worksheet::where('isdeleted', 0)->orderBy('created_at', 'desc')->get();
+        $currentMonth = Carbon::now()->month;
+
+        $firstDay = Carbon::createFromDate(null, $currentMonth, 1);
+        $lastDay = Carbon::createFromDate(null, $currentMonth, $firstDay->daysInMonth);
+
+        $dateFrom = $firstDay->toDateString();
+        $dateTo = $lastDay->toDateString();
+        if (isset($request->dateFrom)) {
+            $dateFrom = $request->dateFrom;
+        }
+        if (isset($request->dateTo)) {
+            $dateTo = $request->dateTo;
+        }
+
+        $worksheet = Worksheet::where('isdeleted', 0)
+            ->whereBetween('dateshift', [$dateFrom, $dateTo])
+            ->orderBy('created_at', 'desc')->get();
         return $worksheet;
     }
     public function transmittal()
@@ -88,11 +104,26 @@ class DigesterController extends Controller
         }
         return view('digester.transmittal');
     }
-    public function getTransmittal()
+    public function getTransmittal(Request $request)
     {
         // dd(DeptuserTrans::where([['isdeleted', 0],['status','Approved'],['transcode',1],['transType','Solid']])
         // ->orderBy('transmittalno', 'asc')->toSql());
+        $currentMonth = Carbon::now()->month;
+
+        $firstDay = Carbon::createFromDate(null, $currentMonth, 1);
+        $lastDay = Carbon::createFromDate(null, $currentMonth, $firstDay->daysInMonth);
+
+        $dateFrom = $firstDay->toDateString();
+        $dateTo = $lastDay->toDateString();
+        if (isset($request->dateFrom)) {
+            $dateFrom = $request->dateFrom;
+        }
+        if (isset($request->dateTo)) {
+            $dateTo = $request->dateTo;
+        }
+
         $transmittal = DeptuserTrans::where([['isdeleted', 0], ['status', 'Approved'], ['transType', 'Solids']])
+            ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
             ->orderBy('transmittalno', 'asc')->get();
 
         return $transmittal;

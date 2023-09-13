@@ -59,14 +59,17 @@
       </div><!-- aside-loggedin -->
       <ul class="nav nav-aside">
         <li class="nav-label">LIMS</li>
-        <li class="nav-item with-sub {{ (request()->is('deptuser/*')) ? 'active show' : '' }}">
-          <a href="" class="nav-link"><i data-feather="home"></i> <span>Dept. Requesters(User)</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsaved}}</span></a>
-          <ul>
-            <li class="{{ (request()->is('deptuser/dashboard*')) ? 'active' : '' }}"><a href="{{ route('deptuser.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('deptuser/create-transmittal')) ? 'active' : '' }}"><a href="{{ route('deptuser.create') }}">Create Transmittal</a></li>
-            <li class="{{ (request()->is('deptuser/unsaved-transmittal')) ? 'active' : '' }}"><a href="{{ route('deptuser.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsaved}}</span></a></li>
-          </ul>
-        </li>
+
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showDeptRequestorModule > 0)
+          <li class="nav-item with-sub {{ (request()->is('deptuser/*')) ? 'active show' : '' }}">
+            <a href="" class="nav-link"><i data-feather="home"></i> <span>Dept. Requesters(User)</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsaved}}</span></a>
+            <ul>
+              <li class="{{ (request()->is('deptuser/dashboard*')) ? 'active' : '' }}"><a href="{{ route('deptuser.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('deptuser/create-transmittal')) ? 'active' : '' }}"><a href="{{ route('deptuser.create') }}">Create Transmittal</a></li>
+              <li class="{{ (request()->is('deptuser/unsaved-transmittal')) ? 'active' : '' }}"><a href="{{ route('deptuser.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsaved}}</span></a></li>
+            </ul>
+          </li>
+        @endif
         <!-- <li class="nav-item with-sub {{ (request()->is('deptofficer/*')) ? 'active show' : '' }}">
           <a href="#" class="nav-link"><i data-feather="home"></i> <span>Dept. Requesters(Officer)</span></a>
           <ul>
@@ -74,111 +77,130 @@
             
           </ul>
         </li> -->
-        <li class="nav-item {{ (request()->is('deptofficer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('deptofficer.index') }}" class="nav-link"><i data-feather="bell"></i> <span>Dept. Requesters(Officer)</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOffApproval}}</span></a></li>
-        <li class="nav-item {{ (request()->is('qaqcreceiver/dashboard*')) ? 'active' : '' }}"><a href="{{ route('qaqcreceiver.index') }}" class="nav-link"><i data-feather="bell"></i> <span>Receiving</span><span class="badge badge-danger rounded-circle ml-3">{{ $forReceive }}</span></a></li>
-        <li class="nav-item with-sub {{ (request()->is('assayer/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Assayer</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAssayer}}</span></a>
-          <ul>
-            <li class="{{ (request()->is('assayer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('assayer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAssayer}}</span></a></li>
-            <li class="{{ (request()->is('assayer/create*')) ? 'active' : '' }}"><a href="{{ route('assayer.create', [' ']) }}">Add New</a></li>
-            <li class="{{ (request()->is('assayer/worksheet*')) ? 'active' : '' }}"><a href="{{ route('assayer.worksheet') }}">Worksheet</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('digester/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Tech/Digester</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigester}}</span></a>
-          <ul>
-            <li class="{{ (request()->is('digester/dashboard*')) ? 'active' : '' }}"><a href="{{ route('digester.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterWorksheet}}</span></a></li>
-            <li class="{{ (request()->is('digester/transmittal*')) ? 'active' : '' }}"><a href="{{ route('digester.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterTrans}}</span></a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('analyst/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Analyst</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalyst}}</span></a>
-          <ul>
-            <li class="{{ (request()->is('analyst/dashboard*')) ? 'active' : '' }}"><a href="{{ route('analyst.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalystWorksheet}}</span></a></li>
-            <li class="{{ (request()->is('analyst/transmittal*')) ? 'active' : '' }}"><a href="{{ route('analyst.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalystTrans}}</span></a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('officer/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Officer</span><span class="badge badge-danger rounded-circle ml-3">{{ $OfficerNotif}}</span></a>
-          <ul>
-            <li class="{{ (request()->is('officer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOfficer}}</span></a></li>
-            <li class="{{ (request()->is('officer/posted*')) ? 'active' : '' }}"><a href="{{ route('officer.posted') }}"><span>Posted</span></a></li>
-            <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
-            <li class="{{ (request()->is('officer/unsaved*')) ? 'active' : '' }}"><a href="{{ route('officer.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsavedOfficer}}</span></a></li>
-            <li class="{{ (request()->is('officer/Solutions-dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.solutions') }}"><span>Solutions Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $officerSolutions}}</span></a></li>
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showDeptOfficerModule > 0)
+          <li class="nav-item {{ (request()->is('deptofficer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('deptofficer.index') }}" class="nav-link"><i data-feather="bell"></i> <span>Dept. Requesters(Officer)</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOffApproval}}</span></a></li>
+        @endif
 
-          </ul>
-        </li>
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showReceivingModule > 0)
+          <li class="nav-item {{ (request()->is('qaqcreceiver/dashboard*')) ? 'active' : '' }}"><a href="{{ route('qaqcreceiver.index') }}" class="nav-link"><i data-feather="bell"></i> <span>Receiving</span><span class="badge badge-danger rounded-circle ml-3">{{ $forReceive }}</span></a></li>
+        @endif
 
-        <li class="nav-label mg-t-25">Maintenance</li>
-        <li class="nav-item with-sub {{ (request()->is('users/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>User Maintenance</span></a>
-          <ul>
-            <li class="{{ (request()->is('users/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('users/create*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('roles/*')) ? 'active show' : '' }}">
-          <a href="" class="nav-link"><i data-feather="users"></i> <span>Roles</span></a>
-          <ul>
-            <li class="{{ (request()->is('roles/dashboard*')) ? 'active' : '' }}"><a href="{{ route('roles.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('roles/create')) ? 'active' : '' }}"><a href="{{ route('roles.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('permissions/*')) ? 'active show' : '' }}">
-          <a href="" class="nav-link"><i data-feather="users"></i> <span>Permissions</span></a>
-          <ul>
-            <li class="{{ (request()->is('permissions/dashboard*')) ? 'active' : '' }}"><a href="{{ route('permissions.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item {{ (request()->is('accessrights/user*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
-        <li class="nav-item {{ (request()->is('accessrights/role*')) ? 'active' : '' }}"><a href="{{ route('accessrights.role') }}" class="nav-link"><i data-feather="settings"></i> <span>Role Access Rights</span></a></li>
-        <li class="nav-item with-sub {{ (request()->is('reports/*')) ? 'active show' : '' }}">
-          <a href="" class="nav-link"><i data-feather="file"></i> <span>Reports</span></a>
-          <ul>
-            <li class="{{ (request()->is('reports/audit-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.auditLogs') }}">User Action Monitoring</a></li>
-            <li class="{{ (request()->is('reports/error-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.errorLogs') }}">Application Error Logs</a></li>
-          </ul>
-        </li>
-        <li class="nav-item {{ (request()->is('applications/dashboard*')) ? 'active' : '' }}"><a href="{{ route('applications.index') }}" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>
-        <li class="nav-label mg-t-25">Master File</li>
-        <li class="nav-item with-sub {{ (request()->is('supervisors/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Shifting Supervisor</span></a>
-          <ul>
-            <li  class="{{ (request()->is('supervisors/dashboard*')) ? 'active' : '' }}"><a href="{{ route('supervisors.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('supervisors/create*')) ? 'active' : '' }}"><a href="{{ route('supervisors.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('fireassayers/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Fire Assayer</span></a>
-          <ul>
-            <li  class="{{ (request()->is('fireassayers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('fireassayers/create*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('assistantofficers/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Assistant QA Officer</span></a>
-          <ul>
-            <li  class="{{ (request()->is('assistantofficers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('assistantofficers/create*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('chiefchemists/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Chief Chemist</span></a>
-          <ul>
-            <li  class="{{ (request()->is('chiefchemists/dashboard*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('chiefchemists/create*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.create') }}">Create</a></li>
-          </ul>
-        </li>
-        <li class="nav-item with-sub {{ (request()->is('qaanalysts/*')) ? 'active show' : '' }}">
-          <a href="#" class="nav-link"><i data-feather="users"></i> <span>Analyst</span></a>
-          <ul>
-            <li  class="{{ (request()->is('qaanalysts/dashboard*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.index') }}">Dashboard</a></li>
-            <li class="{{ (request()->is('qaanalysts/create*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.create') }}">Create</a></li>
-          </ul>
-        </li>
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showAssayerModule > 0)
+          <li class="nav-item with-sub {{ (request()->is('assayer/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Assayer</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAssayer}}</span></a>
+            <ul>
+              <li class="{{ (request()->is('assayer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('assayer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAssayer}}</span></a></li>
+              <li class="{{ (request()->is('assayer/create*')) ? 'active' : '' }}"><a href="{{ route('assayer.create', [' ']) }}">Add New</a></li>
+              <li class="{{ (request()->is('assayer/worksheet*')) ? 'active' : '' }}"><a href="{{ route('assayer.worksheet') }}">Worksheet</a></li>
+            </ul>
+          </li>
+        @endif
 
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showDigesterModule > 0)
+          <li class="nav-item with-sub {{ (request()->is('digester/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Tech/Digester</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigester}}</span></a>
+            <ul>
+              <li class="{{ (request()->is('digester/dashboard*')) ? 'active' : '' }}"><a href="{{ route('digester.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterWorksheet}}</span></a></li>
+              <li class="{{ (request()->is('digester/transmittal*')) ? 'active' : '' }}"><a href="{{ route('digester.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forDigesterTrans}}</span></a></li>
+            </ul>
+          </li>
+        @endif
+
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showAnalystModule > 0)
+          <li class="nav-item with-sub {{ (request()->is('analyst/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Analyst</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalyst}}</span></a>
+            <ul>
+              <li class="{{ (request()->is('analyst/dashboard*')) ? 'active' : '' }}"><a href="{{ route('analyst.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalystWorksheet}}</span></a></li>
+              <li class="{{ (request()->is('analyst/transmittal*')) ? 'active' : '' }}"><a href="{{ route('analyst.transmittal', [' ']) }}"><span>Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $forAnalystTrans}}</span></a></li>
+            </ul>
+          </li>
+        @endif
+
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showOfficerModule > 0)
+          <li class="nav-item with-sub {{ (request()->is('officer/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="bell"></i> <span>Officer</span><span class="badge badge-danger rounded-circle ml-3">{{ $OfficerNotif}}</span></a>
+            <ul>
+              <li class="{{ (request()->is('officer/dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.index') }}"><span>Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $forOfficer}}</span></a></li>
+              <li class="{{ (request()->is('officer/posted*')) ? 'active' : '' }}"><a href="{{ route('officer.posted') }}"><span>Posted</span></a></li>
+              <li class="{{ (request()->is('officer/transmittal*')) ? 'active' : '' }}"><a href="{{ route('officer.transmittal') }}"><span>Transmittal</span></a></li>
+              <li class="{{ (request()->is('officer/unsaved*')) ? 'active' : '' }}"><a href="{{ route('officer.unsavedTrans') }}"><span>Unsaved Transmittal</span><span class="badge badge-danger rounded-circle ml-3">{{ $unsavedOfficer}}</span></a></li>
+              <li class="{{ (request()->is('officer/Solutions-dashboard*')) ? 'active' : '' }}"><a href="{{ route('officer.solutions') }}"><span>Solutions Dashboard</span><span class="badge badge-danger rounded-circle ml-3">{{ $officerSolutions}}</span></a></li>
+            </ul>
+          </li>
+        @endif
+
+        @if((Auth::user()->role == "ADMIN" || Auth::user()->role == "admin") || $showMaintenanceModule > 0)
+          <li class="nav-label mg-t-25">Maintenance</li>
+          <li class="nav-item with-sub {{ (request()->is('users/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>User Maintenance</span></a>
+            <ul>
+              <li class="{{ (request()->is('users/dashboard*')) ? 'active' : '' }}"><a href="{{ route('users.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('users/create*')) ? 'active' : '' }}"><a href="{{ route('users.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('roles/*')) ? 'active show' : '' }}">
+            <a href="" class="nav-link"><i data-feather="users"></i> <span>Roles</span></a>
+            <ul>
+              <li class="{{ (request()->is('roles/dashboard*')) ? 'active' : '' }}"><a href="{{ route('roles.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('roles/create')) ? 'active' : '' }}"><a href="{{ route('roles.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('permissions/*')) ? 'active show' : '' }}">
+            <a href="" class="nav-link"><i data-feather="users"></i> <span>Permissions</span></a>
+            <ul>
+              <li class="{{ (request()->is('permissions/dashboard*')) ? 'active' : '' }}"><a href="{{ route('permissions.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('permissions/create')) ? 'active' : '' }}"><a href="{{ route('permissions.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item {{ (request()->is('accessrights/user*')) ? 'active' : '' }}"><a href="{{ route('accessrights.user') }}" class="nav-link"><i data-feather="settings"></i> <span>User Access Rights</span></a></li>
+          <li class="nav-item {{ (request()->is('accessrights/role*')) ? 'active' : '' }}"><a href="{{ route('accessrights.role') }}" class="nav-link"><i data-feather="settings"></i> <span>Role Access Rights</span></a></li>
+          <li class="nav-item with-sub {{ (request()->is('reports/*')) ? 'active show' : '' }}">
+            <a href="" class="nav-link"><i data-feather="file"></i> <span>Reports</span></a>
+            <ul> 
+              <li class="{{ (request()->is('reports/audit-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.auditLogs') }}">User Action Monitoring</a></li>
+              <li class="{{ (request()->is('reports/error-logs*')) ? 'active' : '' }}"><a href="{{ route('reports.errorLogs') }}">Application Error Logs</a></li>
+            </ul>
+          </li>
+          <li class="nav-item {{ (request()->is('applications/dashboard*')) ? 'active' : '' }}"><a href="{{ route('applications.index') }}" class="nav-link"><i data-feather="settings"></i> <span>Application Maintenance</span></a></li>
+          
+          <li class="nav-label mg-t-25">Master File</li>
+          <li class="nav-item with-sub {{ (request()->is('supervisors/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>Shifting Supervisor</span></a>
+            <ul>
+              <li  class="{{ (request()->is('supervisors/dashboard*')) ? 'active' : '' }}"><a href="{{ route('supervisors.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('supervisors/create*')) ? 'active' : '' }}"><a href="{{ route('supervisors.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('fireassayers/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>Fire Assayer</span></a>
+            <ul>
+              <li  class="{{ (request()->is('fireassayers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('fireassayers/create*')) ? 'active' : '' }}"><a href="{{ route('fireassayers.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('assistantofficers/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>Assistant QA Officer</span></a>
+            <ul>
+              <li  class="{{ (request()->is('assistantofficers/dashboard*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('assistantofficers/create*')) ? 'active' : '' }}"><a href="{{ route('assistantofficers.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('chiefchemists/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>Chief Chemist</span></a>
+            <ul>
+              <li  class="{{ (request()->is('chiefchemists/dashboard*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('chiefchemists/create*')) ? 'active' : '' }}"><a href="{{ route('chiefchemists.create') }}">Create</a></li>
+            </ul>
+          </li>
+          <li class="nav-item with-sub {{ (request()->is('qaanalysts/*')) ? 'active show' : '' }}">
+            <a href="#" class="nav-link"><i data-feather="users"></i> <span>Analyst</span></a>
+            <ul>
+              <li  class="{{ (request()->is('qaanalysts/dashboard*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.index') }}">Dashboard</a></li>
+              <li class="{{ (request()->is('qaanalysts/create*')) ? 'active' : '' }}"><a href="{{ route('qaanalysts.create') }}">Create</a></li>
+            </ul>
+          </li>
+        @endif
+        
       </ul>
     </div>
   </aside>

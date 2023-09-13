@@ -49,6 +49,30 @@
               class="p-button-success p-button-sm mr-2"
               @click="addNew()"
             />
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon"
+                v-model="form.dateFrom"
+                :showIcon="true"
+                v-tooltip="'Date From'"
+                pattern="dd/MM/yyyy"
+                autocomplete="off"
+              />
+            </div>
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon2"
+                v-model="form.dateTo"
+                :showIcon="true"
+                v-tooltip="'Date To'"
+              />
+            </div>
+            <Button
+              icon="pi pi-search"
+              class="p-button-success p-button-sm mr-2"
+              v-tooltip="'Search'"
+              @click="fetchRecord()"
+            />
           </template>
           <template #end>
             <div class="search-form mg-r-10">
@@ -112,11 +136,7 @@
                 header="Time Submitted"
                 :sortable="true"
               >
-                <template #body="slotProps">
-                  <span>{{
-                    slotProps.data.timesubmitted.replace(":00.0000000", "")
-                  }}</span>
-                </template></Column
+              </Column
               >
               <Column
                 field="email_address"
@@ -195,6 +215,13 @@
                     :disabled="slotProps.data.status == 'Approved'"
                   />
                   <Button
+                    v-bind:title="printMsg"
+                    icon="pi pi-print"
+                    class="p-button-rounded p-button-info mr-2"
+                    @click="printTrans(slotProps)"
+                    :disabled="false"
+                  />
+                  <Button
                     v-bind:title="deleteMsg"
                     icon="pi pi-trash"
                     class="p-button-rounded p-button-warning mr-2"
@@ -233,13 +260,22 @@ export default {
       dashboard: this.$env_Url + "deptuser/dashboard",
       filters: null,
       editMsg: "Edit Transmittal",
+      printMsg: "Generate Transmittal",
       viewMsg: "View Transmittal",
       deleteMsg: "Delete Transmittal",
       errors_exist: false,
       errors: {},
+      form: {
+        id: 0,
+        dateFrom: new Date(),
+        dateTo: new Date(),
+      },
     };
   },
   created() {
+    const today = new Date();
+    this.form.dateFrom = new Date(today.getFullYear(),today.getMonth(),1);
+    this.form.dateTo =  new Date(today.getFullYear(),today.getMonth() + 1,0);
     this.fetchRecord();
     this.initFilters();
   },
@@ -304,6 +340,10 @@ export default {
         },
       });
     },
+    printTrans(data){
+      //alert(data.data.transmittalno+"*"+data.data.transType);
+      window.location.href = this.$env_Url + "/deptuser/printTransmittal/" + data.data.transmittalno+"*"+data.data.transType+"*1";
+    }
   },
 };
 </script>

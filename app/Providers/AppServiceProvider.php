@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use DateTime;
+use App\Models\Worksheet;
 use App\Models\Application;
 use App\Models\DeptuserTrans;
 use App\Models\TransmittalItem;
-use App\Models\Worksheet;
-use DateTime;
+use App\Models\RolesPermissions;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
@@ -66,6 +67,16 @@ class AppServiceProvider extends ServiceProvider
                 $OfficerNotif = $forOfficer +  $unsavedOfficer + $officerSolutions;
                 // $forOfficerPosted = Worksheet::where([['isdeleted', 0], ['isPosted', 1]])->count();
 
+                //modules
+                $showDeptRequestorModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 1]])->count();
+                $showDeptOfficerModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 2]])->count();
+                $showReceivingModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 3]])->count();
+                $showAssayerModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 4]])->count();
+                $showDigesterModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 5]])->count();
+                $showAnalystModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 6]])->count();
+                $showOfficerModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 7]])->count();
+                $showMaintenanceModule = RolesPermissions::where([['role_id', auth()->user()->role_id], ['module_id', 8]])->count();
+
                 $reason = "";
                 $scheduledate = "";
                 $scheduletime = "";
@@ -106,7 +117,16 @@ class AppServiceProvider extends ServiceProvider
                         'scheduledate',
                         'scheduletime',
                         'datetime',
-                        'currentDateTime'
+                        'currentDateTime',
+                        'showDeptRequestorModule',
+                        'showDeptOfficerModule',
+                        'showReceivingModule',
+                        'showAssayerModule',
+                        'showDigesterModule',
+                        'showAnalystModule',
+                        'showOfficerModule',
+                        'showMaintenanceModule'
+
                         // 'forOfficerPosted'
                     )
                 );

@@ -69,6 +69,15 @@ export default {
                 return e.response;
             }
         },
+        //custom alert message
+        async customMessage(severity, summary, detail, life){
+            this.$toast.add({
+                severity: severity,
+                summary: summary,
+                detail: detail,
+                life: life,
+            });
+        },
         //alert message
         async smessage() {
             this.$toast.add({
@@ -190,6 +199,12 @@ export default {
                 detail: "Clear Logs",
                 life: 3000,
             });
+        },
+        formatTime(timeString) {
+            const [hours, minutes] = timeString.split(":");
+            const date = new Date(2000, 0, 1, parseInt(hours), parseInt(minutes));
+            const formattedTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            return formattedTime;
         },           
         
     },

@@ -34,6 +34,30 @@
               class="p-button-help p-button-sm mr-2"
               @click="exportCSV($event)"
             />
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon"
+                v-model="form.dateFrom"
+                :showIcon="true"
+                v-tooltip="'Date From'"
+                pattern="dd/MM/yyyy"
+                autocomplete="off"
+              />
+            </div>
+            <div class="search-form mg-r-10" style="width: 200px">
+              <Calendar
+                id="icon2"
+                v-model="form.dateTo"
+                :showIcon="true"
+                v-tooltip="'Date To'"
+              />
+            </div>
+            <Button
+              icon="pi pi-search"
+              class="p-button-success p-button-sm mr-2"
+              v-tooltip="'Search'"
+              @click="fetchRecord()"
+            />
           </template>
           <template #end>
             <div class="search-form mg-r-10">
@@ -201,9 +225,17 @@ export default {
       editMsg: "Edit Worksheet",
       deleteMsg: "Delete Worksheet",
       transIds: null,
+      form: {
+        id: 0,
+        dateFrom: new Date(),
+        dateTo: new Date(),
+      },
     };
   },
   created() {
+    const today = new Date();
+    this.form.dateFrom = new Date(today.getFullYear(),today.getMonth(),1);
+    this.form.dateTo =  new Date(today.getFullYear(),today.getMonth() + 1,0);
     this.fetchRecord();
     this.initFilters();
   },
