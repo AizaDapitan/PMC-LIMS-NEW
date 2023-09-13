@@ -297,7 +297,7 @@
               :sortable="true"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)" :sortable="true"></Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true"></Column>
             <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
             <Column field="transmittalno" header="Transmittal No." :sortable="true"></Column>
             <Column field="fluxg" header="Flux (Grams)" :sortable="true"></Column>

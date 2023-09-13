@@ -22,7 +22,7 @@
             </li>
           </ol>
         </nav>
-        <h4 class="mg-b-0 tx-spacing--1">View Worksheet - Assayers</h4>
+        <h4 class="mg-b-0 tx-spacing--1">View Worksheet - Assayer</h4>
       </div>
     </div>
     <div v-if="errors_exist" class="alert alert-danger" role="alert">
@@ -312,7 +312,7 @@
               header="Source"
               style="min-width: 8rem"
             ></Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)"></Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)"></Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
             <Column field="transmittalno" header="Transmittal No."></Column>
             <Column field="fluxg" header="Flux (Grams)"></Column>

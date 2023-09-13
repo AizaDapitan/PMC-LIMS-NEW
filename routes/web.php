@@ -131,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/duplicateSample', [AssayerController::class, 'duplicateSample'])->name("assayer.duplicateSample");
             Route::post('/download-csv', [AssayerController::class, 'downloadCSV'])->name("assayer.downloadCsv");
             Route::post('/uploaditems', [AssayerController::class, 'uploadItems'])->name("assayer.uploadItems");
+            Route::post('/updateItemOrder', [AssayerController::class, 'updateItemOrder'])->name("assayer.updateItemOrder");
         }
     );
     // Digester

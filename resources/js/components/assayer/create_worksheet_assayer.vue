@@ -273,6 +273,7 @@
           <DataTable
             ref="dt"
             :value="items"
+            :rowReorder="true"
             :paginator="true"
             :rows="10"
             stripedRows
@@ -288,9 +289,11 @@
             dataKey="id"
             v-model:editingRows="editingRows"
             @row-edit-save="onRowEditSave"
+            @rowReorder="onRowReorder"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
+            <Column rowReorder headerStyle="width: 3rem" :reorderableColumn="false" />
             <Column>
               <template #header>
                 <div class="custom-control custom-checkbox">
@@ -660,6 +663,7 @@ export default {
         this.form.labbatch = "";
       }
     },
+
     async fetchItems() {
       const res = await this.callApiwParam(
         "post",
@@ -667,7 +671,21 @@ export default {
         this.form
       );
       this.items = res.data;
+      this.updateItemOrder();
+      //console.log(this.items);
     },
+
+    async updateItemOrder(){
+      const requestData = {
+        items: this.items // Assuming this.items is an array of items
+      };
+      const res = await this.callApiwParam(
+        "post",
+        "/assayer/updateItemOrder",
+        requestData
+      );
+    },
+
     async fetchFireAssayer() {
       const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
 
@@ -707,8 +725,20 @@ export default {
       }
 
     },
+    async onRowReorder(event){
+      console.log(event);
+
+      const draggedItem = this.items[event.dragIndex];
+      this.items.splice(event.dragIndex, 1);
+      this.items.splice(event.dropIndex, 0, draggedItem);
+      
+      this.updateItemOrder();
+      this.customMessage("success", "Confirmed!", "Sample reordered successfully.", 3000);
+
+    },
     async onRowEditSave(event) {
       let { newData, index } = event;
+
       newData.samplewtgrams = parseInt(newData.samplewtgrams)
       newData.fluxg = parseInt(newData.fluxg)
       newData.flourg = parseInt(newData.flourg)
@@ -744,7 +774,11 @@ export default {
         this.errors = res.data.errors;
         // this.ermessage(res.data.errors);
       }
-      
+
+      this.selectedItemsId.forEach((element) => {
+        document.getElementById((element.id).toString()).checked = true;
+        document.getElementById("btndup" + element.id).disabled = ( element.isDuplicate == 1 ? true : false);
+      });
     },
     editItem(data) {
       this.showDialog(data.data);
@@ -829,9 +863,11 @@ export default {
       } else {
         //document.getElementById("btn" + sample.data.id).disabled = true;
         document.getElementById("btndup" + sample.data.id).disabled = true;
-        _.remove(this.selectedItemsId, function (val) {
+        this.selectedItemsId = this.selectedItemsId.filter((obj) => obj.id !== sample.data.id);
+        /*_.remove(this.selectedItemsId, function (val) {
+          console.log("val-"+val+" | sample.data-"+sample.data)
           return val === sample.data;
-        });
+        });*/
       }
     },
     downloadCSV() {

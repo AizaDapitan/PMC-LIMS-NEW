@@ -152,7 +152,7 @@ class AssayerController extends Controller
         // $items = TransmittalItem::whereIn('transmittalno', $transids)->where(function($q){
         //     $q->where( 'isAssayed', 0)->orWhere('reAssayed',1);
         // })->Orwhere('labbatch', $labbatch)->get();
-        $items = TransmittalItem::whereIn('transmittalno', $transids)->where('isdeleted', '<>', '1')->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('sampleno')->get();
+        $items = TransmittalItem::whereIn('transmittalno', $transids)->where('isdeleted', '<>', '1')->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('order')->get();
         $items->transform(function ($item) {
             $item->samplewtgrams = intval($item->samplewtgrams);
             $item->fluxg = intval($item->fluxg);
@@ -202,7 +202,7 @@ class AssayerController extends Controller
     public function getWorksheetItems(Request $request)
     {
         // $transids = explode(',', $request->ids);
-        $items = TransmittalItem::where('labbatch', $request->labbatch)->orderBy('sampleno')->get();
+        $items = TransmittalItem::where('labbatch', $request->labbatch)->orderBy('order')->get();
         $items->transform(function ($item) {
             $item->samplewtvolume = intval($item->samplewtvolume);
             $item->samplewtgrams = intval($item->samplewtgrams);
@@ -539,6 +539,15 @@ class AssayerController extends Controller
             return response()->json('success');
         } catch (Exception $e) {
             return response()->json(['errors' =>  $e->getMessage()], 500);
+        }
+    }
+
+    public function updateItemOrder(Request $request){
+        $order = 1;
+        foreach($request->input('items') as $item){
+            $id = $item['id'];
+            TransmittalItem::where('id', $id)->update(['order' => $order]);
+            $order++;
         }
     }
 }
