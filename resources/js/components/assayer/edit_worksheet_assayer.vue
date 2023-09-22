@@ -517,6 +517,7 @@ export default {
         ids: this.transids,
         transType: this.worksheet.transType,
         reqfrom: "edit_worksheet",
+        is_reassay: this.worksheet.is_reassay,
       },
     };
   },
@@ -525,6 +526,7 @@ export default {
     this.fetchFireAssayer();
     this.fetchItems();
     this.loading = false;
+    //alert(this.worksheet.is_reassay);
   },
   mounted() {
     this.form.timeshift = this.worksheet.timeshift.replace(":00.0000000", "");

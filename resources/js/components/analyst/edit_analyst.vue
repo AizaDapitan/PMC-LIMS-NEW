@@ -380,7 +380,7 @@
 
             <Column header="Sample No.">
               <template #body="slotProps">
-                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.index + 1 }}
                 </span>
               </template>
@@ -388,14 +388,14 @@
             <Column field="id" hidden="true"></Column>
             <Column field="sampleno" header="Sample Code" :sortable="true">
               <template #body="slotProps">
-                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
-                  {{ slotProps.data.sampleno }}
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
+                  {{ slotProps.data.sampleno + (slotProps.data.reaasyedby != null ? ' (reassay)' : '') }}
                 </span>
               </template>
             </Column>
             <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
               <template #body="slotProps">
-                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.data.source }}
                 </span>
               </template>
@@ -408,7 +408,7 @@
             <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
             <Column field="transmittalno" header="Transmittal No." :sortable="true">
               <template #body="slotProps">
-                <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.data.transmittalno }}
                 </span>
               </template>

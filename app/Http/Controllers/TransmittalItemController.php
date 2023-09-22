@@ -287,18 +287,16 @@ class TransmittalItemController extends Controller
     }
     public function getWorksheetItems(Request $request)
     {
-        $items = [];
+        $items = TransmittalItem::where('labbatch', $request->labbatch)
+            ->orderBy('order');
 
         if ($request->reqfrom === "edit_analyst" || $request->reqfrom === "view_analyst") {
-            $items = TransmittalItem::where('labbatch', $request->labbatch)
-                //->where('reassayed', 0)
-                ->orderBy('order')
-                ->get();
-        } else {
-            $items = TransmittalItem::where('labbatch', $request->labbatch)
-                ->orderBy('order')
-                ->get();
+            // No additional conditions needed
+        } elseif ($request->reqfrom === "edit_worksheet" && $request->is_reassay === true) {
+            $items->where('reassayed', 1);
         }
+        
+        $items = $items->get();
 
         $items->transform(function ($item) {
             $item->samplewtgrams = intval($item->samplewtgrams);

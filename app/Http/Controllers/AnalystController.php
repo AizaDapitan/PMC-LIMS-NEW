@@ -348,7 +348,7 @@ class AnalystController extends Controller
             $pdf->SetXY(162, 247);
             $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
             $yy = 67; $i = 1;
 
             foreach($items as $item){
@@ -368,7 +368,7 @@ class AnalystController extends Controller
             $pdf->SetXY(89, 35);
             $pdf->Cell(50, 10, $input[3], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
             $yy = 70; $i = 1;
 
             foreach($items as $item){
@@ -404,7 +404,7 @@ class AnalystController extends Controller
             $pdf->SetXY(162, 247); 
             $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('sampleno')->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
             $yy = 67; $i = 1;
 
             foreach($items as $item){

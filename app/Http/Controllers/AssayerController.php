@@ -397,7 +397,7 @@ class AssayerController extends Controller
             ->whereIn('transmittalno', $transids)
             ->where([['isdeleted', 0],['isAssayed', 0]])
             ->Orwhere('labbatch', $labbatch)
-            ->OrderBy('sampleno')->get();
+            ->OrderBy('order')->get();
     
         $result = [['Item Id', 'Sample No', 'Description', 'Source', 'Transmittal No', 'Sample Wt. (Grams)', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Crusible Used']];
         foreach ($items as $item) {
