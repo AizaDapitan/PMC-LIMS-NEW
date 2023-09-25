@@ -179,7 +179,7 @@
                   <span v-else>Pending</span>
                 </template>
               </Column>
-              <Column field="transType" hidden="true"></Column>
+              <Column field="transType"></Column>
               <Column
                 :exportable="false"
                 style="min-width: 13rem"

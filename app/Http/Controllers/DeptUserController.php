@@ -167,12 +167,15 @@ class DeptUserController extends Controller
                 'name' => auth()->user()->name,
                 'items' => $items,
             ];
+            try{
+                Mail::send('emails.transmittalStored', $data,
+                function($message) use ($request){
+                    $message->to($request->email_address, auth()->user()->dept)
+                    ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' successfully created.');
+                });
+            }catch(Exception $e){
 
-            Mail::send('emails.transmittalStored', $data,
-            function($message) use ($request){
-                $message->to($request->email_address, auth()->user()->dept)
-                ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' successfully created.');
-            });
+            }
             
             return response()->json('success');
         } catch (Exception $e) {
@@ -236,11 +239,16 @@ class DeptUserController extends Controller
             TransmittalItem::where('transmittalno', $request->transmittalno)->update(['source' => $request->source]);
             $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
             $data["items"] = $items;
-            Mail::send('emails.transmittalSaved', $data,
-            function($message) use ($request){
-                $message->to($request->email_address, auth()->user()->dept)
-                ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' details successfully updated.');
-            });
+
+            try{
+                Mail::send('emails.transmittalSaved', $data,
+                function($message) use ($request){
+                    $message->to($request->email_address, auth()->user()->dept)
+                    ->subject('PMC-LIMS : Transmittal No. '.$request->transmittalno.' details successfully updated.');
+                });
+            }catch(Exception $e){
+
+            }
 
             return response()->json('success');
         } catch (Exception $e) {

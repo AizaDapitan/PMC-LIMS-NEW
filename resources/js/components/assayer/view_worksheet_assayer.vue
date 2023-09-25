@@ -306,15 +306,29 @@
               </template></Column
             >
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code"></Column>
-            <Column
-              field="source"
-              header="Source"
-              style="min-width: 8rem"
-            ></Column>
+            <Column field="sampleno" header="Sample Code">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
+                  {{ slotProps.data.sampleno + (slotProps.data.reaasyedby != null ? ' (reassay)' : '') }}
+                </span>
+              </template>
+            </Column>
+            <Column field="source" header="Source" style="min-width: 8rem">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
+                  {{ slotProps.data.source }}
+                </span>
+              </template>
+            </Column>
             <Column field="samplewtgrams" header="Sample Wt.(Grams)"></Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
-            <Column field="transmittalno" header="Transmittal No."></Column>
+            <Column field="transmittalno" header="Transmittal No.">
+              <template #body="slotProps">
+                <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
+                  {{ slotProps.data.transmittalno }}
+                </span>
+              </template>
+            </Column>
             <Column field="fluxg" header="Flux (Grams)"></Column>
             <Column field="flourg" header="Flour (Grams)"></Column>
             <Column field="niterg" header="Niter (Grams)"></Column>

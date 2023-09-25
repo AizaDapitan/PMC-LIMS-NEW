@@ -368,8 +368,8 @@ class AnalystController extends Controller
             $pdf->SetXY(89, 35);
             $pdf->Cell(50, 10, $input[3], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
-            $yy = 70; $i = 1;
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNotNull('transmittalno')->orderBy('order')->get();
+            $yy = 69.7; $i = 1;
 
             foreach($items as $item){
                 $pdf->SetXY(10, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
@@ -377,6 +377,15 @@ class AnalystController extends Controller
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
                 $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
                 $yy+=5; $i++;
+            }
+
+            $yy = 240;
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNull('transmittalno')->orderBy('order')->get();
+            foreach($items as $item){
+                //$pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
+                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
+                $yy-=5;
             }
 
         } else if ($transType == "Carbon") {
@@ -428,11 +437,26 @@ class AnalystController extends Controller
             $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
 
         } else {
-            $pdf->SetXY(89, 249); // set the position of the box
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(89, 249);
+            $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
-            $pdf->SetXY(156, 249); // set the position of the box
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'L'); // add the text, align to Center of cell
+            $pdf->SetXY(156, 249);
+            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
+
+            $pdf->SetXY(89, 35);
+            $pdf->Cell(50, 10, $input[3], 0, 0, 'L');
+
+            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
+            $yy = 70; $i = 1;
+
+            foreach($items as $item){
+                $pdf->SetXY(10, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
+                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
+                $yy+=5; $i++;
+            }
+
         }
 
         

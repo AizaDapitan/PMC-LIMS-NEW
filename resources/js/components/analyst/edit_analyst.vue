@@ -359,6 +359,7 @@
           <DataTable
             ref="dt"
             :value="items"
+            :rowReorder="true"
             :paginator="true"
             :rows="10"
             stripedRows
@@ -374,10 +375,11 @@
             dataKey="id"
             v-model:editingRows="editingRows"
             @row-edit-save="onRowEditSave"
+            @rowReorder="onRowReorder"
           >
             <template #empty> No record found. </template>
             <template #loading> Loading data. Please wait. </template>
-
+            <Column rowReorder headerStyle="width: 3rem" :reorderableColumn="false" />
             <Column header="Sample No.">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
@@ -733,6 +735,16 @@ export default {
       );
       this.items = res.data;
     },
+    async updateItemOrder(){
+      const requestData = {
+        items: this.items // Assuming this.items is an array of items
+      };
+      const res = await this.callApiwParam(
+        "post",
+        "/assayer/updateItemOrder",
+        requestData
+      );
+    },
     async fetchFireAssayer() {
       const res = await this.getDataFromDB("get", "/fireassayers/getFireAssayerActive");
 
@@ -759,6 +771,17 @@ export default {
         this.errors_exist = true;
         this.errors = res.data.errors;
       }
+    },
+    async onRowReorder(event){
+      console.log(event);
+
+      const draggedItem = this.items[event.dragIndex];
+      this.items.splice(event.dragIndex, 1);
+      this.items.splice(event.dropIndex, 0, draggedItem);
+      
+      this.updateItemOrder();
+      this.customMessage("success", "Confirmed!", "Sample reordered successfully.", 3000);
+
     },
     async onRowEditSave(event) {
       let { newData, index } = event;
