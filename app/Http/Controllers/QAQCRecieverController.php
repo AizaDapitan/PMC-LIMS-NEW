@@ -271,7 +271,7 @@ class QAQCRecieverController extends Controller
             foreach($items as $item){
                 $pdf->SetXY(45, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
                 $pdf->SetXY(55, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(83, $yy); $pdf->Cell(26, 7.1, $item->samplewtvolume, 0, 0, 'C');
+                $pdf->SetXY(83, $yy); $pdf->Cell(26, 7.1, intval($item->samplewtvolume), 0, 0, 'C');
                 $pdf->SetXY(107, $yy); $pdf->Cell(36.2, 7.1, $item->elements, 0, 0, 'C');
                 $pdf->SetXY(137, $yy); $pdf->Cell(32, 7, $item->comments, 0, 0, 'C');
                 $yy+=7.1; $i++;
@@ -305,7 +305,7 @@ class QAQCRecieverController extends Controller
             foreach($items as $item){
                 $pdf->SetXY(15.6, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
                 $pdf->SetXY(31.8, $yy); $pdf->Cell(22, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(53.8, $yy); $pdf->Cell(27, 7.1, $item->samplewtvolume, 0, 0, 'C');
+                $pdf->SetXY(53.8, $yy); $pdf->Cell(27, 7.1, intval($item->samplewtvolume), 0, 0, 'C');
                 $pdf->SetXY(80.8, $yy); $pdf->Cell(30, 7.1, $item->description, 0, 0, 'C');
                 $pdf->SetXY(110.8, $yy); $pdf->Cell(32, 7.1, $item->elements, 0, 0, 'C');
                 $pdf->SetXY(142.8, $yy); $pdf->Cell(26.5, 7.1, $item->methodcode, 0, 0, 'C');
@@ -339,7 +339,7 @@ class QAQCRecieverController extends Controller
             foreach($items as $item){
                 $pdf->SetXY(25, $yy); $pdf->Cell(14, 7.1, $i, 0, 0, 'C');
                 $pdf->SetXY(39, $yy); $pdf->Cell(28.2, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(67.2, $yy); $pdf->Cell(26.7, 7.1, $item->samplewtvolume, 0, 0, 'C');
+                $pdf->SetXY(67.2, $yy); $pdf->Cell(26.7, 7.1, intval($item->samplewtvolume), 0, 0, 'C');
                 $pdf->SetXY(93.9, $yy); $pdf->Cell(32, 7.1, $item->elements, 0, 0, 'C');
                 $pdf->SetXY(126, $yy); $pdf->Cell(23.2, 7.1, $item->methodcode, 0, 0, 'C');
                 $pdf->SetXY(149.2, $yy); $pdf->Cell(34, 7.1, $item->comments, 0, 0, 'C');

@@ -168,7 +168,7 @@ class AnalystController extends Controller
                 'reaasyedby' => auth()->user()->username,
                 //'isAssayed' => 0,
                 //'assayedby' => NULL,
-                'fluxg' => 0,
+                /*'fluxg' => 0,
                 'flourg' => 0,
                 'niterg' => 0,
                 'leadg' => 0,
@@ -182,7 +182,7 @@ class AnalystController extends Controller
                 'initialaggpt' => 0,
                 'crusibleclearance' => null,
                 'inquartmg' => 0,
-                'methodremarks' => "",
+                'methodremarks' => "",*/
 
             ];
             $item->update($data);
@@ -348,7 +348,7 @@ class AnalystController extends Controller
             $pdf->SetXY(162, 247);
             $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNotNull('transmittalno')->orderBy('order')->get();
             $yy = 67; $i = 1;
 
             foreach($items as $item){
@@ -357,8 +357,15 @@ class AnalystController extends Controller
                 $yy+=4.85; $i++;
             }
 
+            $yy = 238;
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNull('transmittalno')->orderBy('order')->get();
+            foreach($items as $item){
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $yy-=4.85;
+            }
+
         // BULK
-        } else if ($transType == "Bulk") {
+        } else if ($transType == "Bulk" || $transType == "Cut") {
             $pdf->SetXY(89, 249);
             $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
@@ -376,16 +383,16 @@ class AnalystController extends Controller
                 $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
                 $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
-                $yy+=5; $i++;
+                $yy+=4.9; $i++;
             }
 
             $yy = 240;
             $items = TransmittalItem::where('labbatch', $input[3])->whereNull('transmittalno')->orderBy('order')->get();
             foreach($items as $item){
-                //$pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
-                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
                 $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
-                $yy-=5;
+                $yy-=4.9;
             }
 
         } else if ($transType == "Carbon") {
@@ -395,7 +402,7 @@ class AnalystController extends Controller
             $pdf->SetXY(139, 226);
             $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNotNull('transmittalno')->orderBy('order')->get();
             $yy = 94; $i = 1;
 
             foreach($items as $item){
@@ -406,6 +413,15 @@ class AnalystController extends Controller
                 $yy+=4.3; $i++;
             }
 
+            $yy = 183.7;
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNull('transmittalno')->orderBy('order')->get();
+            foreach($items as $item){
+                $pdf->SetXY(27, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(138, $yy); $pdf->Cell(50, 10, $item->initialaggpt, 0, 0, 'L');
+                $pdf->SetXY(162, $yy); $pdf->Cell(50, 10, $item->agdoremg, 0, 0, 'L');
+                $yy-=4.3;
+            }
+
         } else if ($transType == "Minedrill") {
             $pdf->SetXY(94, 247); 
             $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); 
@@ -413,13 +429,20 @@ class AnalystController extends Controller
             $pdf->SetXY(162, 247); 
             $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
 
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNotNull('transmittalno')->orderBy('order')->get();
             $yy = 67; $i = 1;
 
             foreach($items as $item){
                 $pdf->SetXY(25, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
                 $yy+=4.85; $i++;
+            }
+
+            $yy = 238;
+            $items = TransmittalItem::where('labbatch', $input[3])->whereNull('transmittalno')->orderBy('order')->get();
+            foreach($items as $item){
+                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $yy-=4.85;
             }
 
         } else if ($transType == "Solids") {
@@ -429,33 +452,12 @@ class AnalystController extends Controller
             $pdf->SetXY(124, 202); 
             $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
 
-        } else if ($transType == "Solutions") {
+        } else { // SOLUTIONS
             $pdf->SetXY(51, 206); // set the position of the box
             $pdf->Cell(50, 10, $input[0], 0, 0, 'L'); // add the text, align to Center of cell
 
             $pdf->SetXY(114, 206); // set the position of the box
             $pdf->Cell(50, 10, $input[1], 0, 0, 'C'); // add the text, align to Center of cell
-
-        } else {
-            $pdf->SetXY(89, 249);
-            $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
-
-            $pdf->SetXY(156, 249);
-            $pdf->Cell(50, 10, $input[1], 0, 0, 'L');
-
-            $pdf->SetXY(89, 35);
-            $pdf->Cell(50, 10, $input[3], 0, 0, 'L');
-
-            $items = TransmittalItem::where('labbatch', $input[3])->orderBy('order')->get();
-            $yy = 70; $i = 1;
-
-            foreach($items as $item){
-                $pdf->SetXY(10, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
-                $pdf->SetXY(30, $yy); $pdf->Cell(50, 10, $item->source, 0, 0, 'L');
-                $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
-                $pdf->SetXY(76, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
-                $yy+=5; $i++;
-            }
 
         }
 

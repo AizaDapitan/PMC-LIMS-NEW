@@ -388,59 +388,59 @@
               </template>
             </Column>
             <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code" :sortable="true">
+            <Column field="sampleno" header="Sample Code">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.data.sampleno + (slotProps.data.reaasyedby != null ? ' (reassay)' : '') }}
                 </span>
               </template>
             </Column>
-            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+            <Column field="source" header="Source" style="min-width: 8rem">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.data.source }}
                 </span>
               </template>
             </Column>
-            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
               </template>
             </Column>
-            <Column field="crusibleused" header="Crusible Used" :sortable="true"></Column>
-            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+            <Column field="crusibleused" header="Crusible Used"></Column>
+            <Column field="transmittalno" header="Transmittal No.">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reaasyedby != null ? 'red' : 'inherit' }">
                   {{ slotProps.data.transmittalno }}
                 </span>
               </template>
             </Column>
-            <Column field="fluxg" header="Flux (Grams)" :sortable="true">
+            <Column field="fluxg" header="Flux (Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.fluxg ? parseInt(slotProps.data.fluxg) : '' }}
               </template>
             </Column>
-            <Column field="flourg" header="Flour (Grams)" :sortable="true">
+            <Column field="flourg" header="Flour (Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.flourg ? parseInt(slotProps.data.flourg) : '' }}
               </template>
             </Column>
-            <Column field="niterg" header="Niter (Grams)" :sortable="true">
+            <Column field="niterg" header="Niter (Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.niterg ? parseInt(slotProps.data.niterg) : '' }}
               </template>
             </Column>
-            <Column field="leadg" header="Lead (Grams)" :sortable="true">
+            <Column field="leadg" header="Lead (Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.leadg ? parseInt(slotProps.data.leadg) : '' }}
               </template>
             </Column>
-            <Column field="silicang" header="Silican (Grams)" :sortable="true">
+            <Column field="silicang" header="Silican (Grams)">
               <template #body="slotProps">
                 {{ slotProps.data.silicang ? parseInt(slotProps.data.silicang) : '' }}
               </template>
             </Column>
-            <Column field="auprillmg" header="Au, Prill(Mg)" :sortable="true" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
+            <Column field="auprillmg" header="Au, Prill(Mg)" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -450,7 +450,7 @@
                 />
               </template>
             </Column>
-            <Column field="augradegpt" header="Au, Grade(Gpt)" :sortable="true" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
+            <Column field="augradegpt" header="Au, Grade(Gpt)" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -460,7 +460,7 @@
                 />
               </template>
             </Column>
-            <Column field="assreadingppm" header="ASS Reading, ppm" :sortable="true" :hidden="['Bulk', 'Cut', 'Carbon', 'Solids', 'Solutions'].includes(form.transType)">
+            <Column field="assreadingppm" header="ASS Reading, ppm" :hidden="['Bulk', 'Cut', 'Carbon', 'Solids', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -470,7 +470,7 @@
                 />
               </template>
             </Column>
-            <Column field="agdoremg" header="Ag, Dore(Mg)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
+            <Column field="agdoremg" header="Ag, Dore(Mg)" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -480,7 +480,7 @@
                 />
               </template>
             </Column>
-            <Column field="initialaggpt" header="Initial Ag (Gpt)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solids', 'Solutions'].includes(form.transType)">
+            <Column field="initialaggpt" header="Initial Ag (Gpt)" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill', 'Solids', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -490,7 +490,7 @@
                 />
               </template>
             </Column>
-            <Column field="crusibleclearance" header="Crusible Clearance" :sortable="true" :hidden="['Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
+            <Column field="crusibleclearance" header="Crusible Clearance" :hidden="['Rock', 'Mine Drill', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -499,7 +499,7 @@
                   autofocus
                 />
               </template></Column>
-            <Column field="inquartmg" header="For Inquart (Mg)" :sortable="true" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill','Carbon','Solutions'].includes(form.transType)">
+            <Column field="inquartmg" header="For Inquart (Mg)" :hidden="['Bulk', 'Cut', 'Rock', 'Mine Drill','Carbon','Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -509,7 +509,7 @@
                 />
               </template>
             </Column>
-            <Column field="methodremarks" header="Remarks" :sortable="true">
+            <Column field="methodremarks" header="Remarks">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"

@@ -391,7 +391,11 @@
                 </span>
               </template>
             </Column>
-            <Column field="samplewtvolume" header="Sample Wt.(Grams)" ></Column>
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)" >
+              <template #body="slotProps">
+                {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
+              </template>
+            </Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
             <Column field="transmittalno" header="Transmittal No.">
               <template #body="slotProps">

@@ -333,21 +333,21 @@
               </template>
             </Column>
             <Column field="id" :hidden="true"></Column>
-            <Column field="sampleno" header="Sample Code" :sortable="true">
+            <Column field="sampleno" header="Sample Code">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
                   {{ slotProps.data.sampleno }}
                 </span>
               </template>
             </Column>
-            <Column field="source" header="Source" :sortable="true" style="min-width: 8rem">
+            <Column field="source" header="Source" style="min-width: 8rem">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
                   {{ slotProps.data.source }}
                 </span>
               </template>
             </Column>
-            <Column field="samplewtgrams" header="Sample Wt.(Grams)" :sortable="true">
+            <Column field="samplewtgrams" header="Sample Wt.(Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -357,7 +357,7 @@
                 />
               </template>
             </Column>
-            <Column field="crusibleused" header="Crusible Used" :sortable="true">
+            <Column field="crusibleused" header="Crusible Used">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -367,14 +367,14 @@
                 />
               </template>
             </Column>
-            <Column field="transmittalno" header="Transmittal No." :sortable="true">
+            <Column field="transmittalno" header="Transmittal No.">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.isDuplicate == 1 ? 'orange' : 'black' }">
                   {{ slotProps.data.transmittalno }}
                 </span>
               </template>
             </Column>
-            <Column field="fluxg" header="Flux (Grams)" :sortable="true">
+            <Column field="fluxg" header="Flux (Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -384,7 +384,7 @@
                 />
               </template>
             </Column>
-            <Column field="flourg" header="Flour (Grams)" :sortable="true">
+            <Column field="flourg" header="Flour (Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -394,7 +394,7 @@
                 />
               </template>
             </Column>
-            <Column field="niterg" header="Niter (Grams)" :sortable="true">
+            <Column field="niterg" header="Niter (Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -404,7 +404,7 @@
                 />
               </template>
             </Column>
-            <Column field="leadg" header="Lead (Grams)" :sortable="true">
+            <Column field="leadg" header="Lead (Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
@@ -414,7 +414,7 @@
                 />
               </template>
             </Column>
-            <Column field="silicang" header="Silican (Grams)" :sortable="true">
+            <Column field="silicang" header="Silican (Grams)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
