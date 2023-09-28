@@ -404,7 +404,7 @@
             </Column>
             <Column field="samplewtgrams" header="Sample Wt.(Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.samplewtgrams ? parseInt(slotProps.data.samplewtgrams) : '' }}
+                {{ slotProps.data.samplewtgrams ? (slotProps.data.samplewtgrams) : '' }}
               </template>
             </Column>
             <Column field="crusibleused" header="Crusible Used"></Column>
@@ -417,34 +417,34 @@
             </Column>
             <Column field="fluxg" header="Flux (Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.fluxg ? parseInt(slotProps.data.fluxg) : '' }}
+                {{ slotProps.data.fluxg ? (slotProps.data.fluxg) : '' }}
               </template>
             </Column>
             <Column field="flourg" header="Flour (Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.flourg ? parseInt(slotProps.data.flourg) : '' }}
+                {{ slotProps.data.flourg ? (slotProps.data.flourg) : '' }}
               </template>
             </Column>
             <Column field="niterg" header="Niter (Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.niterg ? parseInt(slotProps.data.niterg) : '' }}
+                {{ slotProps.data.niterg ? (slotProps.data.niterg) : '' }}
               </template>
             </Column>
             <Column field="leadg" header="Lead (Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.leadg ? parseInt(slotProps.data.leadg) : '' }}
+                {{ slotProps.data.leadg ? (slotProps.data.leadg) : '' }}
               </template>
             </Column>
             <Column field="silicang" header="Silican (Grams)">
               <template #body="slotProps">
-                {{ slotProps.data.silicang ? parseInt(slotProps.data.silicang) : '' }}
+                {{ slotProps.data.silicang ? (slotProps.data.silicang) : '' }}
               </template>
             </Column>
             <Column field="auprillmg" header="Au, Prill(Mg)" :hidden="['Carbon', 'Solutions'].includes(form.transType)">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -454,7 +454,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -464,7 +464,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -474,7 +474,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -484,7 +484,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -503,7 +503,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -790,6 +790,7 @@ export default {
       }else{
         this.items[index] = newData;
 
+        newData.trans_type = this.form.transType;
         if(newData.trans_type === 'Bulk' || newData.trans_type === 'Cut'){
           newData.assreadingppm = 0;
           newData.agdoremg = 0;
@@ -839,7 +840,9 @@ export default {
         });
         if (res.status === 200) {
           this.smessage();
-          this.fetchItems();
+          this.errors_exist = false;
+          this.errors = [];
+          //this.fetchItems();
         } else {
           this.errors_exist = true;
           this.errors = res.data.errors;

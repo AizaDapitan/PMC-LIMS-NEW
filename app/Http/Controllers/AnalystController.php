@@ -194,8 +194,7 @@ class AnalystController extends Controller
 
     public function downloadCSV(Request $request){
         $items = TransmittalItem::where('labbatch', $request->labbatch)
-            ->where('reassayed', 0)
-            ->orderBy('sampleno')
+            ->orderBy('order')
             ->get();
         $result = [['Item Id', 'Sample No', 'Transmittal No', 'Sample Wt. (Grams)', 'Crusible Used', 'Flux (Grams)', 'Flour (Grams)', 'Niter (Grams)', 'Lead (Grams)', 'Silican (Grams)', 'Au Prill (Mg)', 'Au Grade (Mg)', 'ASS Reading ppm', 'Ag Dore (Mg)', 'Initial Ag (Gpt)', 'Crucible Clearance', 'For Inquart (Mg)', 'Remarks']];
         foreach ($items as $item) {
@@ -354,6 +353,7 @@ class AnalystController extends Controller
             foreach($items as $item){
                 $pdf->SetXY(25, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(77, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
                 $yy+=4.85; $i++;
             }
 
@@ -435,6 +435,7 @@ class AnalystController extends Controller
             foreach($items as $item){
                 $pdf->SetXY(25, $yy); $pdf->Cell(50, 10, $i, 0, 0, 'L');
                 $pdf->SetXY(50, $yy); $pdf->Cell(50, 10, $item->sampleno, 0, 0, 'L');
+                $pdf->SetXY(77, $yy); $pdf->Cell(50, 10, $item->augradegpt, 0, 0, 'L');
                 $yy+=4.85; $i++;
             }
 

@@ -299,19 +299,26 @@ class TransmittalItemController extends Controller
         $items = $items->get();
 
         $items->transform(function ($item) {
-            $item->samplewtgrams = intval($item->samplewtgrams);
+            /*$item->samplewtgrams = intval($item->samplewtgrams);
             $item->fluxg = intval($item->fluxg);
             $item->flourg = intval($item->flourg);
             $item->niterg = intval($item->niterg);
             $item->leadg = intval($item->leadg);
-            $item->silicang = intval($item->silicang);
+            $item->silicang = intval($item->silicang);*/
 
-            $item->auprillmg = intval($item->auprillmg) != 0 ? intval($item->auprillmg) : '';
+            /*$item->auprillmg = intval($item->auprillmg) != 0 ? intval($item->auprillmg) : '';
             $item->augradegpt = intval($item->augradegpt) != 0 ? intval($item->augradegpt) : '';
             $item->assreadingppm = intval($item->assreadingppm) != 0 ? intval($item->assreadingppm) : '';
             $item->agdoremg = intval($item->agdoremg) != 0 ? intval($item->agdoremg) : '';
             $item->initialaggpt = intval($item->initialaggpt) != 0 ? intval($item->initialaggpt) : '';
-            $item->inquartmg = intval($item->inquartmg) != 0 ? intval($item->inquartmg) : '';
+            $item->inquartmg = intval($item->inquartmg) != 0 ? intval($item->inquartmg) : '';*/
+
+            $item->auprillmg = intval($item->auprillmg) != 0 ? $item->auprillmg : '';
+            $item->augradegpt = intval($item->augradegpt) != 0 ? $item->augradegpt : '';
+            $item->assreadingppm = intval($item->assreadingppm) != 0 ? $item->assreadingppm : '';
+            $item->agdoremg = intval($item->agdoremg) != 0 ? $item->agdoremg : '';
+            $item->initialaggpt = intval($item->initialaggpt) != 0 ? $item->initialaggpt : '';
+            $item->inquartmg = intval($item->inquartmg) != 0 ? $item->inquartmg : '';
             return $item;
         });
         return $items;
