@@ -101,6 +101,26 @@ class QAQCRecieverController extends Controller
         $transmittal = DeptuserTrans::where('id', $id)->first();
         return view('qaqcreceiver.edit', compact('transmittal'));
     }
+
+    public function update(Request $request){
+        $request->validate([
+            'shifting_supervisor' => 'required'
+        ]);
+        try {
+          
+            $deptuserTrans = DeptuserTrans::find($request->id);
+
+            $data = [
+                'supervisor' => $request->shifting_supervisor,
+            ];
+            $deptuserTrans->update($data);
+
+            return response()->json('success');
+        } catch (Exception $e) {
+            return response()->json(['error' =>  $e->getMessage()], 500);
+        }
+    }
+
     public function getItems(Request $request)
     {
         $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno],['isAssayed',0]])->get();
@@ -281,7 +301,7 @@ class QAQCRecieverController extends Controller
             $pdf->SetXY(38, 242); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
             $pdf->SetXY(38, 248); $pdf->Cell(50, 7, (User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
             $pdf->SetXY(146, 238.6); $pdf->Cell(50, 7, (User::where("username", $transmittal->receiver)->first())->name, 0, 0, 'L');
-
+            $pdf->SetXY(157, 244.6); $pdf->Cell(50, 7, $transmittal->supervisor, 0, 0, 'L');
             $pdf->SetXY(165, 250.9); $pdf->Cell(50, 7, (Carbon::parse($transmittal->received_date))->format('F j, Y g:i A'), 0, 0, 'L');
         }
         if($input[1] == "Mine Drill" || $input[1] == "Rock"){
@@ -317,7 +337,7 @@ class QAQCRecieverController extends Controller
             $pdf->SetXY(40, 241.5); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
             $pdf->SetXY(40, 248); $pdf->Cell(50, 7, (User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L');
             $pdf->SetXY(146, 238.6); $pdf->Cell(50, 7, (User::where("username", $transmittal->receiver)->first())->name, 0, 0, 'L');
-
+            $pdf->SetXY(157, 244.6); $pdf->Cell(50, 7, $transmittal->supervisor, 0, 0, 'L');
             $pdf->SetXY(165, 250.9); $pdf->Cell(50, 7, (Carbon::parse($transmittal->received_date))->format('F j, Y g:i A'), 0, 0, 'L');
         
         }

@@ -24,6 +24,15 @@
       </div>
     </div>
 
+    <div v-if="errors_exist" class="alert alert-danger" role="alert">
+      Whoops! Something didn't work.
+      <ul>
+        <div v-for="error in errors" :key="error.id">
+          <li>{{ error[0] }}</li>
+        </div>
+      </ul>
+    </div>
+
     <div class="row">
       <div class="col-lg-12">
         <div class="d-lg-flex justify-content-lg-end">
@@ -199,7 +208,6 @@
               </select>
             </div>
           </div>
-
           <div class="col-lg-4">
             <div class="form-group">
               <label for="status">Status</label>
@@ -217,16 +225,34 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="source">Source</label>
-          <input
-            type="text"
-            class="form-control"
-            id="source"
-            name="source"
-            disabled="true"
-            v-model="form.source"
-          />
+        <div class="row row-sm">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <label for="source">Source</label>
+              <input
+                type="text"
+                class="form-control"
+                id="source"
+                name="source"
+                disabled="true"
+                v-model="form.source"
+              />
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group">
+              <label for="source">Shifting Supervisor</label>
+              <select
+                class="custom-select tx-base"
+                id="shifting_supervisor"
+                name="shifting_supervisor"
+                v-model="form.shifting_supervisor"
+                @change="saveSelection()"
+              >
+              <option v-for="supervisor in supervisors" :key="supervisor.id" :value="supervisor.name">{{supervisor.name}}</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -257,7 +283,6 @@
             responsiveLayout="scroll"
             :loading="loading"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-            v-model:filters="filters"
             filterDisplay="menu"
             rowIndexVar
             editMode="row"
@@ -273,22 +298,22 @@
                 {{ slotProps.index + 1 }}
               </template>
             </Column>
-            <Column field="id" hidden="true"></Column>
-            <Column field="sampleno" header="Sample No." :sortable="true"></Column>
-            <Column field="samplewtvolume" header="Sample Wt./Volume" :sortable="true">
+            <Column field="id" :hidden="true"></Column>
+            <Column field="sampleno" header="Sample No."></Column>
+            <Column field="samplewtvolume" header="Sample Wt./Volume">
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
               </template>
             </Column>
-            <Column field="description" header="Description" :sortable="true"></Column>
-            <Column field="elements" header="Elements" :sortable="true"></Column>
-            <Column field="methodcode" header="Method Code" :sortable="true"></Column>
-            <Column field="comments" header="Comments" :sortable="true"></Column>
+            <Column field="description" header="Description"></Column>
+            <Column field="elements" header="Elements"></Column>
+            <Column field="methodcode" header="Method Code"></Column>
+            <Column field="comments" header="Comments"></Column>
             <Column
               :rowEditor="true"
               style="width: 7%; min-width: 8rem"
@@ -402,6 +427,8 @@ export default {
       disableUpload: false,
       fileLabel: "Choose File",
       editingRows: [],
+      errors_exist: false,
+      errors: {},
       items: [],
       itemFile: null,
       COCitemFile: null,
@@ -409,6 +436,7 @@ export default {
       fileLabel: "Choose File",
       editMsg: "Update Item",
       cocFileLabel: "Choose File",
+      supervisors: [],
       form: {
         id: this.transmittal.id,
         cocFile: this.transmittal.cocFile,
@@ -425,12 +453,14 @@ export default {
         status: this.transmittal.status,
         email_address: this.transmittal.email_address,
         source: this.transmittal.source,
+        shifting_supervisor: this.transmittal.supervisor,
         transType: this.transmittal.transType,
       },
     };
   },
   created() {
     this.fetchItems();
+    this.fetchSupervisor();
     this.loading = false;
   },
   mounted() {
@@ -458,6 +488,12 @@ export default {
       );
       this.items = res.data;
     },
+
+    async fetchSupervisor(){
+      const res = await this.getDataFromDB("get", "/supervisors/getSupervisor");
+      this.supervisors = res.data;
+    },
+
     async uploadItem() {
       //this.fileLabel = this.form.transmittalno + "_" + this.fileLabel;
       let form = new FormData();
@@ -486,7 +522,7 @@ export default {
     },
     async onRowEditSave(event) {
       let { newData, index } = event;
-      newData.samplewtvolume = parseInt(newData.samplewtvolume)
+      //newData.samplewtvolume = parseInt(newData.samplewtvolume);
       this.items[index] = newData;
 
       let itemForm = {
@@ -510,7 +546,8 @@ export default {
       });
       if (res.status === 200) {
         this.smessage();
-        this.fetchItems();
+        //this.fetchItems();
+        this.errors_exist = false;
       } else {
         this.errors_exist = true;
         this.errors = res.data.errors;
@@ -531,6 +568,23 @@ export default {
         .catch(error => {
           alert("Error: "+error)
         });
+    },
+
+    async saveSelection(){
+      console.log(this.form.shifting_supervisor);
+      const res = await this.callApiwParam(
+        "post",
+        "/qaqcreceiver/update",
+        this.form
+      );
+      if (res.status === 200) {
+        this.smessage();
+        this.errors_exist = false;
+      } else {
+        this.errors_exist = true;
+        this.errors = res.data.errors;
+        // this.ermessage(res.data.errors);
+      }
     },
     showDialog(data) {
       const dialogRef = this.$dialog.open(item, {

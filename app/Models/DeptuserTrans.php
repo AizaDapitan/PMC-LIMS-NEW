@@ -20,13 +20,13 @@ class DeptuserTrans extends Model implements AuditableContract
         'transmittalno', 'purpose', 'datesubmitted', 'timesubmitted', 'date_needed', 'priority',
         'status', 'email_address', 'source', 'cocFile', 'csvFile', 'isdeleted', 'deleted_at', 'approvedDate', 'approver',
         'isReceived', 'receiver', 'received_date', 'isSaved', 'created_by', 'transType', 'assayedby', 'transcode',
-        'isPosted','postedBy','posted_at','username','section'
+        'isPosted','postedBy','posted_at','username','section','supervisor'
     ];
     protected $auditInclude = [
         'transmittalno', 'purpose', 'datesubmitted', 'timesubmitted', 'date_needed', 'priority',
         'status', 'email_address', 'source', 'cocFile', 'csvFile', 'isdeleted', 'deleted_at', 'approvedDate', 'approver',
         'isReceived', 'receiver', 'received_date', 'isSaved', 'created_by', 'transType', 'assayedby', 'transcode',
-        'isPosted','postedBy','posted_at','username','section'
+        'isPosted','postedBy','posted_at','username','section','supervisor'
     ];
     protected $appends = ['coc_path', 'statuses', 'isupdated', 'isEditable'];
 

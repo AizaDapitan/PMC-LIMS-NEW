@@ -230,7 +230,8 @@ class TransmittalItemController extends Controller
                 'description' => 'required',
                 'elements' => 'required',
                 'methodcode' => 'required',
-                'transmittalno' => 'required'
+                'transmittalno' => 'required',
+                'samplewtvolume' => 'required',
             ]);
         }
         try {
