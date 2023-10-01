@@ -75,11 +75,9 @@ class DeptUserController extends Controller
 
         $deptusers = DeptuserTrans::where([['isdeleted', 0], ['isSaved', 1], ['transcode', 1], ['created_by', auth()->user()->username]])
             ->whereBetween('datesubmitted', [$dateFrom, $dateTo])
-            ->orderBy('datesubmitted', 'desc')->get();
+            ->orderBy('created_at', 'desc')->get();
         $deptusers->transform(function ($item) {
-            // Transform the timesubmitted field to 12-hour format (2:56 PM)
-            $timestamp = strtotime($item->timesubmitted);
-            $item->timesubmitted = date('g:i A', $timestamp);
+            $item->timesubmitted = date('g:i A', strtotime($item->timesubmitted));
         
             return $item;
         });

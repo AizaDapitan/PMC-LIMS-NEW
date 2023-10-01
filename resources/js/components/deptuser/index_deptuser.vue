@@ -102,7 +102,6 @@
               paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
               :rowsPerPageOptions="[10, 20, 50]"
               responsiveLayout="scroll"
-              :loading="loading1"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
               v-model:filters="filters"
               filterDisplay="menu"
@@ -120,7 +119,7 @@
               <template #empty> No record found. </template>
               <template #loading> Loading data. Please wait. </template>
 
-              <Column field="id" hidden="true"></Column>
+              <Column field="id" :hidden="true"></Column>
               <Column
                 field="transmittalno"
                 header="Transmittal No"
@@ -234,6 +233,9 @@
           </div>
         </div>
       </div>
+
+      <loading-component :visibility="loader"/>
+
       <!-- End Pages -->
     </div>
     <div class="cms-footer mg-t-50">
@@ -259,6 +261,7 @@ export default {
       deptusers: [],
       dashboard: this.$env_Url + "deptuser/dashboard",
       filters: null,
+      loader: true,
       editMsg: "Edit Transmittal",
       printMsg: "Generate Transmittal",
       viewMsg: "View Transmittal",
@@ -290,6 +293,7 @@ export default {
         this.form
       );
       this.deptusers = res.data;
+      this.loader = false;
     },
     initFilters() {
       this.filters = {

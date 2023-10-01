@@ -510,6 +510,7 @@
           <i data-feather="save" class="mg-r-5"></i> Save
         </button>
       </div>
+      <loading-component :visibility="loader"/>
     </div>
 
     <div class="cms-footer mg-t-50">

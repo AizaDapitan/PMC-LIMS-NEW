@@ -351,7 +351,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -378,7 +378,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -388,7 +388,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -398,7 +398,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -408,7 +408,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -418,7 +418,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -739,12 +739,12 @@ export default {
     async onRowEditSave(event) {
       let { newData, index } = event;
 
-      newData.samplewtgrams = parseInt(newData.samplewtgrams)
+      /*newData.samplewtgrams = parseInt(newData.samplewtgrams)
       newData.fluxg = parseInt(newData.fluxg)
       newData.flourg = parseInt(newData.flourg)
       newData.niterg = parseInt(newData.niterg)
       newData.leadg = parseInt(newData.leadg)
-      newData.silicang = parseInt(newData.silicang)
+      newData.silicang = parseInt(newData.silicang)*/
       this.items[index] = newData;
 
       let itemForm = {

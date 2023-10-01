@@ -300,7 +300,7 @@
                 </span>
               </template>
             </Column>
-            <Column field="id" hidden="true"></Column>
+            <Column field="id" :hidden="true"></Column>
             <Column field="sampleno" header="Sample Code">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
@@ -319,7 +319,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -346,7 +346,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -356,7 +356,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -366,7 +366,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -376,7 +376,7 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
@@ -386,13 +386,13 @@
               <template #editor="{ data, field }">
                 <InputText
                   v-model="data[field]"
-                  type="number"
+                  type="text"
                   min="0"
                   autofocus
                 />
               </template>
             </Column>
-            <Column field="reassayed" header="Is Reassayed?" hidden="true">
+            <Column field="reassayed" header="Is Reassayed?" :hidden="true">
               <template #body="slotProps">
                 <span :style="{ color: slotProps.data.reassayed == 1 ? 'red' : 'inherit' }">
                   {{ slotProps.data.reassayed == 1 ? 'Yes' : '' }}
@@ -595,12 +595,12 @@ export default {
 
     async onRowEditSave(event) {
       let { newData, index } = event;
-      newData.samplewtgrams = parseInt(newData.samplewtgrams)
+      /*newData.samplewtgrams = parseInt(newData.samplewtgrams)
       newData.fluxg = parseInt(newData.fluxg)
       newData.flourg = parseInt(newData.flourg)
       newData.niterg = parseInt(newData.niterg)
       newData.leadg = parseInt(newData.leadg)
-      newData.silicang = parseInt(newData.silicang)
+      newData.silicang = parseInt(newData.silicang)*/
       this.items[index] = newData;
 
       let itemForm = {

@@ -270,6 +270,7 @@
           <i data-feather="download" class="mg-r-5"></i> Download Item Template
         </a>
       </div>
+      <ProgressSpinner />
       <div class="col-lg-12">
         <div class="table-responsive-lg">
           <DataTable

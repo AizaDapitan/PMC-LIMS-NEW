@@ -289,7 +289,7 @@
           </div>
         </div>
       </div>
-
+      <loading-component :visibility="loader"/>
       <!-- End Pages -->
     </div>
     <div class="cms-footer mg-t-50">
@@ -310,6 +310,7 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 export default {
   data() {
     return {
+      loader: true,
       transmittals: [],
       dashboard: this.$env_Url + "/assayer/dashboard",
       create: this.$env_Url + "/assayer/create-worksheet",
@@ -346,6 +347,7 @@ export default {
         this.form
       );
       this.transmittals = res.data;
+      this.loader = false;
     },
     initFilters() {
       this.filters = {

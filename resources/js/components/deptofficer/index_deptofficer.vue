@@ -218,6 +218,7 @@
           </div>
         </div>
       </div>
+      <loading-component :visibility="loader"/>
       <!-- End Pages -->
     </div>
     <div class="cms-footer mg-t-50">
@@ -239,6 +240,7 @@ export default {
   // props: ["deptofficers"],
   data() {
     return {
+      loader: true,
       deptofficers: [],
       dashboard: this.$env_Url + "deptofficer/dashboard",
       filters: null,
@@ -267,6 +269,7 @@ export default {
         this.form
       );
       this.deptofficers = res.data;
+      this.loader = false;
     },
     initFilters() {
       this.filters = {

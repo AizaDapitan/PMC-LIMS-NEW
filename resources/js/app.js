@@ -35,6 +35,11 @@ app.directive('tooltip', Tooltip);
 app.config.globalProperties.$env_Url = process.env.MIX_APP_URL;
 
 app.component(
+    "loading-component",
+    require("./components/item/loader.vue").default
+);
+
+app.component(
     "login-component",
     require("./components/auth/login.vue").default
 );

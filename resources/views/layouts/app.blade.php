@@ -449,8 +449,9 @@
         // console.log(dd2);
         if (schedule == curDateless1hour && shown == 0) {
           shown = 1;
-          //    alert("In exactly 1 hour the system will undergo maitenance! Please save your work.");
+              //alert("In exactly 1 hour the system will undergo maitenance! Please save your work.");
 
+              //console.log("In exactly 1 hour the system will undergo maitenance! Please save your work.");
           modal.style.display = "block";
           return false;
         }

@@ -199,6 +199,7 @@
           </div>
         </div>
       </div>
+      <loading-component :visibility="loader"/>
       <!-- End Pages -->
     </div>
     <div class="cms-footer mg-t-50">
@@ -219,6 +220,7 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 export default {
   data() {
     return {
+      loader: true,
       worksheets: [],
       filters: null,
       viewMsg: "View Worksheet",
@@ -247,6 +249,7 @@ export default {
         this.form
       );
       this.worksheets = res.data;
+      this.loader = false
     },
     initFilters() {
       this.filters = {

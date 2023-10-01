@@ -195,6 +195,7 @@
           </div>
         </div>
       </div>
+      <loading-component :visibility="loader"/>
       <!-- End Pages -->
     </div>
     <div class="cms-footer mg-t-50">
@@ -216,6 +217,7 @@ export default {
   // props: ["deptusers"],
   data() {
     return {
+      loader: true,
       deptusers: [],
       dashboard: this.$env_Url + "deptuser/dashboard",
       filters: null,
@@ -239,6 +241,7 @@ export default {
         this.form
       );
       this.deptusers = res.data;
+      this.loader = false;
     },
     initFilters() {
       this.filters = {

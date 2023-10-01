@@ -153,7 +153,7 @@ class AssayerController extends Controller
         //     $q->where( 'isAssayed', 0)->orWhere('reAssayed',1);
         // })->Orwhere('labbatch', $labbatch)->get();
         $items = TransmittalItem::whereIn('transmittalno', $transids)->where('isdeleted', '<>', '1')->where( 'isAssayed', 0)->Orwhere('labbatch', $labbatch)->OrderBy('order')->get();
-        $items->transform(function ($item) {
+        /*$items->transform(function ($item) {
             $item->samplewtgrams = intval($item->samplewtgrams);
             $item->fluxg = intval($item->fluxg);
             $item->flourg = intval($item->flourg);
@@ -161,7 +161,7 @@ class AssayerController extends Controller
             $item->leadg = intval($item->leadg);
             $item->silicang = intval($item->silicang);
             return $item;
-        });
+        });*/
 
         return  $items;
     }
