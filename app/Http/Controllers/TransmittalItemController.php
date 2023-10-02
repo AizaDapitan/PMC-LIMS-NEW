@@ -117,10 +117,10 @@ class TransmittalItemController extends Controller
             $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $request->transmittalno]])->get();
         }
         
-        $items->transform(function ($item) {
+        /*$items->transform(function ($item) {
             $item->samplewtvolume = intval($item->samplewtvolume);
             return $item;
-        });
+        });*/
         
         return  $items;
     }
@@ -223,7 +223,7 @@ class TransmittalItemController extends Controller
                 'inquartmg' => 'required',
                 'methodremarks' => 'required'
             ]);
-        } else {
+        } else if ($request->receiving){
             $request->validate([
                 'id' => 'required',
                 'sampleno' => 'required',
@@ -232,6 +232,15 @@ class TransmittalItemController extends Controller
                 'methodcode' => 'required',
                 'transmittalno' => 'required',
                 'samplewtvolume' => 'required',
+            ]);
+        }else{
+            $request->validate([
+                'id' => 'required',
+                'sampleno' => 'required',
+                'description' => 'required',
+                'elements' => 'required',
+                'methodcode' => 'required',
+                'transmittalno' => 'required',
             ]);
         }
         try {
@@ -266,7 +275,7 @@ class TransmittalItemController extends Controller
                     'methodremarks'    => $request->methodremarks,
                     'updatedby' => auth()->user()->username
                 ];
-            } else {
+            } else if ($request->receiving) {
                 $data = [
                     'sampleno' => $request->sampleno,
                     'description' => $request->description,
@@ -278,6 +287,15 @@ class TransmittalItemController extends Controller
                     'source'    => $request->source,
                     'updatedby' => auth()->user()->username,
                     'receiveby'  => $receiver
+                ];
+            } else{
+                $data = [
+                    'sampleno' => $request->sampleno,
+                    'description' => $request->description,
+                    'elements' => $request->elements,
+                    'comments' => $request->comments,
+                    'methodcode' =>  $request->methodcode,
+                    'transmittalno' => $request->transmittalno,
                 ];
             }
             $item->update($data);

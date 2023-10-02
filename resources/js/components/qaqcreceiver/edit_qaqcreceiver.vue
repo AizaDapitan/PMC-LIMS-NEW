@@ -547,7 +547,7 @@ export default {
       });
       if (res.status === 200) {
         this.smessage();
-        //this.fetchItems();
+        this.fetchItems();
         this.errors_exist = false;
       } else {
         this.errors_exist = true;
