@@ -388,111 +388,140 @@ class DeptUserController extends Controller
         $filecontent = file_get_contents(config('app.api_path') . 'Transmittals/Transmittal-'.$transType . '.pdf', false, $streamContext);
         $pagecount = $pdf->setSourceFile(\setasign\Fpdi\PdfParser\StreamReader::createByString($filecontent));
         $tpl = $pdf->importPage(1);
-        $pdf->AddPage();
-        $pdf->useTemplate($tpl, 5, 0, 200);
-        $pdf->SetFont('Helvetica');
-        $pdf->SetFontSize('9');
         
         $transmittal = DeptuserTrans::where("transmittalno", $input[0])->first();
-        
-        if ($input[1] == "Bulk" || $input[1] == "Cut") {
-            $pdf->SetXY(163, 5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
-            $pdf->SetXY(163, 12.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(163, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
-            $pdf->SetXY(150, 28.5); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
+        $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $input[0]]])->get();
 
-            $pdf->SetFontSize('24');
-            $pdf->SetXY(70, 45); $pdf->Cell(80, 10, strtoupper($input[1])." SAMPLES", 0, 0, 'C');
-            
-            $pdf->SetFontSize('9');
-            $pdf->SetXY(35, 52.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
-            $pdf->SetXY(40, 59); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(35, 65); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
-            $pdf->SetXY(35, 71); $pdf->Cell(50, 10, $transmittal->source, 0, 0, 'L');
+        if ($input[1] == "Bulk" || $input[1] == "Cut") {  
+            $numberOfGroups = ceil(count($items) / 19);
+            for ($groupNumber = 1; $groupNumber <= $numberOfGroups; $groupNumber++) {
+                $pdf->AddPage();
+                $pdf->useTemplate($tpl, 5, 0, 200);
+                $pdf->SetFont('Helvetica');
+                $pdf->SetFontSize('9');
 
-            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $input[0]]])->get();
-            $yy = 90.4; $i = 1;
+                $pdf->SetXY(163, 5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
+                $pdf->SetXY(163, 12.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(163, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
+                $pdf->SetXY(150, 28.5); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
 
-            foreach($items as $item){
-                $pdf->SetXY(50.6, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
-                $pdf->SetXY(67.1, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(99, $yy); $pdf->Cell(36.2, 7.1, $item->elements, 0, 0, 'C');
-                $pdf->SetXY(135, $yy); $pdf->Cell(32, 7.1, $item->comments, 0, 0, 'C');
-                $yy+=7.1; $i++;
-            }
+                $pdf->SetFontSize('24');
+                $pdf->SetXY(70, 45); $pdf->Cell(80, 10, strtoupper($input[1]) . " SAMPLES", 0, 0, 'C');
 
-            $pdf->SetXY(135, 225); $pdf->Cell(32, 7, $i - 1, 0, 0, 'C');
-            $pdf->SetXY(40, 246); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
+                $pdf->SetFontSize('9');
+                $pdf->SetXY(35, 52.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
+                $pdf->SetXY(40, 59); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(35, 65); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
+                $pdf->SetXY(35, 71); $pdf->Cell(50, 10, $transmittal->source, 0, 0, 'L');
 
-            if($input[2] == "2"){
-                $pdf->SetXY(15.5, 252); $pdf->Cell(50, 7, "Approved by:      ".(User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
+                $i = 1; $yy = 90.4;
+                $startIndex = ($groupNumber - 1) * 19; // Calculate the starting index for this group
+
+                for ($j = $startIndex; $j < min($startIndex + 19, count($items)); $j++) {
+                    $item = $items[$j];
+
+                    $pdf->SetXY(50.6, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
+                    $pdf->SetXY(67.1, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
+                    $pdf->SetXY(99, $yy); $pdf->Cell(36.2, 7.1, $item->elements, 0, 0, 'C');
+                    $pdf->SetXY(135, $yy); $pdf->Cell(32, 7.1, $item->comments, 0, 0, 'C');
+                    $yy += 7.1;
+                    $i++;
+                }
+
+                $pdf->SetXY(135, 225); $pdf->Cell(32, 7, $i - 1, 0, 0, 'C');
+                $pdf->SetXY(40, 246); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
+
+                if ($input[2] == "2") {
+                    $pdf->SetXY(15.5, 252); $pdf->Cell(50, 7, "Approved by:      " . (User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L');
+                }
             }
         }
+
         if($input[1] == "Mine Drill" || $input[1] == "Rock"){
-            $pdf->SetXY(163, 5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
-            $pdf->SetXY(163, 12.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(163, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
-            $pdf->SetXY(150, 28.5); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
+            $numberOfGroups = ceil(count($items) / 19);
+            for ($groupNumber = 1; $groupNumber <= $numberOfGroups; $groupNumber++) {
+                $pdf->AddPage();
+                $pdf->useTemplate($tpl, 5, 0, 200);
+                $pdf->SetFont('Helvetica');
+                $pdf->SetFontSize('9');
 
-            $pdf->SetFontSize('24');
-            $pdf->SetXY(70, 45); $pdf->Cell(80, 10, ($input[1] == "Rock" ? "ROCK DRILL" : strtoupper($input[1]))." SAMPLES", 0, 0, 'C');
+                $pdf->SetXY(163, 5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
+                $pdf->SetXY(163, 12.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(163, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
+                $pdf->SetXY(150, 28.5); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
+    
+                $pdf->SetFontSize('24');
+                $pdf->SetXY(70, 45); $pdf->Cell(80, 10, ($input[1] == "Rock" ? "ROCK DRILL" : strtoupper($input[1]))." SAMPLES", 0, 0, 'C');
+    
+                $pdf->SetFontSize('9');
+                $pdf->SetXY(35, 52.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
+                $pdf->SetXY(40, 59); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(35, 65); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
+                $pdf->SetXY(35, 71); $pdf->Cell(50, 10, $transmittal->source, 0, 0, 'L');
 
-            $pdf->SetFontSize('9');
-            $pdf->SetXY(35, 52.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
-            $pdf->SetXY(40, 59); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(35, 65); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
-            $pdf->SetXY(35, 71); $pdf->Cell(50, 10, $transmittal->source, 0, 0, 'L');
-        
-            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $input[0]]])->get();
-            $yy = 90.3; $i = 1;
+                $yy = 90.3; $i = 1;
+                $startIndex = ($groupNumber - 1) * 19; // Calculate the starting index for this group
 
-            foreach($items as $item){
-                $pdf->SetXY(15.6, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
-                $pdf->SetXY(31.8, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(63.8, $yy); $pdf->Cell(30, 7.1, $item->description, 0, 0, 'C');
-                $pdf->SetXY(93.8, $yy); $pdf->Cell(36, 7.1, $item->elements, 0, 0, 'C');
-                $pdf->SetXY(129.8, $yy); $pdf->Cell(33.5, 7.1, $item->methodcode, 0, 0, 'C');
-                $pdf->SetXY(163, $yy); $pdf->Cell(32, 7.1, $item->comments, 0, 0, 'C');
-                $yy+=7.1; $i++;
+                for ($j = $startIndex; $j < min($startIndex + 19, count($items)); $j++) {
+                    $item = $items[$j];
+
+                    $pdf->SetXY(15.6, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
+                    $pdf->SetXY(31.8, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
+                    $pdf->SetXY(63.8, $yy); $pdf->Cell(30, 7.1, $item->description, 0, 0, 'C');
+                    $pdf->SetXY(93.8, $yy); $pdf->Cell(36, 7.1, $item->elements, 0, 0, 'C');
+                    $pdf->SetXY(129.8, $yy); $pdf->Cell(33.5, 7.1, $item->methodcode, 0, 0, 'C');
+                    $pdf->SetXY(163, $yy); $pdf->Cell(32, 7.1, $item->comments, 0, 0, 'C');
+                    $yy+=7.1; $i++;
+                }
+
+                $pdf->SetXY(163, 225); $pdf->Cell(32, 7, $i - 1, 0, 0, 'C');
+                $pdf->SetXY(40, 246); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
+
+                if($input[2] == "2"){
+                    $pdf->SetXY(15.5, 252); $pdf->Cell(50, 7, "Approved by:      ".(User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
+                }
             }
-
-            $pdf->SetXY(163, 225); $pdf->Cell(32, 7, $i - 1, 0, 0, 'C');
-            $pdf->SetXY(40, 246); $pdf->Cell(50, 7, (User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
-
-            if($input[2] == "2"){
-                $pdf->SetXY(15.5, 252); $pdf->Cell(50, 7, "Approved by:      ".(User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
-            }
-        
         }
 
         if ($input[1] == "Carbon") {
-            $pdf->SetXY(163, 6); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
-            $pdf->SetXY(173, 13); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(173, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
-            $pdf->SetXY(160, 28); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
+            $numberOfGroups = ceil(count($items) / 22);
+            for ($groupNumber = 1; $groupNumber <= $numberOfGroups; $groupNumber++) {
+                $pdf->AddPage();
+                $pdf->useTemplate($tpl, 5, 0, 200);
+                $pdf->SetFont('Helvetica');
+                $pdf->SetFontSize('9');
 
-            $pdf->SetXY(34, 56.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
-            $pdf->SetXY(42, 62.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
-            $pdf->SetXY(34, 68.5); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
-            $pdf->SetXY(42, 74.5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
+                $pdf->SetXY(163, 6); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
+                $pdf->SetXY(173, 13); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->datesubmitted))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(173, 20.5); $pdf->Cell(50, 10, date('g:i A', strtotime($transmittal->timesubmitted)), 0, 0, 'L');
+                $pdf->SetXY(160, 28); $pdf->Cell(50, 10, $transmittal->email_address, 0, 0, 'L');
 
-            $items = TransmittalItem::where([['isdeleted', 0], ['transmittalno', $input[0]]])->get();
-            $yy = 94.4; $i = 1;
+                $pdf->SetXY(34, 56.5); $pdf->Cell(50, 10, $transmittal->purpose, 0, 0, 'L');
+                $pdf->SetXY(42, 62.5); $pdf->Cell(50, 10, (Carbon::createFromFormat('Y-m-d', $transmittal->date_needed))->format('F j, Y'), 0, 0, 'L');
+                $pdf->SetXY(34, 68.5); $pdf->Cell(50, 10, $transmittal->priority, 0, 0, 'L');
+                $pdf->SetXY(42, 74.5); $pdf->Cell(50, 10, $input[0], 0, 0, 'L');
 
-            foreach($items as $item){
-                $pdf->SetXY(32, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
-                $pdf->SetXY(48.2, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
-                $pdf->SetXY(80.2, $yy); $pdf->Cell(36.2, 7.1, $item->elements, 0, 0, 'C');
-                $pdf->SetXY(116.6, $yy); $pdf->Cell(27, 7.1, $item->methodcode, 0, 0, 'C');
-                $pdf->SetXY(143.6, $yy); $pdf->Cell(38, 7.1, $item->comments, 0, 0, 'C');
-                $yy+=7.1; $i++;
-            }
 
-            $pdf->SetXY(143.6, 252); $pdf->Cell(38, 7, $i - 1, 0, 0, 'C');
-            $pdf->SetXY(15, 257); $pdf->Cell(50, 7, "Prepared by:      ".(User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
+                $yy = 94.4; $i = 1;
+                $startIndex = ($groupNumber - 1) * 22; // Calculate the starting index for this group
 
-            if($input[2] == "2"){
-                $pdf->SetXY(15, 260); $pdf->Cell(50, 7, "Approved by:      ".(User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
+                for ($j = $startIndex; $j < min($startIndex + 22, count($items)); $j++) {
+                    $item = $items[$j];
+                    
+                    $pdf->SetXY(32, $yy); $pdf->Cell(16.2, 7.1, $i, 0, 0, 'C');
+                    $pdf->SetXY(48.2, $yy); $pdf->Cell(32, 7.1, $item->sampleno, 0, 0, 'C');
+                    $pdf->SetXY(80.2, $yy); $pdf->Cell(36.2, 7.1, $item->elements, 0, 0, 'C');
+                    $pdf->SetXY(116.6, $yy); $pdf->Cell(27, 7.1, $item->methodcode, 0, 0, 'C');
+                    $pdf->SetXY(143.6, $yy); $pdf->Cell(38, 7.1, $item->comments, 0, 0, 'C');
+                    $yy+=7.1; $i++;
+                }
+
+                $pdf->SetXY(143.6, 250); $pdf->Cell(38, 7, $i - 1, 0, 0, 'C');
+                $pdf->SetXY(15, 257); $pdf->Cell(50, 7, "Prepared by:      ".(User::where("username", $transmittal->created_by)->first())->name, 0, 0, 'L');
+
+                if($input[2] == "2"){
+                    $pdf->SetXY(15, 260); $pdf->Cell(50, 7, "Approved by:      ".(User::where("username", $transmittal->approver)->first())->name, 0, 0, 'L'); 
+                }
             }
         }
         
